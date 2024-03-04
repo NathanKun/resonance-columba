@@ -32,7 +32,6 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     fetch("/api/get-prices")
       .then((res) => res.json())
       .then((res) => {
-        console.log("prices fetched", res.data);
         setData(res.data);
       });
   };
@@ -42,6 +41,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     // compare with current value
     const pdtData = data[product];
     const cityData = pdtData?.[type]?.[city];
+    console.log(pdtData);
     let newVariation = variation;
     let newTrend = trend;
     let changed = false;
@@ -58,7 +58,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     }
 
     if (!changed) {
-      console.log("no change in price; won't update");
+      console.log("no change in price, won't update");
       return;
     }
 
@@ -72,10 +72,17 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         type,
       } as SetPriceRequest),
     })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("price set", res);
-        setData(res.data);
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("set-price failed");
+      })
+      .then((responseJson) => {
+        setData(responseJson.data);
+      })
+      .catch((error) => {
+        fetchData();
       });
   };
 

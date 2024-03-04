@@ -14,14 +14,16 @@ import Select from "@mui/material/Select";
 import { MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
+import { useCookies } from "next-client-cookies";
 import { PriceContext } from "../price-provider";
 
 interface ProductPrice {
   variation: number;
   trend: string; // up arrow, down arrow, or empty
   timeDiffInMin: string; // e.g. 5分钟前
-  profit: number;
+  singleProfit: number;
+  lotProfit: number;
 }
 
 interface ProductRow {
@@ -80,6 +82,17 @@ const VariationInput = (props: any) => {
         min: 70,
         max: 130,
       }}
+      sx={{
+        "&": {
+          fontSize: "0.7rem",
+        },
+        '& input[type="number"]::-webkit-inner-spin-button, & input[type="number"]::-webkit-outer-spin-button': {
+          "-webkit-appearance": "none",
+        },
+        "& input[type=number]": {
+          padding: "0.5rem",
+        },
+      }}
     />
   );
 };
@@ -95,7 +108,11 @@ const TrendCell = (props: any) => {
     background = "lightcoral";
     text = "↓";
   }
-  return <span style={{ color: "white", background, padding: "5px 10px" }}>{text}</span>;
+  return (
+    <span style={{ color: "white", background, padding: "5px 10px", display: "block", textAlign: "center" }}>
+      {text}
+    </span>
+  );
 };
 
 const TrendInput = (props: any) => {
@@ -129,7 +146,7 @@ function MultipleSelect(props: any) {
       <InputLabel
         id={"multiple-select-label-" + name}
         sx={{
-          fontSize: "0.8rem",
+          fontSize: "0.7rem",
         }}
       >
         {label}
@@ -142,7 +159,7 @@ function MultipleSelect(props: any) {
         onChange={handleChange}
         input={<OutlinedInput label={label} />}
         sx={{
-          fontSize: "0.8rem",
+          fontSize: "0.7rem",
           "& .MuiSelect-select": {
             padding: ".5rem",
           },
@@ -151,7 +168,7 @@ function MultipleSelect(props: any) {
           PaperProps: {
             sx: {
               "& li": {
-                fontSize: "0.8rem",
+                fontSize: "0.7rem",
               },
             },
           },
@@ -167,22 +184,46 @@ function MultipleSelect(props: any) {
   );
 }
 
+interface SelectedCities {
+  sourceCities: CityName[];
+  targetCities: CityName[];
+}
+
 export default function PricesTable() {
   const { prices, setPrice } = useContext(PriceContext);
-  const [cookies, setCookie] = useCookies(["selectedCities"]);
+  const cookies = useCookies();
+  const [selectedCities, setSelectedCities] = useState<SelectedCities>(() => {
+    const str = cookies.get("selectedCities");
+    if (str) {
+      return JSON.parse(str);
+    } else {
+      return { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] };
+    }
+  });
+
+  const updateSelectedCitiesCookieAndState = useCallback(
+    (newSelectedCities: SelectedCities) => {
+      const newStr = JSON.stringify(newSelectedCities);
+      cookies.set("selectedCities", newStr);
+      setSelectedCities(newSelectedCities);
+    },
+    [cookies]
+  );
 
   const setSourceCities = useCallback(
     (selected: CityName[]) => {
-      setCookie("selectedCities", { sourceCities: selected, targetCities: cookies.selectedCities?.targetCities ?? [] });
+      const newSelectedCities = { ...selectedCities, sourceCities: selected };
+      updateSelectedCitiesCookieAndState(newSelectedCities);
     },
-    [setCookie, cookies.selectedCities?.targetCities]
+    [selectedCities, updateSelectedCitiesCookieAndState]
   );
 
   const setTargetCities = useCallback(
     (selected: CityName[]) => {
-      setCookie("selectedCities", { sourceCities: cookies.selectedCities?.sourceCities ?? [], targetCities: selected });
+      const newSelectedCities = { ...selectedCities, targetCities: selected };
+      updateSelectedCitiesCookieAndState(newSelectedCities);
     },
-    [setCookie, cookies.selectedCities?.sourceCities]
+    [selectedCities, updateSelectedCitiesCookieAndState]
   );
 
   // build table rows
@@ -193,7 +234,7 @@ export default function PricesTable() {
       const buyableCities: CityName[] = product.buyPrices ? Object.keys(product.buyPrices) : [];
 
       for (const sourceCity of buyableCities) {
-        if (!cookies.selectedCities?.sourceCities?.some((city: string) => buyableCities.includes(city))) {
+        if (!selectedCities.sourceCities.includes(sourceCity)) {
           return;
         }
 
@@ -207,7 +248,7 @@ export default function PricesTable() {
             return;
           }
 
-          const isBuyableCity = buyableCities.includes(city);
+          const isBuyableCity = sourceCity === city;
 
           const productPriceFromApi = isBuyableCity ? productPrices.buy?.[city] : productPrices.sell?.[city]; // sell/buy is player's perspective
           if (!productPriceFromApi) {
@@ -218,18 +259,27 @@ export default function PricesTable() {
           const timeDiffInMin = Math.ceil((Date.now() / 1000 - time._seconds) / 60);
           let profit = 0;
           if (!isBuyableCity) {
-            // a product can have different buy prices in different cities, find the lowest one,
-            // but the profile become unclear, we don't know which city to buy from.
-            const productBuyPrice = Math.min(
-              ...(Object.values(product.buyPrices).filter((price) => price !== null) as number[])
-            );
-            profit = Math.round((productBuyPrice * variation) / 100 - productBuyPrice);
+            // a product can be bought from multiple cities, so we need to find the city with the highest profit,
+            // but this will also make the calculate profit unclear which city it is from
+            for (const buyCity of Object.keys(product.buyPrices)) {
+              let productBuyPrice = product.buyPrices[buyCity] ?? 0;
+              const buyVariation = productPrices.buy?.[buyCity]?.variation ?? 0;
+              productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100) * 0.92; // estimated buy price
+
+              let productSellPrice = product.sellPrices[city] ?? 0;
+              const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
+              productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+
+              const cityProfit = Math.round(productSellPrice - productBuyPrice);
+              profit = Math.max(profit, cityProfit);
+            }
           }
           const productPriceForTable: ProductPrice = {
             variation,
             trend,
             timeDiffInMin: timeDiffInMin + "分钟前",
-            profit,
+            singleProfit: profit,
+            lotProfit: profit * (product.buyLot?.[sourceCity] ?? 0),
           };
 
           if (isBuyableCity) {
@@ -250,12 +300,12 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [prices, cookies.selectedCities?.sourceCities]);
+  }, [selectedCities.sourceCities, prices]);
 
   // build headers
   const columns = useMemo<MRT_ColumnDef<ProductRow>[]>(() => {
     const result: MRT_ColumnDef<ProductRow>[] =
-      cookies.selectedCities?.targetCities.map((city: CityName) => {
+      CITIES.map((city: CityName) => {
         return {
           id: city + "-group",
           header: city,
@@ -308,6 +358,9 @@ export default function PricesTable() {
 
                 return <TrendInput value={cell.getValue()} save={save} />;
               },
+              muiTableBodyCellProps: {
+                align: "justify",
+              },
             },
             {
               id: `targetCity-${city}-time`,
@@ -317,9 +370,16 @@ export default function PricesTable() {
               enableEditing: false,
             },
             {
-              id: `targetCity-${city}-profit`,
-              accessorFn: (row: ProductRow) => row.targetCity[city]?.profit,
-              header: "利润",
+              id: `targetCity-${city}-singleprofit`,
+              accessorFn: (row: ProductRow) => row.targetCity[city]?.singleProfit,
+              header: "单个利润",
+              size: 50,
+              enableEditing: false,
+            },
+            {
+              id: `targetCity-${city}-lotprofit`,
+              accessorFn: (row: ProductRow) => row.targetCity[city]?.lotProfit,
+              header: "单批利润",
               size: 50,
               enableEditing: false,
             },
@@ -327,6 +387,85 @@ export default function PricesTable() {
         } as MRT_ColumnDef<ProductRow>;
       }) ?? [];
 
+    // highest profit group
+    const highestProfitCity = (row: ProductRow) => {
+      const highestProfitCity = CITIES.reduce((a, b) =>
+        (row.targetCity[a]?.singleProfit ?? 0) > (row.targetCity[b]?.singleProfit ?? 0) ? a : b
+      );
+      return highestProfitCity;
+    };
+
+    result.unshift({
+      id: "highest-profit-group",
+      header: "最高利润",
+
+      columns: [
+        {
+          id: "highest-profit-single",
+          accessorFn: (row: ProductRow) => {
+            const city = highestProfitCity(row);
+            return city;
+          },
+          header: "单个",
+          size: 50,
+          enableEditing: false,
+          Cell: (props: any) => {
+            const { renderedCellValue: city, row } = props;
+            const profit = row.original.targetCity?.[city]?.singleProfit;
+            if (!city || !profit) {
+              return null;
+            }
+            return (
+              <span>
+                {profit} {city}
+              </span>
+            );
+          },
+          sortingFn: (rowA, rowB, columnId) => {
+            const productRow1 = rowA.original;
+            const productRow2 = rowB.original;
+            const city1 = highestProfitCity(productRow1);
+            const city2 = highestProfitCity(productRow2);
+            const profit1 = productRow1.targetCity[city1]?.singleProfit ?? 0;
+            const profit2 = productRow2.targetCity[city2]?.singleProfit ?? 0;
+            return profit1 - profit2;
+          },
+        },
+        {
+          id: "highest-profit-lot",
+          accessorFn: (row: ProductRow) => {
+            const city = highestProfitCity(row);
+            return city;
+          },
+          header: "单批",
+          size: 50,
+          enableEditing: false,
+          Cell: (props: any) => {
+            const { renderedCellValue: city, row } = props;
+            const profit = row.original.targetCity?.[city]?.lotProfit;
+            if (!city || !profit) {
+              return null;
+            }
+            return (
+              <span>
+                {profit} {city}
+              </span>
+            );
+          },
+          sortingFn: (rowA, rowB, columnId) => {
+            const productRow1 = rowA.original;
+            const productRow2 = rowB.original;
+            const city1 = highestProfitCity(productRow1);
+            const city2 = highestProfitCity(productRow2);
+            const profit1 = productRow1.targetCity[city1]?.lotProfit ?? 0;
+            const profit2 = productRow2.targetCity[city2]?.lotProfit ?? 0;
+            return profit1 - profit2;
+          },
+        },
+      ],
+    });
+
+    // source city group
     result.unshift({
       id: "source-city-group",
       header: "原产地",
@@ -384,6 +523,9 @@ export default function PricesTable() {
 
             return <TrendInput value={cell.getValue()} save={save} />;
           },
+          muiTableBodyCellProps: {
+            align: "justify",
+          },
         },
         {
           id: "source-time",
@@ -396,7 +538,22 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [cookies.selectedCities?.targetCities, setPrice]);
+  }, [setPrice]);
+
+  const columnVisibility = useMemo(() => {
+    const visibleCities = selectedCities.targetCities;
+    const invisibleCities = CITIES.filter((city) => !visibleCities?.includes(city));
+    const result: { [key: string]: boolean } = {};
+    invisibleCities.forEach((city) => {
+      result[city + "-group"] = false;
+      result[`targetCity-${city}-variation`] = false;
+      result[`targetCity-${city}-trend`] = false;
+      result[`targetCity-${city}-time`] = false;
+      result[`targetCity-${city}-singleprofit`] = false;
+      result[`targetCity-${city}-lotprofit`] = false;
+    });
+    return result;
+  }, [selectedCities.targetCities]);
 
   const renderCitySelects = useCallback(() => {
     return (
@@ -405,19 +562,19 @@ export default function PricesTable() {
           label="原产地"
           name="sourceCities"
           allOptions={CITIES}
-          selectedOptions={cookies.selectedCities?.sourceCities ?? []}
+          selectedOptions={selectedCities.sourceCities}
           handleChange={(event: any) => setSourceCities(event.target.value)}
         />
         <MultipleSelect
           label="目标城市"
           name="targetCities"
           allOptions={CITIES}
-          selectedOptions={cookies.selectedCities?.targetCities ?? []}
+          selectedOptions={selectedCities.targetCities}
           handleChange={(event: any) => setTargetCities(event.target.value)}
         />
       </div>
     );
-  }, [cookies.selectedCities?.sourceCities, cookies.selectedCities?.targetCities, setSourceCities, setTargetCities]);
+  }, [selectedCities.sourceCities, selectedCities.targetCities, setSourceCities, setTargetCities]);
 
   const table = useMaterialReactTable({
     data,
@@ -442,15 +599,32 @@ export default function PricesTable() {
       },
       density: "compact",
     },
-    muiTableHeadCellProps: {
-      sx: {
-        fontSize: "0.8rem",
+    state: {
+      columnVisibility,
+    },
+
+    displayColumnDefOptions: {
+      "mrt-row-expand": {
+        size: 50,
       },
     },
+    muiTableHeadCellProps: ({ column }) => ({
+      sx: {
+        fontSize: "0.7rem",
+        backgroundColor: column.getIsPinned() ? "#f5f5f5" : "inherit",
+        borderLeft: "1px solid rgba(224, 224, 224, 1)",
+        borderRight: "1px solid rgba(224, 224, 224, 1)",
+        "& .MuiBadge-root": {
+          display: "none",
+        },
+      },
+    }),
     muiTableBodyCellProps: {
       sx: {
-        fontSize: "0.8rem",
-        lineHeight: "0.9rem",
+        fontSize: "0.7rem",
+        lineHeight: "0.8rem",
+        borderLeft: "1px solid rgba(224, 224, 224, 1)",
+        borderRight: "1px solid rgba(224, 224, 224, 1)",
       },
     },
     muiTableHeadRowProps: {
