@@ -1,23 +1,7 @@
-import { CityName } from "@/data/Cities";
 import { db } from "@/firebase/app";
-import { Trend } from "@/interfaces/SellingPrice";
+import { FirestoreProducts } from "@/interfaces/get-prices";
 
-export interface FirestoreProducts {
-  [key: string]: {
-    [key: CityName]: {
-      trend: Trend;
-      variation: number;
-      time: {
-        _seconds: number;
-        _nanoseconds: number;
-      };
-    };
-  };
-}
-
-export interface GetPricesResponse {
-  data: FirestoreProducts;
-}
+export const revalidate = 60;
 
 export async function GET(request: Request) {
   try {

@@ -1,11 +1,14 @@
 import { CityName } from "@/data/Cities";
 
 export interface Product {
-  city: string;
   name: string;
-  price: number;
-  type: ProductType;
-  prices: {
+  buyPrices: {
+    [key: CityName]: number | null;
+  };
+  buyLot?: {
+    [key: CityName]: number | null;
+  };
+  sellPrices: {
     [key: CityName]: number | null;
   };
 }
