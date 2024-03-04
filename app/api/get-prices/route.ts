@@ -2,22 +2,30 @@ import { CityName } from "@/data/Cities";
 import { db } from "@/firebase/app";
 import { Trend } from "@/interfaces/SellingPrice";
 
-export interface FirestoreProducts {
-  [key: string]: {
-    [key: CityName]: {
-      trend: Trend;
-      variation: number;
-      time: {
-        _seconds: number;
-        _nanoseconds: number;
-      };
+export interface FirestoreProductPrice {
+  [key: CityName]: {
+    trend: Trend;
+    variation: number;
+    time: {
+      _seconds: number;
+      _nanoseconds: number;
     };
   };
+}
+
+export interface FirestoreProduct {
+  [type: string]: FirestoreProductPrice;
+}
+
+export interface FirestoreProducts {
+  [key: string]: FirestoreProduct;
 }
 
 export interface GetPricesResponse {
   data: FirestoreProducts;
 }
+
+export const revalidate = 60;
 
 export async function GET(request: Request) {
   try {

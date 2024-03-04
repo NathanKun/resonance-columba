@@ -4,32 +4,36 @@ import { Trend } from "@/interfaces/SellingPrice";
 import { FieldValue } from "firebase-admin/firestore";
 
 interface SetPriceFirestoreRequest {
-  [product: string]: {
-    [city: CityName]: {
-      variation: number;
-      trend: Trend;
-      time: FieldValue;
-    };
+  [propPath: string]: {
+    variation?: number;
+    trend?: Trend;
+    time: FieldValue;
   };
 }
+
+export type ExchangeType = "buy" | "sell";
 
 export interface SetPriceRequest {
   product: string;
   city: CityName;
-  variation: number;
-  trend: Trend;
+  type: ExchangeType;
+  variation?: number;
+  trend?: Trend;
 }
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
-    const { product, city, variation, trend }: SetPriceRequest = await request.json();
+    const { product, city, variation, trend, type }: SetPriceRequest = await request.json();
+
+    if (!product || !city || (!variation && !trend) || (type !== "buy" && type !== "sell")) {
+      return Response.json({ error: "invalid request" }, { status: 400 });
+    }
 
     const docRef = db.collection("columba").doc("products");
 
     // Update the timestamp field with the value from the server
-    const data: SetPriceFirestoreRequest = {};
-    data[product] = {
-      [city]: {
+    const data: SetPriceFirestoreRequest = {
+      [`${product}.${type}.${city}`]: {
         variation,
         trend,
         time: FieldValue.serverTimestamp(),
@@ -41,6 +45,6 @@ export async function GET(request: Request) {
     return Response.json({ data: docSnapshot.data() });
   } catch (e) {
     console.log(e);
-    return Response.json({ error: "failed to load data" });
+    return Response.json({ error: "failed to load data" }, { status: 500 });
   }
 }

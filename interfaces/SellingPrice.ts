@@ -7,5 +7,5 @@ export interface SellingPrice {
   time: string;
 }
 
-const trend = ["up", "down"];
-export type Trend = (typeof trend)[number];
+export const trends = ["up", "down"] as const;
+export type Trend = (typeof trends)[number];

@@ -11,4 +11,4 @@ const cityList = [
 ];
 
 export type CityName = (typeof cityList)[number];
-export const cities: CityName[] = cityList;
+export const CITIES: CityName[] = cityList;
