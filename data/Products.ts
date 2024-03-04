@@ -17,6 +17,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       修格里城: 3363,
     },
+    buyLot: {
+      修格里城: 9,
+    },
   },
   {
     name: "弹丸加速装置",
@@ -35,6 +38,10 @@ export const PRODUCTS: Product[] = [
       修格里城: 2147,
       铁盟哨站: 2067,
     },
+    buyLot: {
+      修格里城: 18,
+      铁盟哨站: 12,
+    },
   },
   {
     name: "红茶",
@@ -51,6 +58,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       修格里城: 688,
+    },
+    buyLot: {
+      修格里城: 29,
     },
   },
   {
@@ -69,6 +79,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       修格里城: 300,
     },
+    buyLot: {
+      修格里城: 39,
+    },
   },
   {
     name: "防弹背心",
@@ -85,6 +98,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       铁盟哨站: 2847,
+    },
+    buyLot: {
+      铁盟哨站: 11,
     },
   },
   {
@@ -103,6 +119,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       铁盟哨站: 1370,
     },
+    buyLot: {
+      铁盟哨站: 17,
+    },
   },
   {
     name: "桦石发财树",
@@ -119,6 +138,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       七号自由港: 4888,
+    },
+    buyLot: {
+      七号自由港: 7,
     },
   },
   {
@@ -137,6 +159,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       七号自由港: 2300,
     },
+    buyLot: {
+      七号自由港: 10,
+    },
   },
   {
     name: "人工晶花",
@@ -153,6 +178,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       七号自由港: 1777,
+    },
+    buyLot: {
+      七号自由港: 16,
     },
   },
   {
@@ -171,6 +199,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       七号自由港: 588,
     },
+    buyLot: {
+      七号自由港: 35,
+    },
   },
   {
     name: "游戏机",
@@ -187,6 +218,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       澄明数据中心: 3200,
+    },
+    buyLot: {
+      澄明数据中心: 10,
     },
   },
   {
@@ -205,6 +239,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       澄明数据中心: 2500,
     },
+    buyLot: {
+      澄明数据中心: 10,
+    },
   },
   {
     name: "游戏卡带",
@@ -221,6 +258,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       澄明数据中心: 648,
+    },
+    buyLot: {
+      澄明数据中心: 30,
     },
   },
   {
@@ -239,6 +279,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       澄明数据中心: 960,
     },
+    buyLot: {
+      澄明数据中心: 20,
+    },
   },
   {
     name: "阿妮塔202军用无人机",
@@ -255,6 +298,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       阿妮塔战备工厂: 3500,
+    },
+    buyLot: {
+      阿妮塔战备工厂: 7,
     },
   },
   {
@@ -273,6 +319,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       阿妮塔战备工厂: 2800,
     },
+    buyLot: {
+      阿妮塔战备工厂: 11,
+    },
   },
   {
     name: "钛合金",
@@ -289,6 +338,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       阿妮塔战备工厂: 2671,
+    },
+    buyLot: {
+      阿妮塔战备工厂: 11,
     },
   },
   {
@@ -307,6 +359,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       阿妮塔战备工厂: 1400,
     },
+    buyLot: {
+      阿妮塔战备工厂: 18,
+    },
   },
   {
     name: "阿妮塔小型桦树发电机",
@@ -323,6 +378,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       阿妮塔能源研究所: 6888,
+    },
+    buyLot: {
+      阿妮塔能源研究所: 1,
     },
   },
   {
@@ -341,6 +399,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       阿妮塔能源研究所: 3840,
     },
+    buyLot: {
+      阿妮塔能源研究所: 8,
+    },
   },
   {
     name: "阿妮塔101民用无人机",
@@ -357,6 +418,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       阿妮塔能源研究所: 1535,
+    },
+    buyLot: {
+      阿妮塔能源研究所: 14,
     },
   },
   {
@@ -375,6 +439,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       阿妮塔能源研究所: 1152,
     },
+    buyLot: {
+      阿妮塔能源研究所: 21,
+    },
   },
   {
     name: "琥珀",
@@ -391,6 +458,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       荒原站: 2240,
+    },
+    buyLot: {
+      荒原站: 23,
     },
   },
   {
@@ -409,6 +479,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       荒原站: 1144,
     },
+    buyLot: {
+      荒原站: 19,
+    },
   },
   {
     name: "图形加速卡",
@@ -425,6 +498,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       曼德矿场: 3071,
+    },
+    buyLot: {
+      曼德矿场: 17,
     },
   },
   {
@@ -443,6 +519,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       曼德矿场: 880,
     },
+    buyLot: {
+      曼德矿场: 27,
+    },
   },
   {
     name: "沙金",
@@ -459,6 +538,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       淘金乐园: 2700,
+    },
+    buyLot: {
+      淘金乐园: 11,
     },
   },
   {
@@ -477,6 +559,9 @@ export const PRODUCTS: Product[] = [
     buyPrices: {
       淘金乐园: 1920,
     },
+    buyLot: {
+      淘金乐园: 13,
+    },
   },
   {
     name: "玛瑙",
@@ -493,6 +578,9 @@ export const PRODUCTS: Product[] = [
     },
     buyPrices: {
       淘金乐园: 1727,
+    },
+    buyLot: {
+      淘金乐园: 17,
     },
   },
 ];

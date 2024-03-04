@@ -53,12 +53,18 @@ dependencies:
   firebase-admin:
     specifier: ^12.0.0
     version: 12.0.0
+  lru-cache:
+    specifier: ^10.2.0
+    version: 10.2.0
   material-react-table:
     specifier: ^2.12.1
     version: 2.12.1(@emotion/react@11.11.4)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.11)(@mui/material@5.15.11)(@mui/x-date-pickers@6.19.6)(react-dom@18.2.0)(react@18.2.0)
   next:
     specifier: 14.1.1
     version: 14.1.1(react-dom@18.2.0)(react@18.2.0)
+  next-client-cookies:
+    specifier: ^1.1.0
+    version: 1.1.0(next@14.1.1)(react@18.2.0)
   postcss:
     specifier: 8.4.35
     version: 8.4.35
@@ -3971,6 +3977,11 @@ packages:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
     dev: false
 
+  /js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: false
@@ -4329,6 +4340,17 @@ packages:
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+    dev: false
+
+  /next-client-cookies@1.1.0(next@14.1.1)(react@18.2.0):
+    resolution: {integrity: sha512-e/rqQTXHSFuvUJELMeCDgM7dWW6IUNOGr7noWyRSgE/5l033UaqseDrjShfRZYG45JnrYKoX653OdXTJ8cn+NA==}
+    peerDependencies:
+      next: '>= 13.0.0'
+      react: '>= 16.8.0'
+    dependencies:
+      js-cookie: 3.0.5
+      next: 14.1.1(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
     dev: false
 
   /next@14.1.1(react-dom@18.2.0)(react@18.2.0):

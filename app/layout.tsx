@@ -16,11 +16,14 @@ const inter = Inter({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.variable}>
-        <main className="relative flex min-h-screen flex-col items-center justify-center">
-          <h1 className="pt-2 pb-2 bg-gradient-to-br text-center text-3xl font-medium">
+      <body className={`${inter.variable} min-h-screen`}>
+        <header className="flex items-center justify-between w-full p-2">
+          <h1 className="text-3xl font-medium">
             <Link href="/">科伦巴商会</Link>
           </h1>
+          <Link href="/about">关于</Link>
+        </header>
+        <main className="relative flex flex-col items-center justify-center">
           <div className="w-full">{children}</div>
         </main>
       </body>
