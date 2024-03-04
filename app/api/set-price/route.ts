@@ -1,25 +1,6 @@
-import { CityName } from "@/data/Cities";
 import { db } from "@/firebase/app";
-import { Trend } from "@/interfaces/SellingPrice";
+import { SetPriceFirestoreRequest, SetPriceRequest } from "@/interfaces/set-price";
 import { FieldValue } from "firebase-admin/firestore";
-
-interface SetPriceFirestoreRequest {
-  [propPath: string]: {
-    variation?: number;
-    trend?: Trend;
-    time: FieldValue;
-  };
-}
-
-export type ExchangeType = "buy" | "sell";
-
-export interface SetPriceRequest {
-  product: string;
-  city: CityName;
-  type: ExchangeType;
-  variation?: number;
-  trend?: Trend;
-}
 
 export async function POST(request: Request) {
   try {
