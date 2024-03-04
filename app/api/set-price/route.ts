@@ -1,8 +1,20 @@
 import { db } from "@/firebase/app";
 import { SetPriceFirestoreRequest, SetPriceRequest } from "@/interfaces/set-price";
 import { FieldValue } from "firebase-admin/firestore";
+import rateLimit from "../../../utils/rate-limit";
+
+const limiter = rateLimit({
+  interval: 60 * 1000, // 60 seconds
+  uniqueTokenPerInterval: 500, // Max 500 users per second
+});
 
 export async function POST(request: Request) {
+  try {
+    await limiter.check(100, "CACHE_TOKEN"); // 10 requests per minute
+  } catch {
+    return Response.json({ error: "rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const { product, city, variation, trend, type }: SetPriceRequest = await request.json();
 
