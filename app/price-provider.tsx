@@ -2,9 +2,9 @@
 
 import { CityName } from "@/data/Cities";
 import { Trend } from "@/interfaces/SellingPrice";
+import { FirestoreProducts } from "@/interfaces/get-prices";
+import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { createContext, useEffect, useState } from "react";
-import { FirestoreProducts } from "./api/get-prices/route";
-import { ExchangeType, SetPriceRequest } from "./api/set-price/route";
 
 export interface PriceContextProps {
   prices: FirestoreProducts;
