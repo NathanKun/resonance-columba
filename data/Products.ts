@@ -118,7 +118,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: 5792,
     },
     buyPrices: {
-      "7号自由港": 4888,
+      七号自由港: 4888,
     },
   },
   {
@@ -135,7 +135,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: 2834,
     },
     buyPrices: {
-      "7号自由港": 2300,
+      七号自由港: 2300,
     },
   },
   {
@@ -152,7 +152,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: 2301,
     },
     buyPrices: {
-      "7号自由港": 1777,
+      七号自由港: 1777,
     },
   },
   {
@@ -169,7 +169,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: 1047,
     },
     buyPrices: {
-      "7号自由港": 588,
+      七号自由港: 588,
     },
   },
   {
