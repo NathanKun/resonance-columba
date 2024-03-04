@@ -10,7 +10,7 @@ const limiter = rateLimit({
 
 export async function POST(request: Request) {
   try {
-    await limiter.check(100, "CACHE_TOKEN"); // 10 requests per minute
+    await limiter.check(300, "CACHE_TOKEN"); // 10 requests per minute
   } catch {
     return Response.json({ error: "rate limit exceeded" }, { status: 429 });
   }
