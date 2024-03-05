@@ -3,6 +3,7 @@
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import { Trend, trends } from "@/interfaces/SellingPrice";
+import { isCraftableProduct } from "@/utils/price-utils";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
@@ -20,9 +21,7 @@ import {
 } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { ReactNode, useCallback, useContext, useMemo, useState } from "react";
-// import { useCookies } from "react-cookie";
-import { isCraftableProduct } from "@/utils/price-utils";
-import { useCookies } from "next-client-cookies";
+import { useCookies } from "react-cookie";
 import { PriceContext } from "../price-provider";
 
 interface ProductPrice {
@@ -215,23 +214,18 @@ interface SelectedCities {
 
 export default function PricesTable() {
   const { prices, setPrice } = useContext(PriceContext);
-  const cookies = useCookies();
-  const [selectedCities, setSelectedCities] = useState<SelectedCities>(() => {
-    const str = cookies.get("selectedCities");
-    if (str) {
-      return JSON.parse(str);
-    } else {
-      return { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] };
-    }
-  });
+  const [cookie, setCookie] = useCookies(["selectedCities"]);
+  const [selectedCities, setSelectedCities] = useState<SelectedCities>(
+    cookie.selectedCities ?? { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] }
+  );
 
   const updateSelectedCitiesCookieAndState = useCallback(
     (newSelectedCities: SelectedCities) => {
       const newStr = JSON.stringify(newSelectedCities);
-      cookies.set("selectedCities", newStr);
+      setCookie("selectedCities", newStr);
       setSelectedCities(newSelectedCities);
     },
-    [cookies]
+    [setCookie]
   );
 
   const setSourceCities = useCallback(
