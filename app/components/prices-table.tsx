@@ -11,10 +11,17 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
-import { MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
+import {
+  MRT_Column,
+  MRT_Row,
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { ReactNode, useCallback, useContext, useMemo, useState } from "react";
 // import { useCookies } from "react-cookie";
+import { isCraftableProduct } from "@/utils/price-utils";
 import { useCookies } from "next-client-cookies";
 import { PriceContext } from "../price-provider";
 
@@ -34,10 +41,21 @@ interface ProductRow {
   targetCity: {
     [key: CityName]: ProductPrice;
   };
+  craftable: boolean;
 }
 
-const VariationCell = (props: any) => {
-  const { renderedCellValue: value } = props;
+const VariationCell = (props: {
+  renderedCellValue: ReactNode;
+  row: MRT_Row<ProductRow>;
+  column: MRT_Column<ProductRow, unknown>;
+}) => {
+  const { renderedCellValue: value, row, column } = props;
+
+  // if the product is craftable & the cell is in it's source city, don't show variation
+  if (row.original.craftable && column.id === "source-variation") {
+    return <span>制造</span>;
+  }
+
   return (
     <span>
       {value}
@@ -98,7 +116,13 @@ const VariationInput = (props: any) => {
 };
 
 const TrendCell = (props: any) => {
-  const { renderedCellValue: value } = props;
+  const { renderedCellValue: value, row, column } = props;
+
+  // if the product is craftable & the cell is in it's source city, don't show trend
+  if (row.original.craftable && column.id === "source-trend") {
+    return null;
+  }
+
   let text,
     background = "";
   if (value === "up") {
@@ -257,21 +281,77 @@ export default function PricesTable() {
 
           const { variation, trend, time } = productPriceFromApi;
           const timeDiffInMin = Math.ceil((Date.now() / 1000 - time._seconds) / 60);
+
+          // calculate profit
           let profit = 0;
           if (!isBuyableCity) {
-            // a product can be bought from multiple cities, so we need to find the city with the highest profit,
-            // but this will also make the calculate profit unclear which city it is from
-            for (const buyCity of Object.keys(product.buyPrices)) {
-              let productBuyPrice = product.buyPrices[buyCity] ?? 0;
-              const buyVariation = productPrices.buy?.[buyCity]?.variation ?? 0;
-              productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100) * 0.92; // estimated buy price
+            // for a buyable (non craftable) product
+            if (!product.craft) {
+              // a product can be bought from multiple cities, so we need to find the city with the highest profit,
+              // but this will also make the calculate profit unclear which city it is from
+              for (const buyCity of Object.keys(product.buyPrices)) {
+                let productBuyPrice = product.buyPrices[buyCity] ?? 0;
+                const buyVariation = productPrices.buy?.[buyCity]?.variation ?? 0;
+                productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100) * 0.92; // estimated buy price
 
+                let productSellPrice = product.sellPrices[city] ?? 0;
+                const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
+                productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+
+                const cityProfit = Math.round(productSellPrice - productBuyPrice);
+                profit = Math.max(profit, cityProfit);
+              }
+            }
+            // a craftable product but with static price
+            else if (product.craft.static) {
+              const productBuyPrice = product.craft.static;
               let productSellPrice = product.sellPrices[city] ?? 0;
+
               const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
               productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
 
-              const cityProfit = Math.round(productSellPrice - productBuyPrice);
-              profit = Math.max(profit, cityProfit);
+              profit = Math.round(productSellPrice - productBuyPrice);
+
+              console.log(
+                productName +
+                  " " +
+                  city +
+                  " " +
+                  profit +
+                  " " +
+                  sellVariation +
+                  " " +
+                  product.sellPrices[city] +
+                  " " +
+                  productBuyPrice
+              );
+            }
+            // a craftable product with materials
+            else if (product.craft && !product.craft.static) {
+              const craft = product.craft;
+              let productCraftPrice = 0;
+              const materials = Object.keys(craft);
+
+              for (const material of materials) {
+                const materialQuantity = craft[material]!;
+                // I assume the sourceCity of a craftable product is the same as the sourceCity of its materials,
+                // otherwise the calculation below will be incorrect
+                const materialBuyVariation = prices[material]?.buy?.[sourceCity]?.variation ?? 0;
+                let materialBuyPrice = PRODUCTS.find((p) => p.name === material)?.buyPrices?.[sourceCity] ?? 0;
+                materialBuyPrice = Math.round((materialBuyPrice * materialBuyVariation) / 100) * 0.92; // estimated buy price
+
+                productCraftPrice += materialBuyPrice * materialQuantity;
+              }
+
+              if (productCraftPrice === 0) {
+                profit = 0;
+              } else {
+                let productSellPrice = product.sellPrices[city] ?? 0;
+                const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
+                productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+
+                profit = Math.round(productSellPrice - productCraftPrice);
+              }
             }
           }
           const productPriceForTable: ProductPrice = {
@@ -295,6 +375,7 @@ export default function PricesTable() {
           productName,
           source,
           targetCity,
+          craftable: isCraftableProduct(productName),
         });
       }
     });
@@ -323,6 +404,8 @@ export default function PricesTable() {
                 };
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
+
+                // won't sell the product in its buyable city, so no need to edit variation
                 if (buyableCities.includes(city)) {
                   cancel();
                   return null;
@@ -345,6 +428,8 @@ export default function PricesTable() {
               Edit: ({ cell, column, row, table }) => {
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
+
+                // won't sell the product in its buyable city, so no need to edit trend
                 if (buyableCities.includes(city)) {
                   table.setEditingCell(null);
                   return null;
@@ -503,6 +588,13 @@ export default function PricesTable() {
             const cancel = () => {
               table.setEditingCell(null);
             };
+
+            // craftable product don't have variation
+            if (row.original.craftable) {
+              cancel();
+              return null;
+            }
+
             return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
           },
         },
@@ -520,6 +612,12 @@ export default function PricesTable() {
               setPrice({ product: productName, city: sourceCity, trend: newTrend, type: "buy" });
               table.setEditingCell(null);
             };
+
+            // craftable product don't have trend
+            if (row.original.craftable) {
+              table.setEditingCell(null);
+              return;
+            }
 
             return <TrendInput value={cell.getValue()} save={save} />;
           },
