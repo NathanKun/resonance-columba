@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Noto_Sans_SC } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
@@ -7,11 +7,10 @@ export const metadata = {
   description: "雷索纳斯 科伦巴商会 数据分享站",
 };
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
+const inter = Noto_Sans_SC({
+  preload: false,
+  variable: "--font-noto-sans-sc",
+}); // use font-sans
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

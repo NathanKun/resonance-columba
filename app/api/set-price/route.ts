@@ -1,7 +1,6 @@
-import { db } from "@/firebase/app";
-import { SetPriceFirestoreRequest, SetPriceRequest } from "@/interfaces/set-price";
-import { FieldValue } from "firebase-admin/firestore";
-import { env } from "process";
+import { columbaCol } from "@/firebase/app";
+import { SetPriceFirestoreRequest, SetPriceHistoryItem, SetPriceRequest } from "@/interfaces/set-price";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import rateLimit from "../../../utils/rate-limit";
 
 const limiter = rateLimit({
@@ -9,7 +8,19 @@ const limiter = rateLimit({
   uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
+const getIp = (request: Request): string => {
+  let ipAddress = request.headers.get("x-real-ip");
+
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (!ipAddress && forwardedFor) {
+    ipAddress = forwardedFor?.split(",").at(0) ?? "Unknown";
+  }
+
+  return ipAddress!;
+};
+
 export async function POST(request: Request) {
+  // rate limit
   try {
     await limiter.check(300, "CACHE_TOKEN"); // 10 requests per minute
   } catch {
@@ -17,26 +28,44 @@ export async function POST(request: Request) {
   }
 
   try {
+    // validate request
     const { product, city, variation, trend, type }: SetPriceRequest = await request.json();
 
     if (!product || !city || (!variation && !trend) || (type !== "buy" && type !== "sell")) {
       return Response.json({ error: "invalid request" }, { status: 400 });
     }
 
-    const docRef = db.collection(env.FIREBASE_COLLECTION_NAME!).doc("products");
+    // update products doc
+    const productsDocRef = columbaCol.doc("products");
 
-    // Update the timestamp field with the value from the server
-    const data: SetPriceFirestoreRequest = {
-      [`${product}.${type}.${city}`]: {
-        variation,
-        trend,
-        time: FieldValue.serverTimestamp(),
-      },
+    const setPricePath = `${product}.${type}.${city}`;
+    const setPriceItem: SetPriceHistoryItem = {
+      variation,
+      trend,
+      time: FieldValue.serverTimestamp(), // Update the timestamp field with the value from the server
+      ip: getIp(request),
     };
-    await docRef.update(data);
+    const setPriceData: SetPriceFirestoreRequest = {
+      [setPricePath]: setPriceItem,
+    };
+    await productsDocRef.update(setPriceData);
 
-    const docSnapshot = await docRef.get();
-    return Response.json({ data: docSnapshot.data() });
+    // fetch updated data
+    const docSnapshot = await productsDocRef.get();
+    const returnData = docSnapshot.data();
+
+    // before retuning the data, update the historical data
+    const historiesDocRef = columbaCol.doc("histories");
+    const setHistoryData = {
+      [setPricePath]: FieldValue.arrayUnion({
+        ...setPriceItem,
+        time: Timestamp.now(), // FieldValue.serverTimestamp() not supported in arrayUnion
+      }),
+    };
+    await historiesDocRef.update(setHistoryData);
+
+    // return updated data
+    return Response.json({ data: returnData });
   } catch (e) {
     console.log(e);
     return Response.json({ error: "failed to load data" }, { status: 500 });

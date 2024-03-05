@@ -2,215 +2,19 @@
 
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
-import { Trend, trends } from "@/interfaces/SellingPrice";
-import { isCraftableProduct } from "@/utils/price-utils";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import Select from "@mui/material/Select";
-import {
-  MRT_Column,
-  MRT_Row,
-  MaterialReactTable,
-  useMaterialReactTable,
-  type MRT_ColumnDef,
-} from "material-react-table";
+import { Trend } from "@/interfaces/SellingPrice";
+import { ProductPrice, ProductRow, SelectedCities } from "@/interfaces/prices-table";
+import { highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
+import { MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
-import { ReactNode, useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
-import { PriceContext } from "../price-provider";
-
-interface ProductPrice {
-  variation: number;
-  trend: string; // up arrow, down arrow, or empty
-  timeDiffInMin: string; // e.g. 5分钟前
-  singleProfit: number;
-  lotProfit: number;
-}
-
-interface ProductRow {
-  sourceCity: CityName;
-  buyableCities: CityName[];
-  productName: string;
-  source?: ProductPrice;
-  targetCity: {
-    [key: CityName]: ProductPrice;
-  };
-  craftable: boolean;
-}
-
-const VariationCell = (props: {
-  renderedCellValue: ReactNode;
-  row: MRT_Row<ProductRow>;
-  column: MRT_Column<ProductRow, unknown>;
-}) => {
-  const { renderedCellValue: value, row, column } = props;
-
-  // if the product is craftable & the cell is in it's source city, don't show variation
-  if (row.original.craftable && column.id === "source-variation") {
-    return <span>制造</span>;
-  }
-
-  return (
-    <span>
-      {value}
-      {value ? "%" : ""}
-    </span>
-  );
-};
-
-const VariationInput = (props: any) => {
-  const { value: variation, save, cancel } = props;
-  const [value, setValue] = useState(variation ?? 100);
-
-  const onBlur = (event: any) => {
-    const value = event.target.value;
-    if (validate(value)) {
-      save(parseInt(value));
-    } else {
-      cancel();
-    }
-  };
-
-  const validate = (value: string) => {
-    if (value.endsWith("%")) {
-      value = value.slice(0, -1);
-    }
-    const newValue = parseInt(value);
-    if (isNaN(newValue) || newValue < 70 || newValue > 130) {
-      return false;
-    }
-    return true;
-  };
-
-  return (
-    <OutlinedInput
-      value={value}
-      onChange={(event) => setValue(event.target.value)}
-      onBlur={onBlur}
-      type="number"
-      autoFocus
-      size="small"
-      inputProps={{
-        min: 70,
-        max: 130,
-      }}
-      sx={{
-        "&": {
-          fontSize: "0.7rem",
-        },
-        '& input[type="number"]::-webkit-inner-spin-button, & input[type="number"]::-webkit-outer-spin-button': {
-          "-webkit-appearance": "none",
-        },
-        "& input[type=number]": {
-          padding: "0.5rem",
-        },
-      }}
-    />
-  );
-};
-
-const TrendCell = (props: any) => {
-  const { renderedCellValue: value, row, column } = props;
-
-  // if the product is craftable & the cell is in it's source city, don't show trend
-  if (row.original.craftable && column.id === "source-trend") {
-    return null;
-  }
-
-  let text,
-    background = "";
-  if (value === "up") {
-    background = "lightgreen";
-    text = "↑";
-  } else if (value === "down") {
-    background = "lightcoral";
-    text = "↓";
-  }
-  return (
-    <span style={{ color: "white", background, padding: "5px 10px", display: "block", textAlign: "center" }}>
-      {text}
-    </span>
-  );
-};
-
-const TrendInput = (props: any) => {
-  const { value: selected, save } = props;
-
-  const onBlur = (event: any) => {
-    save(selected);
-  };
-
-  return (
-    <ToggleButtonGroup value={selected} exclusive aria-label="price trend" onBlur={onBlur} autoFocus size="small">
-      {trends.map((trend) => (
-        <ToggleButton
-          key={"trend-input-toogle-button-" + trend}
-          value={trend}
-          aria-label="left aligned"
-          onClick={() => save(trend)}
-        >
-          {trend === "up" ? <TrendingUpIcon /> : <TrendingDownIcon />}
-        </ToggleButton>
-      ))}
-    </ToggleButtonGroup>
-  );
-};
-
-function MultipleSelect(props: any) {
-  const { allOptions, selectedOptions, handleChange, label, name } = props;
-
-  return (
-    <FormControl sx={{ m: 1, width: "16rem" }}>
-      <InputLabel
-        id={"multiple-select-label-" + name}
-        sx={{
-          fontSize: "0.7rem",
-        }}
-      >
-        {label}
-      </InputLabel>
-      <Select
-        labelId={"multiple-select-label-" + name}
-        id={"multiple-select-" + name}
-        multiple
-        value={selectedOptions}
-        onChange={handleChange}
-        input={<OutlinedInput label={label} />}
-        sx={{
-          fontSize: "0.7rem",
-          "& .MuiSelect-select": {
-            padding: ".5rem",
-          },
-        }}
-        MenuProps={{
-          PaperProps: {
-            sx: {
-              "& li": {
-                fontSize: "0.7rem",
-              },
-            },
-          },
-        }}
-      >
-        {allOptions.map((option: string) => (
-          <MenuItem key={option} value={option}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-}
-
-interface SelectedCities {
-  sourceCities: CityName[];
-  targetCities: CityName[];
-}
+import { PriceContext } from "../../price-provider";
+import MultipleSelect from "./multiple-select";
+import TrendCell from "./trend-cell";
+import TrendInput from "./trend-input";
+import VariationCell from "./variation-cell";
+import VariationInput from "./variation-input";
 
 export default function PricesTable() {
   const { prices, setPrice } = useContext(PriceContext);
@@ -334,6 +138,7 @@ export default function PricesTable() {
               }
             }
           }
+
           const productPriceForTable: ProductPrice = {
             variation,
             trend,
@@ -453,13 +258,6 @@ export default function PricesTable() {
       }) ?? [];
 
     // highest profit group
-    const highestProfitCity = (row: ProductRow) => {
-      const highestProfitCity = CITIES.reduce((a, b) =>
-        (row.targetCity[a]?.singleProfit ?? 0) > (row.targetCity[b]?.singleProfit ?? 0) ? a : b
-      );
-      return highestProfitCity;
-    };
-
     result.unshift({
       id: "highest-profit-group",
       header: "最高利润",
@@ -467,10 +265,7 @@ export default function PricesTable() {
       columns: [
         {
           id: "highest-profit-single",
-          accessorFn: (row: ProductRow) => {
-            const city = highestProfitCity(row);
-            return city;
-          },
+          accessorFn: (row: ProductRow) => highestProfitCity(row),
           header: "单个",
           size: 50,
           enableEditing: false,

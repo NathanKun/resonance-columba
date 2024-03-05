@@ -4,12 +4,18 @@ import { Trend } from "./SellingPrice";
 
 export type ExchangeType = "buy" | "sell";
 
+export interface SetPriceItem {
+  variation?: number;
+  trend?: Trend;
+  time: FieldValue;
+}
+
+export interface SetPriceHistoryItem extends SetPriceItem {
+  ip?: string;
+}
+
 export interface SetPriceFirestoreRequest {
-  [propPath: string]: {
-    variation?: number;
-    trend?: Trend;
-    time: FieldValue;
-  };
+  [propPath: string]: SetPriceItem;
 }
 
 export interface SetPriceRequest {
