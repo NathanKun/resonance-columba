@@ -311,20 +311,6 @@ export default function PricesTable() {
               productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
 
               profit = Math.round(productSellPrice - productBuyPrice);
-
-              console.log(
-                productName +
-                  " " +
-                  city +
-                  " " +
-                  profit +
-                  " " +
-                  sellVariation +
-                  " " +
-                  product.sellPrices[city] +
-                  " " +
-                  productBuyPrice
-              );
             }
             // a craftable product with materials
             else if (product.craft && !product.craft.static) {
