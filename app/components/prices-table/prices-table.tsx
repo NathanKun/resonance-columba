@@ -4,7 +4,7 @@ import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import { Trend } from "@/interfaces/SellingPrice";
 import { ProductPrice, ProductRow, SelectedCities } from "@/interfaces/prices-table";
-import { isCraftableProduct } from "@/utils/price-utils";
+import { highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import { MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
@@ -138,6 +138,7 @@ export default function PricesTable() {
               }
             }
           }
+
           const productPriceForTable: ProductPrice = {
             variation,
             trend,
@@ -257,13 +258,6 @@ export default function PricesTable() {
       }) ?? [];
 
     // highest profit group
-    const highestProfitCity = (row: ProductRow) => {
-      const highestProfitCity = CITIES.reduce((a, b) =>
-        (row.targetCity[a]?.singleProfit ?? 0) > (row.targetCity[b]?.singleProfit ?? 0) ? a : b
-      );
-      return highestProfitCity;
-    };
-
     result.unshift({
       id: "highest-profit-group",
       header: "最高利润",
@@ -271,10 +265,7 @@ export default function PricesTable() {
       columns: [
         {
           id: "highest-profit-single",
-          accessorFn: (row: ProductRow) => {
-            const city = highestProfitCity(row);
-            return city;
-          },
+          accessorFn: (row: ProductRow) => highestProfitCity(row),
           header: "单个",
           size: 50,
           enableEditing: false,
