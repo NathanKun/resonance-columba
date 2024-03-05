@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Noto_Sans_SC } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -25,6 +27,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="relative flex flex-col items-center justify-center">
           <div className="w-full">{children}</div>
         </main>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
