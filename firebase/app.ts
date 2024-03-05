@@ -16,4 +16,5 @@ if (!getApps().length) {
   db.settings({ ignoreUndefinedProperties: true });
 }
 
-export const db = getFirestore();
+const db = getFirestore();
+export const columbaCol = db.collection(env.FIREBASE_COLLECTION_NAME!);

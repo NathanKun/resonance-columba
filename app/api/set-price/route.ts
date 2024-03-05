@@ -1,7 +1,6 @@
-import { db } from "@/firebase/app";
+import { columbaCol } from "@/firebase/app";
 import { SetPriceFirestoreRequest, SetPriceRequest } from "@/interfaces/set-price";
 import { FieldValue } from "firebase-admin/firestore";
-import { env } from "process";
 import rateLimit from "../../../utils/rate-limit";
 
 const limiter = rateLimit({
@@ -23,7 +22,7 @@ export async function POST(request: Request) {
       return Response.json({ error: "invalid request" }, { status: 400 });
     }
 
-    const docRef = db.collection(env.FIREBASE_COLLECTION_NAME!).doc("products");
+    const docRef = columbaCol.doc("products");
 
     // Update the timestamp field with the value from the server
     const data: SetPriceFirestoreRequest = {

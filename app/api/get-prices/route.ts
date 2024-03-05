@@ -1,12 +1,11 @@
-import { db } from "@/firebase/app";
+import { columbaCol } from "@/firebase/app";
 import { FirestoreProducts } from "@/interfaces/get-prices";
-import { env } from "process";
 
 export const revalidate = 60;
 
 export async function GET(request: Request) {
   try {
-    const docRef = db.collection(env.FIREBASE_COLLECTION_NAME!).doc("products");
+    const docRef = columbaCol.doc("products");
     const docSnapshot = await docRef.get();
 
     return Response.json({ data: docSnapshot.data() as FirestoreProducts });
