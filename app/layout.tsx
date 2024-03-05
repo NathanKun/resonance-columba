@@ -3,8 +3,8 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata = {
-  title: "Vercel KV for Redis Next.js Starter",
-  description: "A simple Next.js app with Vercel KV for Redis as the database",
+  title: "科伦巴商会",
+  description: "雷索纳斯 科伦巴商会 数据分享站",
 };
 
 const inter = Inter({
