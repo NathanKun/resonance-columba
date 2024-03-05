@@ -41,7 +41,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     // compare with current value
     const pdtData = data[product];
     const cityData = pdtData?.[type]?.[city];
-    console.log(pdtData);
+
     let newVariation = variation;
     let newTrend = trend;
     let changed = false;
@@ -58,7 +58,6 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     }
 
     if (!changed) {
-      console.log("no change in price, won't update");
       return;
     }
 
