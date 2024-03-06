@@ -358,8 +358,7 @@ export default function PricesTable() {
 
             // craftable product don't have variation
             if (row.original.craftable) {
-              cancel();
-              return null;
+              return <>制造</>;
             }
 
             return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
@@ -388,8 +387,7 @@ export default function PricesTable() {
 
             // craftable product don't have trend
             if (row.original.craftable) {
-              table.setEditingCell(null);
-              return;
+              return null;
             }
 
             return <TrendInput value={cell.getValue()} save={save} />;
@@ -463,7 +461,14 @@ export default function PricesTable() {
       expanded: true,
       grouping: ["source-city"],
       columnPinning: {
-        left: ["source-city", "source-productName", "source-variation", "source-trend", "source-time"],
+        left: [
+          "source-city-group",
+          "source-city",
+          "source-productName",
+          "source-variation",
+          "source-trend",
+          "source-time",
+        ],
       },
       density: "compact",
     },
