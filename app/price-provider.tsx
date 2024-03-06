@@ -14,7 +14,7 @@ export interface PriceContextProps {
 
 export const PriceContext = createContext({
   prices: {},
-  setPrice: (props: SetPriceProps) => {},
+  setPrice: () => {},
 } as PriceContextProps);
 
 export interface SetPriceProps {
@@ -26,7 +26,7 @@ export interface SetPriceProps {
 }
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
-  const fetchInterval = 1000 * 5; // 1 minute
+  const fetchInterval = 1000 * 60; // 1 minute
   const [data, setData] = useState<FirestoreProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
   const focus = useHasFocus();
