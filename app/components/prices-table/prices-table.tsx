@@ -141,7 +141,7 @@ export default function PricesTable() {
     return background;
   };
 
-  const getVariationCellMuiProps = (props: { cell: MRT_Cell<ProductRow, unknown> }) => {
+  const getVariationCellMuiProps = useCallback((props: { cell: MRT_Cell<ProductRow, unknown> }) => {
     const cell = props.cell;
     const color = getVariationCellColor(cell);
     return {
@@ -155,7 +155,7 @@ export default function PricesTable() {
         padding: "0",
       },
     };
-  };
+  }, []);
 
   // build headers
   const columns = useMemo<MRT_ColumnDef<ProductRow>[]>(() => {
@@ -406,7 +406,7 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [setPrice]);
+  }, [getVariationCellMuiProps, setPrice]);
 
   const columnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;
