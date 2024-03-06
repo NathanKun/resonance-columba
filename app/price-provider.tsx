@@ -105,7 +105,6 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         fetchData();
       }
     }, fetchInterval);
-    console.log("interval", interval);
 
     return () => clearInterval(interval); // if focus changes or lastFetch changes, clear interval
   }, [fetchInterval, lastFetch, focus]);
