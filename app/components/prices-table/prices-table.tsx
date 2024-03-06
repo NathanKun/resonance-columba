@@ -130,11 +130,11 @@ export default function PricesTable() {
     let background = "";
     if (Number.isInteger(value)) {
       if ((value as number) > 100) {
-        background = "lightcoral";
+        background = "lightgreen";
       } else if (value === 100) {
         background = "lightgray";
       } else {
-        background = "lightgreen";
+        background = "lightcoral";
       }
     }
 
