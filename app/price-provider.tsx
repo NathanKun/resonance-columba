@@ -25,7 +25,9 @@ export interface SetPriceProps {
 }
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
+  const fetchInterval = 1000 * 60; // 1 minute
   const [data, setData] = useState<FirestoreProducts>({});
+  const [lastFetch, setLastFetch] = useState<number | null>(0);
 
   const fetchData = () => {
     console.log("fetching prices");
@@ -33,6 +35,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       .then((res) => res.json())
       .then((res) => {
         setData(res.data);
+        setLastFetch(Date.now());
       });
   };
 
@@ -42,8 +45,6 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     const pdtData = data[product];
     const cityData = pdtData?.[type]?.[city];
 
-    let newVariation = variation;
-    let newTrend = trend;
     let changed = false;
     if (variation !== undefined) {
       changed = cityData?.variation !== variation;
@@ -75,20 +76,29 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       })
       .then((responseJson) => {
         setData(responseJson.data);
+        setLastFetch(Date.now());
       })
       .catch((error) => {
         fetchData();
+        console.error("set-price failed", error);
       });
   };
 
+  // fetch data on mount
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // fetch data every fetchInterval
+  useEffect(() => {
     const interval = setInterval(() => {
-      fetchData();
-    }, 1000 * 60);
+      if (Date.now() - (lastFetch || 0) > fetchInterval) {
+        fetchData();
+      }
+    }, fetchInterval);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchInterval, lastFetch]);
 
   const value = { prices: data, setPrice };
 
