@@ -15,9 +15,8 @@ export interface Product {
     static?: number; // static price
     [pdtName: string]: number | undefined; // dynamic price, componentName => number of components
   };
+  type: ProductType;
 }
 
-export enum ProductType {
-  Normal,
-  Special,
-}
+export const ProductTypes = ["Normal", "Special", "Craft"] as const;
+export type ProductType = (typeof ProductTypes)[number];
