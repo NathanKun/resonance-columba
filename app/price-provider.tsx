@@ -1,6 +1,7 @@
 "use client";
 
 import { CityName } from "@/data/Cities";
+import { useHasFocus } from "@/hooks/useHasFocus";
 import { FirestoreProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
@@ -13,7 +14,7 @@ export interface PriceContextProps {
 
 export const PriceContext = createContext({
   prices: {},
-  setPrice: (props: SetPriceProps) => {},
+  setPrice: () => {},
 } as PriceContextProps);
 
 export interface SetPriceProps {
@@ -28,9 +29,10 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   const fetchInterval = 1000 * 60; // 1 minute
   const [data, setData] = useState<FirestoreProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
+  const focus = useHasFocus();
 
   const fetchData = () => {
-    console.log("fetching prices");
+    console.log(new Date(), "fetching data");
     fetch("/api/get-prices")
       .then((res) => res.json())
       .then((res) => {
@@ -84,21 +86,28 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       });
   };
 
-  // fetch data on mount
+  // when focus changes or lastFetch changes, do:
   useEffect(() => {
-    fetchData();
-  }, []);
+    // if the window is not focused, do not fetch data & do not set interval
+    if (!focus) {
+      return;
+    }
 
-  // fetch data every fetchInterval
-  useEffect(() => {
+    // has focus & last fetch was more than fetchInterval ago, fetch data
+    if (focus && Date.now() - (lastFetch || 0) > fetchInterval) {
+      fetchData();
+    }
+
+    // set interval to fetch data
     const interval = setInterval(() => {
+      // fetch data if last fetch was more than fetchInterval ago
       if (Date.now() - (lastFetch || 0) > fetchInterval) {
         fetchData();
       }
     }, fetchInterval);
 
-    return () => clearInterval(interval);
-  }, [fetchInterval, lastFetch]);
+    return () => clearInterval(interval); // if focus changes or lastFetch changes, clear interval
+  }, [fetchInterval, lastFetch, focus]);
 
   const value = { prices: data, setPrice };
 
