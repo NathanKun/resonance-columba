@@ -47,14 +47,10 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     let changed = false;
     if (variation !== undefined) {
       changed = cityData?.variation !== variation;
-    } else {
-      newVariation = cityData?.variation;
     }
 
     if (!changed && trend !== undefined) {
       changed = cityData?.trend !== trend;
-    } else {
-      newTrend = cityData?.trend;
     }
 
     if (!changed) {
@@ -66,8 +62,8 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       body: JSON.stringify({
         product,
         city,
-        variation: newVariation,
-        trend: newTrend,
+        variation,
+        trend,
         type,
       } as SetPriceRequest),
     })

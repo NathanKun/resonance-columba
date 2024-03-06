@@ -45,10 +45,13 @@ export async function POST(request: Request) {
       time: FieldValue.serverTimestamp(), // Update the timestamp field with the value from the server
       ip: getIp(request),
     };
-    const setPriceData: SetPriceFirestoreRequest = {
-      [setPricePath]: setPriceItem,
-    };
-    await productsDocRef.update(setPriceData);
+    const setPriceData: any = {};
+    for (const key of Object.keys(setPriceItem)) {
+      setPriceData[`${setPricePath}.${key}` as keyof typeof setPriceData] =
+        setPriceItem[key as keyof SetPriceHistoryItem];
+    }
+
+    await productsDocRef.update(setPriceData as SetPriceFirestoreRequest);
 
     // fetch updated data
     const docSnapshot = await productsDocRef.get();

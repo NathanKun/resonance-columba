@@ -15,7 +15,7 @@ export interface SetPriceHistoryItem extends SetPriceItem {
 }
 
 export interface SetPriceFirestoreRequest {
-  [propPath: string]: SetPriceItem;
+  [propPath: string]: any;
 }
 
 export interface SetPriceRequest {
