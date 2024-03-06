@@ -1,3 +1,6 @@
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+
 export default function TrendCell(props: any) {
   const { renderedCellValue: value, row, column } = props;
 
@@ -6,18 +9,13 @@ export default function TrendCell(props: any) {
     return null;
   }
 
-  let text,
-    background = "";
+  let icon;
+
   if (value === "up") {
-    background = "lightgreen";
-    text = "↑";
+    icon = <TrendingUpIcon />;
   } else if (value === "down") {
-    background = "lightcoral";
-    text = "↓";
+    icon = <TrendingDownIcon />;
   }
-  return (
-    <span style={{ color: "white", background, padding: "5px 10px", display: "block", textAlign: "center" }}>
-      {text}
-    </span>
-  );
+
+  return <span style={{ display: "block", textAlign: "center" }}>{icon}</span>;
 }

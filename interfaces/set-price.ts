@@ -1,6 +1,6 @@
 import { CityName } from "@/data/Cities";
 import { FieldValue } from "firebase-admin/firestore";
-import { Trend } from "./SellingPrice";
+import { Trend } from "./trend";
 
 export type ExchangeType = "buy" | "sell";
 
@@ -15,7 +15,7 @@ export interface SetPriceHistoryItem extends SetPriceItem {
 }
 
 export interface SetPriceFirestoreRequest {
-  [propPath: string]: SetPriceItem;
+  [propPath: string]: any;
 }
 
 export interface SetPriceRequest {

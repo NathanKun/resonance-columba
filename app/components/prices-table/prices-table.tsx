@@ -2,10 +2,10 @@
 
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
-import { Trend } from "@/interfaces/SellingPrice";
-import { ProductPrice, ProductRow, SelectedCities } from "@/interfaces/prices-table";
-import { highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
-import { MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
+import { ProductRow, ProductRowCityPrice, SelectedCities } from "@/interfaces/prices-table";
+import { Trend } from "@/interfaces/trend";
+import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
+import { MRT_Cell, MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
@@ -62,87 +62,40 @@ export default function PricesTable() {
 
         const productName = product.name;
         let source;
-        const targetCity: { [key: CityName]: ProductPrice } = {};
+        const targetCity: { [key: CityName]: ProductRowCityPrice } = {};
 
-        CITIES.forEach((city) => {
+        CITIES.forEach((currentColumnCity) => {
           const productPrices = prices[product.name];
           if (!productPrices) {
             return;
           }
 
-          const isBuyableCity = sourceCity === city;
+          const isBuyableCity = sourceCity === currentColumnCity;
 
-          const productPriceFromApi = isBuyableCity ? productPrices.buy?.[city] : productPrices.sell?.[city]; // sell/buy is player's perspective
+          const productPriceFromApi = isBuyableCity
+            ? productPrices.buy?.[currentColumnCity]
+            : productPrices.sell?.[currentColumnCity]; // sell/buy is player's perspective
           if (!productPriceFromApi) {
             return;
           }
 
           const { variation, trend, time } = productPriceFromApi;
-          const timeDiffInMin = Math.ceil((Date.now() / 1000 - time._seconds) / 60);
-
-          // calculate profit
-          let profit = 0;
-          if (!isBuyableCity) {
-            // for a buyable (non craftable) product
-            if (!product.craft) {
-              // a product can be bought from multiple cities, so we need to find the city with the highest profit,
-              // but this will also make the calculate profit unclear which city it is from
-              for (const buyCity of Object.keys(product.buyPrices)) {
-                let productBuyPrice = product.buyPrices[buyCity] ?? 0;
-                const buyVariation = productPrices.buy?.[buyCity]?.variation ?? 0;
-                productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100) * 0.92; // estimated buy price
-
-                let productSellPrice = product.sellPrices[city] ?? 0;
-                const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
-                productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
-
-                const cityProfit = Math.round(productSellPrice - productBuyPrice);
-                profit = Math.max(profit, cityProfit);
-              }
-            }
-            // a craftable product but with static price
-            else if (product.craft.static) {
-              const productBuyPrice = product.craft.static;
-              let productSellPrice = product.sellPrices[city] ?? 0;
-
-              const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
-              productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
-
-              profit = Math.round(productSellPrice - productBuyPrice);
-            }
-            // a craftable product with materials
-            else if (product.craft && !product.craft.static) {
-              const craft = product.craft;
-              let productCraftPrice = 0;
-              const materials = Object.keys(craft);
-
-              for (const material of materials) {
-                const materialQuantity = craft[material]!;
-                // I assume the sourceCity of a craftable product is the same as the sourceCity of its materials,
-                // otherwise the calculation below will be incorrect
-                const materialBuyVariation = prices[material]?.buy?.[sourceCity]?.variation ?? 0;
-                let materialBuyPrice = PRODUCTS.find((p) => p.name === material)?.buyPrices?.[sourceCity] ?? 0;
-                materialBuyPrice = Math.round((materialBuyPrice * materialBuyVariation) / 100) * 0.92; // estimated buy price
-
-                productCraftPrice += materialBuyPrice * materialQuantity;
-              }
-
-              if (productCraftPrice === 0) {
-                profit = 0;
-              } else {
-                let productSellPrice = product.sellPrices[city] ?? 0;
-                const sellVariation = productPrices.sell?.[city]?.variation ?? 0;
-                productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
-
-                profit = Math.round(productSellPrice - productCraftPrice);
-              }
-            }
+          let timeDiffNum = Math.ceil((Date.now() / 1000 - time._seconds) / 60); // in minutes
+          let timeDiff: string;
+          if (timeDiffNum >= 60) {
+            timeDiffNum = timeDiffNum / 60;
+            timeDiff = timeDiffNum.toFixed(1) + "小时前";
+          } else {
+            timeDiff = timeDiffNum + "分钟前";
           }
 
-          const productPriceForTable: ProductPrice = {
+          // calculate profit
+          const profit = calculateProfit(product, currentColumnCity, sourceCity, isBuyableCity, prices);
+
+          const productPriceForTable: ProductRowCityPrice = {
             variation,
             trend,
-            timeDiffInMin: timeDiffInMin + "分钟前",
+            timeDiff,
             singleProfit: profit,
             lotProfit: profit * (product.buyLot?.[sourceCity] ?? 0),
           };
@@ -150,7 +103,7 @@ export default function PricesTable() {
           if (isBuyableCity) {
             source = productPriceForTable;
           } else {
-            targetCity[city] = productPriceForTable;
+            targetCity[currentColumnCity] = productPriceForTable;
           }
         });
 
@@ -168,6 +121,42 @@ export default function PricesTable() {
     return result;
   }, [selectedCities.sourceCities, prices]);
 
+  const getVariationCellColor = (cell: MRT_Cell<ProductRow, unknown>) => {
+    if (cell.getIsAggregated()) {
+      return null;
+    }
+
+    const value = cell.getValue();
+    let background = "";
+    if (Number.isInteger(value)) {
+      if ((value as number) > 100) {
+        background = "lightgreen";
+      } else if (value === 100) {
+        background = "lightgray";
+      } else {
+        background = "lightcoral";
+      }
+    }
+
+    return background;
+  };
+
+  const getVariationCellMuiProps = useCallback((props: { cell: MRT_Cell<ProductRow, unknown> }) => {
+    const cell = props.cell;
+    const color = getVariationCellColor(cell);
+    return {
+      sx: {
+        backgroundColor: color,
+        "&:before": {
+          backgroundColor: `${color} !important`,
+        },
+        fontSize: "0.7rem",
+        textAlign: "center",
+        padding: "0",
+      },
+    };
+  }, []);
+
   // build headers
   const columns = useMemo<MRT_ColumnDef<ProductRow>[]>(() => {
     const result: MRT_ColumnDef<ProductRow>[] =
@@ -183,6 +172,7 @@ export default function PricesTable() {
               header: "价位",
               size: 50,
               Cell: VariationCell,
+              muiTableBodyCellProps: getVariationCellMuiProps,
               Edit: ({ cell, column, row, table }) => {
                 const cancel = () => {
                   table.setEditingCell(null);
@@ -192,7 +182,6 @@ export default function PricesTable() {
 
                 // won't sell the product in its buyable city, so no need to edit variation
                 if (buyableCities.includes(city)) {
-                  cancel();
                   return null;
                 }
 
@@ -210,13 +199,18 @@ export default function PricesTable() {
               header: "趋势",
               size: 50,
               Cell: TrendCell,
+              muiTableBodyCellProps: {
+                sx: {
+                  padding: "0",
+                  textAlign: "center",
+                },
+              },
               Edit: ({ cell, column, row, table }) => {
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
 
                 // won't sell the product in its buyable city, so no need to edit trend
                 if (buyableCities.includes(city)) {
-                  table.setEditingCell(null);
                   return null;
                 }
 
@@ -228,13 +222,10 @@ export default function PricesTable() {
 
                 return <TrendInput value={cell.getValue()} save={save} />;
               },
-              muiTableBodyCellProps: {
-                align: "justify",
-              },
             },
             {
               id: `targetCity-${city}-time`,
-              accessorFn: (row: ProductRow) => row.targetCity[city]?.timeDiffInMin,
+              accessorFn: (row: ProductRow) => row.targetCity[city]?.timeDiff,
               header: "更新",
               size: 50,
               enableEditing: false,
@@ -352,6 +343,7 @@ export default function PricesTable() {
           header: "价位",
           size: 50,
           Cell: VariationCell,
+          muiTableBodyCellProps: getVariationCellMuiProps,
           Edit: ({ cell, column, row, table }) => {
             const save = (newVaraition: number) => {
               row._valuesCache[column.id] = newVaraition;
@@ -379,6 +371,12 @@ export default function PricesTable() {
           header: "趋势",
           size: 50,
           Cell: TrendCell,
+          muiTableBodyCellProps: {
+            sx: {
+              padding: "0",
+              textAlign: "center",
+            },
+          },
           Edit: ({ cell, column, row, table }) => {
             const save = (newTrend: Trend) => {
               row._valuesCache[column.id] = newTrend;
@@ -396,13 +394,10 @@ export default function PricesTable() {
 
             return <TrendInput value={cell.getValue()} save={save} />;
           },
-          muiTableBodyCellProps: {
-            align: "justify",
-          },
         },
         {
           id: "source-time",
-          accessorFn: (row: ProductRow) => row.source?.timeDiffInMin,
+          accessorFn: (row: ProductRow) => row.source?.timeDiff,
           header: "更新",
           size: 50,
           enableEditing: false,
@@ -411,7 +406,7 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [setPrice]);
+  }, [getVariationCellMuiProps, setPrice]);
 
   const columnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;

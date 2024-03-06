@@ -45,7 +45,7 @@ export default function VariationInput(props: any) {
           "-webkit-appearance": "none",
         },
         "& input[type=number]": {
-          padding: "0.5rem",
+          padding: "0.3rem",
         },
       }}
     />

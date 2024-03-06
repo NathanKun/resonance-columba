@@ -1,7 +1,9 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+// import { Analytics } from "@vercel/analytics/react";
+// import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Noto_Sans_SC } from "next/font/google";
 import Link from "next/link";
+import { env } from "process";
 import "./globals.css";
 
 export const metadata = {
@@ -27,8 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="relative flex flex-col items-center justify-center">
           <div className="w-full">{children}</div>
         </main>
-        <SpeedInsights />
-        <Analytics />
+        <GoogleAnalytics gaId={env.NEXT_PUBLIC_GOOGLE_ANALYTICS!} />
       </body>
     </html>
   );
