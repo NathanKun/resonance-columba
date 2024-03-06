@@ -1,5 +1,5 @@
 import { CityName } from "@/data/Cities";
-import { Trend } from "./SellingPrice";
+import { Trend } from "./trend";
 
 export interface FirestoreProductPrice {
   [key: CityName]: {

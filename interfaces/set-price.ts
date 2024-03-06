@@ -1,6 +1,6 @@
 import { CityName } from "@/data/Cities";
 import { FieldValue } from "firebase-admin/firestore";
-import { Trend } from "./SellingPrice";
+import { Trend } from "./trend";
 
 export type ExchangeType = "buy" | "sell";
 
