@@ -1,4 +1,4 @@
-import { trends } from "@/interfaces/SellingPrice";
+import { trends } from "@/interfaces/trend";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
@@ -18,6 +18,11 @@ export default function TrendInput(props: any) {
           value={trend}
           aria-label="left aligned"
           onClick={() => save(trend)}
+          sx={{
+            "&": {
+              padding: "0.25rem",
+            },
+          }}
         >
           {trend === "up" ? <TrendingUpIcon /> : <TrendingDownIcon />}
         </ToggleButton>

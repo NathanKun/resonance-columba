@@ -1,9 +1,9 @@
 "use client";
 
 import { CityName } from "@/data/Cities";
-import { Trend } from "@/interfaces/SellingPrice";
 import { FirestoreProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
+import { Trend } from "@/interfaces/trend";
 import { createContext, useEffect, useState } from "react";
 
 export interface PriceContextProps {

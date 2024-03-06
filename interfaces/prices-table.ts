@@ -1,9 +1,9 @@
 import { CityName } from "@/data/Cities";
 
-export interface ProductPrice {
+export interface ProductRowCityPrice {
   variation: number;
   trend: string; // up arrow, down arrow, or empty
-  timeDiffInMin: string; // e.g. 5分钟前
+  timeDiff: string; // e.g. 5分钟前
   singleProfit: number;
   lotProfit: number;
 }
@@ -12,9 +12,9 @@ export interface ProductRow {
   sourceCity: CityName;
   buyableCities: CityName[];
   productName: string;
-  source?: ProductPrice;
+  source?: ProductRowCityPrice;
   targetCity: {
-    [key: CityName]: ProductPrice;
+    [key: CityName]: ProductRowCityPrice;
   };
   craftable: boolean;
 }
