@@ -20,6 +20,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       修格里城: 9,
     },
+    type: "Special",
   },
   {
     name: "弹丸加速装置",
@@ -42,6 +43,7 @@ export const PRODUCTS: Product[] = [
       修格里城: 18,
       铁盟哨站: 12,
     },
+    type: "Special",
   },
   {
     name: "红茶",
@@ -62,6 +64,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       修格里城: 29,
     },
+    type: "Special",
   },
   {
     name: "沃德烤鸡",
@@ -82,6 +85,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       修格里城: 39,
     },
+    type: "Special",
   },
   {
     name: "防弹背心",
@@ -102,6 +106,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       铁盟哨站: 11,
     },
+    type: "Special",
   },
   {
     name: "精钢",
@@ -122,6 +127,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       铁盟哨站: 17,
     },
+    type: "Special",
   },
   {
     name: "桦石发财树",
@@ -142,6 +148,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       七号自由港: 7,
     },
+    type: "Special",
   },
   {
     name: "石墨烯",
@@ -162,6 +169,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       七号自由港: 10,
     },
+    type: "Special",
   },
   {
     name: "人工晶花",
@@ -182,6 +190,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       七号自由港: 16,
     },
+    type: "Special",
   },
   {
     name: "班节虾",
@@ -202,6 +211,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       七号自由港: 35,
     },
+    type: "Special",
   },
   {
     name: "游戏机",
@@ -222,6 +232,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       澄明数据中心: 10,
     },
+    type: "Special",
   },
   {
     name: "银矿石",
@@ -242,6 +253,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       澄明数据中心: 10,
     },
+    type: "Special",
   },
   {
     name: "游戏卡带",
@@ -262,6 +274,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       澄明数据中心: 30,
     },
+    type: "Special",
   },
   {
     name: "扬声器",
@@ -282,6 +295,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       澄明数据中心: 20,
     },
+    type: "Special",
   },
   {
     name: "阿妮塔202军用无人机",
@@ -302,6 +316,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔战备工厂: 7,
     },
+    type: "Special",
   },
   {
     name: "抗污染防护服",
@@ -322,6 +337,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔战备工厂: 11,
     },
+    type: "Special",
   },
   {
     name: "钛合金",
@@ -342,6 +358,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔战备工厂: 11,
     },
+    type: "Special",
   },
   {
     name: "碳纤维",
@@ -362,6 +379,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔战备工厂: 18,
     },
+    type: "Special",
   },
   {
     name: "阿妮塔小型桦树发电机",
@@ -382,6 +400,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔能源研究所: 1,
     },
+    type: "Special",
   },
   {
     name: "石墨烯电池",
@@ -402,6 +421,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔能源研究所: 8,
     },
+    type: "Special",
   },
   {
     name: "阿妮塔101民用无人机",
@@ -422,6 +442,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔能源研究所: 14,
     },
+    type: "Special",
   },
   {
     name: "家用太阳能电池组",
@@ -442,6 +463,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       阿妮塔能源研究所: 21,
     },
+    type: "Special",
   },
   {
     name: "琥珀",
@@ -462,6 +484,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       荒原站: 23,
     },
+    type: "Special",
   },
   {
     name: "孔雀石",
@@ -482,6 +505,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       荒原站: 31,
     },
+    type: "Special",
   },
   {
     name: "绿松石",
@@ -502,6 +526,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       荒原站: 19,
     },
+    type: "Special",
   },
   {
     name: "图形加速卡",
@@ -522,6 +547,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       曼德矿场: 17,
     },
+    type: "Special",
   },
   {
     name: "曼德工具箱",
@@ -542,6 +568,49 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       曼德矿场: 27,
     },
+    type: "Special",
+  },
+  {
+    name: "钛矿石",
+    sellPrices: {
+      修格里城: 1750,
+      铁盟哨站: 1716,
+      七号自由港: 2041,
+      澄明数据中心: 1830,
+      阿妮塔战备工厂: 1959,
+      阿妮塔能源研究所: 2202,
+      荒原站: 1750,
+      曼德矿场: null,
+      淘金乐园: 1750,
+    },
+    buyPrices: {
+      曼德矿场: 1619,
+    },
+    buyLot: {
+      曼德矿场: 15,
+    },
+    type: "Normal",
+  },
+  {
+    name: "铁轨用特种钢材",
+    sellPrices: {
+      修格里城: 1166,
+      铁盟哨站: 1112,
+      七号自由港: 1328,
+      澄明数据中心: 1219,
+      阿妮塔战备工厂: 1273,
+      阿妮塔能源研究所: 1436,
+      荒原站: 1166,
+      曼德矿场: null,
+      淘金乐园: 1166,
+    },
+    buyPrices: {
+      曼德矿场: 1079,
+    },
+    buyLot: {
+      曼德矿场: 24,
+    },
+    type: "Normal",
   },
   {
     name: "沙金",
@@ -562,6 +631,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       淘金乐园: 11,
     },
+    type: "Special",
   },
   {
     name: "青金石",
@@ -582,6 +652,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       淘金乐园: 13,
     },
+    type: "Special",
   },
   {
     name: "玛瑙",
@@ -602,6 +673,7 @@ export const PRODUCTS: Product[] = [
     buyLot: {
       淘金乐园: 17,
     },
+    type: "Special",
   },
 
   // CRAFT
@@ -625,6 +697,7 @@ export const PRODUCTS: Product[] = [
     craft: {
       static: 381,
     },
+    type: "Craft",
   },
   {
     name: "年货大礼包",
@@ -645,6 +718,7 @@ export const PRODUCTS: Product[] = [
     craft: {
       static: 393,
     },
+    type: "Craft",
   },
   {
     name: "金箔",
@@ -665,6 +739,7 @@ export const PRODUCTS: Product[] = [
     craft: {
       沙金: 0.5, // 1 沙金 = 2 金箔
     },
+    type: "Craft",
   },
   {
     name: "纯金线材",
@@ -685,5 +760,6 @@ export const PRODUCTS: Product[] = [
     craft: {
       沙金: 3, // 3 沙金 => 1.5 金箔 => 1 纯金线材
     },
+    type: "Craft",
   },
 ];
