@@ -32,7 +32,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   const focus = useHasFocus();
 
   const fetchData = () => {
-    console.log(new Date(), "fetching data");
+    console.info(new Date(), "fetching data");
     fetch("/api/get-prices")
       .then((res) => res.json())
       .then((res) => {
