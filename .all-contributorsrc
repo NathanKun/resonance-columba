@@ -1,4 +1,21 @@
 {
   "projectName": "resonance-columba",
-  "projectOwner": "NathanKun"
+  "projectOwner": "NathanKun",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "SilyASilyF",
+      "name": "SilyASilyF",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18006559?v=4",
+      "profile": "https://github.com/SilyASilyF",
+      "contributions": [
+        "data"
+      ]
+    }
+  ]
 }
