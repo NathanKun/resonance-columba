@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     // return updated data
     return Response.json({ data: returnData });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return Response.json({ error: "failed to load data" }, { status: 500 });
   }
 }

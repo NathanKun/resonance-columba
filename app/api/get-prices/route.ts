@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
     return Response.json({ data: docSnapshot.data() as FirestoreProducts });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return Response.json({ error: "failed to load data" }); // todo: status code and interface
   }
 }
