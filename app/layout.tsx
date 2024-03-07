@@ -6,10 +6,17 @@ import { env } from "process";
 import Header from "./components/header/header";
 import "./globals.css";
 import PriceProvider from "./price-provider";
+
 export const metadata = {
   title: "科伦巴商会",
   description: "雷索纳斯 科伦巴商会 数据分享站",
+
+  metadataBase: new URL("https://www.resonance-columba.com"),
+  alternates: {
+    canonical: "/",
+  },
 };
+
 const inter = Noto_Sans_SC({
   preload: false,
   variable: "--font-noto-sans-sc",
