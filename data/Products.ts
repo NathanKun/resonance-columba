@@ -298,6 +298,48 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
+    name: "火澄石",
+    sellPrices: {
+      修格里城: 7560,
+      铁盟哨站: 7770,
+      七号自由港: 7384,
+      澄明数据中心: 7385,
+      阿妮塔战备工厂: null,
+      阿妮塔能源研究所: null,
+      荒原站: 7735,
+      曼德矿场: 7735,
+      淘金乐园: 7419,
+    },
+    buyPrices: {
+      阿妮塔战备工厂: 7000,
+    },
+    buyLot: {
+      阿妮塔战备工厂: 2,
+    },
+    type: "Special",
+  },
+  {
+    name: "负片炮弹",
+    sellPrices: {
+      修格里城: null,
+      铁盟哨站: null,
+      七号自由港: null,
+      澄明数据中心: null,
+      阿妮塔战备工厂: null,
+      阿妮塔能源研究所: 4430,
+      荒原站: 4641,
+      曼德矿场: 4641,
+      淘金乐园: 4326,
+    },
+    buyPrices: {
+      阿妮塔战备工厂: 4200,
+    },
+    buyLot: {
+      阿妮塔战备工厂: 4,
+    },
+    type: "Special",
+  },
+  {
     name: "阿妮塔202军用无人机",
     sellPrices: {
       修格里城: 3814,
