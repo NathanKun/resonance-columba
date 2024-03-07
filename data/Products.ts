@@ -800,7 +800,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: null,
     },
     craft: {
-      沙金: 3, // 3 沙金 => 1.5 金箔 => 1 纯金线材
+      沙金: 0.75, // 0.75 沙金 => 1.5 金箔 => 1 纯金线材
     },
     type: "Craft",
   },
