@@ -6,8 +6,8 @@ import Popover from "@mui/material/Popover";
 import SvgIcon from "@mui/material/SvgIcon";
 import Typography from "@mui/material/Typography";
 import { MouseEvent, useState } from "react";
-export default function QQBtn(props: { className?: string; displayText: boolean }) {
-  const { className, displayText } = props;
+export default function QQBtn(props: { wrapperClassName?: string; buttonClassName?: string; displayText: boolean }) {
+  const { wrapperClassName, buttonClassName, displayText } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -30,9 +30,9 @@ export default function QQBtn(props: { className?: string; displayText: boolean 
   );
 
   return (
-    <span className={className}>
+    <span className={wrapperClassName}>
       {displayText && (
-        <Button variant="text" className="text-black" onClick={handleClick} startIcon={<QQIcon />}>
+        <Button variant="text" className={`${buttonClassName} text-black`} onClick={handleClick} startIcon={<QQIcon />}>
           QQ群
         </Button>
       )}

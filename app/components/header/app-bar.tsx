@@ -9,6 +9,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import MuiLink from "@mui/material/Link";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { grey, orange } from "@mui/material/colors";
@@ -16,6 +17,7 @@ import Link from "next/link";
 import * as React from "react";
 import LogoSvgIcon from "./logo-icon";
 import QQBtn from "./qq-btn";
+import V2PricesSwitch from "./v2-prices-switch";
 
 export default function HeaderAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -44,36 +46,38 @@ export default function HeaderAppBar() {
     <ThemeProvider theme={theme}>
       <AppBar position="static">
         <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ minHeight: "52px !important" }}>
+          <Toolbar disableGutters sx={{ minHeight: "52px !important", maxHeight: "52px !important" }}>
             <Typography fontSize="3em" lineHeight="0" className="fill-black mr-2">
               <LogoSvgIcon />
             </Typography>
 
-            <Typography variant="h6" noWrap component="a" href="/" color="black">
+            <MuiLink href="/" variant="h6" underline="none" component={Link} noWrap className="mr-4 text-black">
               科伦巴商会
-            </Typography>
+            </MuiLink>
+
+            <V2PricesSwitch />
 
             <div className="grow" />
 
             {/* Desktop Nav Menu */}
             <Box className="grow-0 hidden sm:flex text-black">
               <Link href="/" className="ml-2">
-                <Button variant="text" className="text-black" startIcon={<TableViewIcon />}>
+                <Button variant="text" className="text-black px-0" startIcon={<TableViewIcon />}>
                   数据
                 </Button>
               </Link>
               <Link href="/discussion" className="ml-2">
-                <Button variant="text" className="text-black" startIcon={<ChatBubbleOutlineRoundedIcon />}>
+                <Button variant="text" className="text-black px-0" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                   讨论
                 </Button>
               </Link>
               <Link href="/about" className="ml-2">
-                <Button variant="text" className="text-black" startIcon={<InfoOutlinedIcon />}>
+                <Button variant="text" className="text-black px-0" startIcon={<InfoOutlinedIcon />}>
                   关于
                 </Button>
               </Link>
 
-              <QQBtn className="mx-2" displayText={true} />
+              <QQBtn wrapperClassName="mx-2" buttonClassName="px-0" displayText={true} />
             </Box>
 
             {/* Mobile Nav Menu */}
@@ -126,7 +130,7 @@ export default function HeaderAppBar() {
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <QQBtn className="mx-auto" displayText={true} />
+                  <QQBtn wrapperClassName="mx-auto" displayText={true} />
                 </MenuItem>
               </Menu>
             </Box>

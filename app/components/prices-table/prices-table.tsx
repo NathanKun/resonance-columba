@@ -19,7 +19,7 @@ import VariationCell from "./variation-cell";
 import VariationInput from "./variation-input";
 
 export default function PricesTable() {
-  const { prices, setPrice } = useContext(PriceContext);
+  const { prices, isV2Prices, setPrice } = useContext(PriceContext);
   const [cookie, setCookie] = useCookies(["selectedCities"]);
   const [selectedCities, setSelectedCities] = useState<SelectedCities>(
     cookie.selectedCities ?? { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] }
@@ -30,7 +30,6 @@ export default function PricesTable() {
       createTheme({
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
-          // mode: "light",
         },
       }),
     [prefersDarkMode]
@@ -147,41 +146,47 @@ export default function PricesTable() {
     return result;
   }, [selectedCities.sourceCities, prices]);
 
-  const getVariationCellColor = (cell: MRT_Cell<ProductRow, unknown>) => {
-    if (cell.getIsAggregated()) {
-      return null;
-    }
-
-    const value = cell.getValue();
-    let background = "";
-    if (Number.isInteger(value)) {
-      if ((value as number) > 100) {
-        background = theme.palette.mode === "dark" ? "darkgreen" : "lightgreen";
-      } else if (value === 100) {
-        background = theme.palette.mode === "dark" ? "darkgrey" : "lightgrey";
-      } else {
-        background = theme.palette.mode === "dark" ? "darkred" : "lightcoral";
+  const getVariationCellColor = useCallback(
+    (cell: MRT_Cell<ProductRow, unknown>) => {
+      if (cell.getIsAggregated()) {
+        return null;
       }
-    }
 
-    return background;
-  };
+      const value = cell.getValue();
+      let background = "";
+      if (Number.isInteger(value)) {
+        if ((value as number) > 100) {
+          background = theme.palette.mode === "dark" ? "darkgreen" : "lightgreen";
+        } else if (value === 100) {
+          background = theme.palette.mode === "dark" ? "darkgrey" : "lightgrey";
+        } else {
+          background = theme.palette.mode === "dark" ? "darkred" : "lightcoral";
+        }
+      }
 
-  const getVariationCellMuiProps = useCallback((props: { cell: MRT_Cell<ProductRow, unknown> }) => {
-    const cell = props.cell;
-    const color = getVariationCellColor(cell);
-    return {
-      sx: {
-        backgroundColor: color,
-        "&:before": {
-          backgroundColor: `${color} !important`,
+      return background;
+    },
+    [theme.palette.mode]
+  );
+
+  const getVariationCellMuiProps = useCallback(
+    (props: { cell: MRT_Cell<ProductRow, unknown> }) => {
+      const cell = props.cell;
+      const color = getVariationCellColor(cell);
+      return {
+        sx: {
+          backgroundColor: color,
+          "&:before": {
+            backgroundColor: `${color} !important`,
+          },
+          fontSize: "0.7rem",
+          textAlign: "center",
+          padding: "0",
         },
-        fontSize: "0.7rem",
-        textAlign: "center",
-        padding: "0",
-      },
-    };
-  }, []);
+      };
+    },
+    [getVariationCellColor]
+  );
 
   // build headers
   const columns = useMemo<MRT_ColumnDef<ProductRow>[]>(() => {
@@ -488,7 +493,7 @@ export default function PricesTable() {
     enableDensityToggle: false,
     enableStickyHeader: true,
     enableColumnFilters: false,
-    enableEditing: true,
+    enableEditing: !isV2Prices,
     editDisplayMode: "cell",
     positionToolbarAlertBanner: "none",
     renderTopToolbarCustomActions: renderCitySelects,

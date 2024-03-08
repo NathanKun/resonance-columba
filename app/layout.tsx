@@ -26,12 +26,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.variable} min-h-screen`}>
-        <Header />
-        <main className="relative flex flex-col items-center justify-center">
-          <PriceProvider>
+        <PriceProvider>
+          <Header />
+          <main className="relative flex flex-col items-center justify-center">
             <div className="w-full">{children}</div>
-          </PriceProvider>
-        </main>
+          </main>
+        </PriceProvider>
         <GoogleAnalytics gaId={env.NEXT_PUBLIC_GOOGLE_ANALYTICS!} />
       </body>
     </html>

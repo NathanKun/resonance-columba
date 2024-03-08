@@ -193,7 +193,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "班节虾",
+    name: "斑节虾",
     sellPrices: {
       修格里城: 782,
       铁盟哨站: 869,

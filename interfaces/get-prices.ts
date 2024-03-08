@@ -5,6 +5,7 @@ export interface GetPricesProductCityPrice {
   trend: Trend;
   variation: number;
   time: number;
+  price?: number;
 }
 
 export interface GetPricesProductPrice {
@@ -26,6 +27,7 @@ export interface FireStoreProductCityPrice {
     _seconds: number;
     _nanoseconds: number;
   };
+  price?: number;
 }
 
 export interface FirestoreProductPrice {
