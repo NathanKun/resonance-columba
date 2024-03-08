@@ -94,9 +94,9 @@ export default function PricesTable() {
           let timeDiff: string;
           if (timeDiffNum >= 60) {
             timeDiffNum = timeDiffNum / 60;
-            timeDiff = timeDiffNum.toFixed(1) + "小时前";
+            timeDiff = timeDiffNum.toFixed(1) + "小时";
           } else {
-            timeDiff = timeDiffNum + "分钟前";
+            timeDiff = timeDiffNum + "分钟";
           }
 
           // calculate profit
