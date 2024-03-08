@@ -5,6 +5,8 @@ import { PRODUCTS } from "@/data/Products";
 import { ProductRow, ProductRowCityPrice, SelectedCities } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import { IconButton } from "@mui/material";
 import { MRT_Cell, MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
@@ -47,6 +49,14 @@ export default function PricesTable() {
     },
     [selectedCities, updateSelectedCitiesCookieAndState]
   );
+
+  const switchSourceAndTargetCities = useCallback(() => {
+    const newSelectedCities = {
+      sourceCities: selectedCities.targetCities,
+      targetCities: selectedCities.sourceCities,
+    };
+    updateSelectedCitiesCookieAndState(newSelectedCities);
+  }, [selectedCities, updateSelectedCitiesCookieAndState]);
 
   // build table rows
   const data = useMemo<ProductRow[]>(() => {
@@ -438,9 +448,18 @@ export default function PricesTable() {
           selectedOptions={selectedCities.targetCities}
           handleChange={(event: any) => setTargetCities(event.target.value)}
         />
+        <IconButton onClick={switchSourceAndTargetCities} size="small">
+          <SyncAltIcon />
+        </IconButton>
       </div>
     );
-  }, [selectedCities.sourceCities, selectedCities.targetCities, setSourceCities, setTargetCities]);
+  }, [
+    selectedCities.sourceCities,
+    selectedCities.targetCities,
+    setSourceCities,
+    setTargetCities,
+    switchSourceAndTargetCities,
+  ]);
 
   const table = useMaterialReactTable({
     data,
