@@ -524,7 +524,7 @@ export const PRODUCTS: Product[] = [
       荒原站: 2240,
     },
     buyLot: {
-      荒原站: 23,
+      荒原站: 13,
     },
     type: "Special",
   },
@@ -545,7 +545,7 @@ export const PRODUCTS: Product[] = [
       荒原站: 1337,
     },
     buyLot: {
-      荒原站: 31,
+      荒原站: 17,
     },
     type: "Special",
   },
@@ -575,12 +575,12 @@ export const PRODUCTS: Product[] = [
     sellPrices: {
       修格里城: null,
       铁盟哨站: null,
-      七号自由港: null,
+      七号自由港: 1095,
       澄明数据中心: null,
       阿妮塔战备工厂: null,
-      阿妮塔能源研究所: null,
+      阿妮塔能源研究所: 1193,
       荒原站: null,
-      曼德矿场: null,
+      曼德矿场: 848,
       淘金乐园: null,
     },
     buyPrices: {
