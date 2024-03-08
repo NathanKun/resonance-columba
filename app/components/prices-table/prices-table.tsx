@@ -7,7 +7,15 @@ import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import { IconButton, ThemeProvider, alpha, createTheme, darken, lighten, useMediaQuery } from "@mui/material";
-import { MRT_Cell, MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
+import {
+  MRT_Cell,
+  MRT_Column,
+  MRT_Row,
+  MRT_TableInstance,
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
@@ -204,7 +212,7 @@ export default function PricesTable() {
               size: 50,
               Cell: VariationCell,
               muiTableBodyCellProps: getVariationCellMuiProps,
-              Edit: ({ cell, column, row, table }) => {
+              Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
                 const cancel = () => {
                   table.setEditingCell(null);
                 };
@@ -236,7 +244,7 @@ export default function PricesTable() {
                   textAlign: "center",
                 },
               },
-              Edit: ({ cell, column, row, table }) => {
+              Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
 
@@ -275,7 +283,14 @@ export default function PricesTable() {
               size: 50,
               enableEditing: false,
             },
-          ],
+          ]
+            // remove time column for v2 prices
+            .filter((column) => {
+              if (column.id === `targetCity-${city}-time` && isV2Prices) {
+                return false;
+              }
+              return true;
+            }),
         } as MRT_ColumnDef<ProductRow>;
       }) ?? [];
 
@@ -375,7 +390,7 @@ export default function PricesTable() {
           size: 50,
           Cell: VariationCell,
           muiTableBodyCellProps: getVariationCellMuiProps,
-          Edit: ({ cell, column, row, table }) => {
+          Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
             const save = (newVaraition: number) => {
               row._valuesCache[column.id] = newVaraition;
               const rowData = row.original;
@@ -407,7 +422,7 @@ export default function PricesTable() {
               textAlign: "center",
             },
           },
-          Edit: ({ cell, column, row, table }) => {
+          Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
             const save = (newTrend: Trend) => {
               row._valuesCache[column.id] = newTrend;
               const rowData = row.original;
@@ -431,11 +446,18 @@ export default function PricesTable() {
           size: 50,
           enableEditing: false,
         },
-      ],
+      ]
+        // remove time column for v2 prices
+        .filter((column) => {
+          if (column.id === "source-time" && isV2Prices) {
+            return false;
+          }
+          return true;
+        }),
     });
 
     return result;
-  }, [getVariationCellMuiProps, setPrice]);
+  }, [getVariationCellMuiProps, isV2Prices, setPrice]);
 
   const columnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;
@@ -568,4 +590,11 @@ export default function PricesTable() {
       <MaterialReactTable table={table} />
     </ThemeProvider>
   );
+}
+
+interface MRT_EditFunctionProps {
+  cell: MRT_Cell<ProductRow, unknown>;
+  column: MRT_Column<ProductRow, unknown>;
+  row: MRT_Row<ProductRow>;
+  table: MRT_TableInstance<ProductRow>;
 }
