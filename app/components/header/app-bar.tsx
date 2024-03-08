@@ -105,7 +105,7 @@ export default function HeaderAppBar() {
                 className="block sm:hidden"
               >
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/discussion" className="mx-auto">
+                  <Link href="/" className="mx-auto">
                     <Button variant="text" className="text-black" startIcon={<TableViewIcon />}>
                       数据
                     </Button>
