@@ -8,7 +8,7 @@ export default function MultipleSelect(props: any) {
   const { allOptions, selectedOptions, handleChange, label, name } = props;
 
   return (
-    <FormControl sx={{ m: 1, width: "16rem" }}>
+    <FormControl className="max-[385px]:w-16 max-[450px]:w-24 max-[639px]:w-32 sm:w-56 md:w-72 lg:w-96 mr-4">
       <InputLabel
         id={"multiple-select-label-" + name}
         sx={{
