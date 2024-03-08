@@ -1,5 +1,7 @@
 import { columbaCol } from "@/firebase/app";
+import { GetPricesProducts } from "@/interfaces/get-prices";
 import { SetPriceFirestoreRequest, SetPriceHistoryItem, SetPriceRequest } from "@/interfaces/set-price";
+import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import rateLimit from "../../../utils/rate-limit";
 
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
 
     // fetch updated data
     const docSnapshot = await productsDocRef.get();
-    const returnData = docSnapshot.data();
+    const newFirebaseData = docSnapshot.data()!;
 
     // before retuning the data, update the historical data
     const historiesDocRef = columbaCol.doc("histories");
@@ -68,7 +70,8 @@ export async function POST(request: Request) {
     await historiesDocRef.update(setHistoryData);
 
     // return updated data
-    return Response.json({ data: returnData });
+    const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(newFirebaseData);
+    return Response.json({ data: responseData });
   } catch (e) {
     console.error(e);
     return Response.json({ error: "failed to load data" }, { status: 500 });

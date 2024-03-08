@@ -90,13 +90,13 @@ export default function PricesTable() {
           }
 
           const { variation, trend, time } = productPriceFromApi;
-          let timeDiffNum = Math.ceil((Date.now() / 1000 - time._seconds) / 60); // in minutes
+          let timeDiffNum = Math.ceil((Date.now() / 1000 - time) / 60); // in minutes
           let timeDiff: string;
           if (timeDiffNum >= 60) {
             timeDiffNum = timeDiffNum / 60;
-            timeDiff = timeDiffNum.toFixed(1) + "小时前";
+            timeDiff = timeDiffNum.toFixed(1) + "小时";
           } else {
-            timeDiff = timeDiffNum + "分钟前";
+            timeDiff = timeDiffNum + "分钟";
           }
 
           // calculate profit
