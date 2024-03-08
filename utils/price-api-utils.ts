@@ -20,6 +20,7 @@ export const convertFirebaseDataToGetPricesData = (data: FirestoreProducts): Get
           trend: cityData.trend,
           variation: cityData.variation,
           time: cityData.time._seconds,
+          price: cityData.price,
         } as GetPricesProductCityPrice;
       }
       pdtData[type] = typeData;

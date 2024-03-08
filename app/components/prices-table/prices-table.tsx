@@ -6,7 +6,7 @@ import { ProductRow, ProductRowCityPrice, SelectedCities } from "@/interfaces/pr
 import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import { IconButton } from "@mui/material";
+import { IconButton, ThemeProvider, alpha, createTheme, darken, lighten, useMediaQuery } from "@mui/material";
 import { MRT_Cell, MaterialReactTable, useMaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
@@ -19,11 +19,26 @@ import VariationCell from "./variation-cell";
 import VariationInput from "./variation-input";
 
 export default function PricesTable() {
-  const { prices, setPrice } = useContext(PriceContext);
+  const { prices, isV2Prices, setPrice } = useContext(PriceContext);
   const [cookie, setCookie] = useCookies(["selectedCities"]);
   const [selectedCities, setSelectedCities] = useState<SelectedCities>(
     cookie.selectedCities ?? { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] }
   );
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? "dark" : "light",
+        },
+      }),
+    [prefersDarkMode]
+  );
+
+  const baseBackgroundColor =
+    theme.palette.mode === "dark" ? lighten(theme.palette.background.default, 0.05) : theme.palette.background.default;
+  const cellBorderStyle =
+    theme.palette.mode === "dark" ? "1px solid rgba(31, 41, 55, 1)" : "1px solid rgba(224, 224, 224, 1)";
 
   const updateSelectedCitiesCookieAndState = useCallback(
     (newSelectedCities: SelectedCities) => {
@@ -131,41 +146,47 @@ export default function PricesTable() {
     return result;
   }, [selectedCities.sourceCities, prices]);
 
-  const getVariationCellColor = (cell: MRT_Cell<ProductRow, unknown>) => {
-    if (cell.getIsAggregated()) {
-      return null;
-    }
-
-    const value = cell.getValue();
-    let background = "";
-    if (Number.isInteger(value)) {
-      if ((value as number) > 100) {
-        background = "lightgreen";
-      } else if (value === 100) {
-        background = "lightgray";
-      } else {
-        background = "lightcoral";
+  const getVariationCellColor = useCallback(
+    (cell: MRT_Cell<ProductRow, unknown>) => {
+      if (cell.getIsAggregated()) {
+        return null;
       }
-    }
 
-    return background;
-  };
+      const value = cell.getValue();
+      let background = "";
+      if (Number.isInteger(value)) {
+        if ((value as number) > 100) {
+          background = theme.palette.mode === "dark" ? "darkgreen" : "lightgreen";
+        } else if (value === 100) {
+          background = theme.palette.mode === "dark" ? "darkgrey" : "lightgrey";
+        } else {
+          background = theme.palette.mode === "dark" ? "darkred" : "lightcoral";
+        }
+      }
 
-  const getVariationCellMuiProps = useCallback((props: { cell: MRT_Cell<ProductRow, unknown> }) => {
-    const cell = props.cell;
-    const color = getVariationCellColor(cell);
-    return {
-      sx: {
-        backgroundColor: color,
-        "&:before": {
-          backgroundColor: `${color} !important`,
+      return background;
+    },
+    [theme.palette.mode]
+  );
+
+  const getVariationCellMuiProps = useCallback(
+    (props: { cell: MRT_Cell<ProductRow, unknown> }) => {
+      const cell = props.cell;
+      const color = getVariationCellColor(cell);
+      return {
+        sx: {
+          backgroundColor: color,
+          "&:before": {
+            backgroundColor: `${color} !important`,
+          },
+          fontSize: "0.7rem",
+          textAlign: "center",
+          padding: "0",
         },
-        fontSize: "0.7rem",
-        textAlign: "center",
-        padding: "0",
-      },
-    };
-  }, []);
+      };
+    },
+    [getVariationCellColor]
+  );
 
   // build headers
   const columns = useMemo<MRT_ColumnDef<ProductRow>[]>(() => {
@@ -472,7 +493,7 @@ export default function PricesTable() {
     enableDensityToggle: false,
     enableStickyHeader: true,
     enableColumnFilters: false,
-    enableEditing: true,
+    enableEditing: !isV2Prices,
     editDisplayMode: "cell",
     positionToolbarAlertBanner: "none",
     renderTopToolbarCustomActions: renderCitySelects,
@@ -480,14 +501,7 @@ export default function PricesTable() {
       expanded: true,
       grouping: ["source-city"],
       columnPinning: {
-        left: [
-          "source-city-group",
-          "source-city",
-          "source-productName",
-          "source-variation",
-          "source-trend",
-          "source-time",
-        ],
+        left: ["source-city", "source-productName", "source-variation", "source-trend", "source-time"],
       },
       density: "compact",
     },
@@ -500,12 +514,11 @@ export default function PricesTable() {
         size: 50,
       },
     },
-    muiTableHeadCellProps: ({ column }) => ({
+    muiTableHeadCellProps: () => ({
       sx: {
         fontSize: "0.7rem",
-        backgroundColor: column.getIsPinned() ? "#f5f5f5" : "inherit",
-        borderLeft: "1px solid rgba(224, 224, 224, 1)",
-        borderRight: "1px solid rgba(224, 224, 224, 1)",
+        borderLeft: cellBorderStyle,
+        borderRight: cellBorderStyle,
         "& .MuiBadge-root": {
           display: "none",
         },
@@ -515,8 +528,8 @@ export default function PricesTable() {
       sx: {
         fontSize: "0.7rem",
         lineHeight: "0.8rem",
-        borderLeft: "1px solid rgba(224, 224, 224, 1)",
-        borderRight: "1px solid rgba(224, 224, 224, 1)",
+        borderLeft: cellBorderStyle,
+        borderRight: cellBorderStyle,
       },
     },
     muiTableHeadRowProps: {
@@ -537,7 +550,22 @@ export default function PricesTable() {
       },
     },
     localization: MRT_Localization_ZH_HANS,
+    mrtTheme: {
+      baseBackgroundColor,
+      draggingBorderColor: theme.palette.primary.main,
+      matchHighlightColor:
+        theme.palette.mode === "dark"
+          ? darken(theme.palette.warning.dark, 0.25)
+          : lighten(theme.palette.warning.light, 0.5),
+      menuBackgroundColor: lighten(baseBackgroundColor, 0.07),
+      pinnedRowBackgroundColor: alpha(theme.palette.primary.main, 0.1),
+      selectedRowBackgroundColor: alpha(theme.palette.primary.main, 0.2),
+    },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <ThemeProvider theme={theme}>
+      <MaterialReactTable table={table} />
+    </ThemeProvider>
+  );
 }
