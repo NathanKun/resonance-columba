@@ -57,10 +57,10 @@ export default function HeaderAppBar() {
 
             <V2PricesSwitch />
 
-            <div className="grow" />
+            <Box className="grow" />
 
             {/* Desktop Nav Menu */}
-            <Box className="grow-0 hidden sm:flex text-black">
+            <Box className="grow-0 hidden md:flex text-black">
               <Link href="/" className="ml-2">
                 <Button variant="text" className="text-black px-0" startIcon={<TableViewIcon />}>
                   数据
@@ -78,10 +78,16 @@ export default function HeaderAppBar() {
               </Link>
 
               <QQBtn wrapperClassName="mx-2" buttonClassName="px-0" displayText={true} />
+
+              <Link href="https://soli-reso.com/" className="ml-2" target="_blank">
+                <Button variant="outlined" className="text-black" color="error">
+                  雷索纳斯官网
+                </Button>
+              </Link>
             </Box>
 
             {/* Mobile Nav Menu */}
-            <Box className="grow-0 flex sm:hidden">
+            <Box className="grow-0 flex md:hidden">
               <IconButton
                 size="large"
                 aria-label="account of current user"
