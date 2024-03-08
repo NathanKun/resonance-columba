@@ -542,7 +542,7 @@ export const PRODUCTS: Product[] = [
       淘金乐园: 1865,
     },
     buyPrices: {
-      荒原站: 1337,
+      荒原站: 1650,
     },
     buyLot: {
       荒原站: 17,
@@ -608,7 +608,7 @@ export const PRODUCTS: Product[] = [
       曼德矿场: 3071,
     },
     buyLot: {
-      曼德矿场: 17,
+      曼德矿场: 12,
     },
     type: "Special",
   },

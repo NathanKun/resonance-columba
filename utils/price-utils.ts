@@ -27,6 +27,13 @@ export const calculateProfit = (
     return 0;
   }
 
+  // check if product price in prices object has the price property
+  const realTimeSellPrice = prices[product.name]?.["sell"]?.[currentColumnCity]?.price;
+  const realTimeBuyPrice = prices[product.name]?.["buy"]?.[sourceCity]?.price;
+  if (realTimeSellPrice && realTimeBuyPrice) {
+    return Math.round(realTimeSellPrice * 1.04 - realTimeBuyPrice * 0.92);
+  }
+
   let profit = 0;
   const productPrices: GetPricesProduct = prices[product.name];
 

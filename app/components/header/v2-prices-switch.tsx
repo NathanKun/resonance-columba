@@ -1,4 +1,5 @@
 import { PriceContext } from "@/app/price-provider";
+import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -50,7 +51,7 @@ export default function V2PricesSwitch() {
               }}
             />
           }
-          label="新版数据"
+          label={<Typography fontSize="14px">新版数据</Typography>}
         />
       </FormGroup>
       <Dialog
