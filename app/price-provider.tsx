@@ -2,13 +2,13 @@
 
 import { CityName } from "@/data/Cities";
 import { useHasFocus } from "@/hooks/useHasFocus";
-import { FirestoreProducts } from "@/interfaces/get-prices";
+import { GetPricesProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
 import { createContext, useEffect, useState } from "react";
 
 export interface PriceContextProps {
-  prices: FirestoreProducts;
+  prices: GetPricesProducts;
   setPrice: (props: SetPriceProps) => void;
 }
 
@@ -27,7 +27,7 @@ export interface SetPriceProps {
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
   const fetchInterval = 1000 * 60; // 1 minute
-  const [data, setData] = useState<FirestoreProducts>({});
+  const [data, setData] = useState<GetPricesProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
   const focus = useHasFocus();
 

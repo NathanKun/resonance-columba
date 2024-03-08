@@ -1,6 +1,6 @@
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
-import { FirestoreProduct, FirestoreProducts } from "@/interfaces/get-prices";
+import { GetPricesProduct, GetPricesProducts } from "@/interfaces/get-prices";
 import { ProductRow } from "@/interfaces/prices-table";
 import { Product } from "@/interfaces/product";
 
@@ -21,14 +21,14 @@ export const calculateProfit = (
   currentColumnCity: CityName,
   sourceCity: CityName,
   isBuyableCity: boolean,
-  prices: FirestoreProducts
+  prices: GetPricesProducts
 ) => {
   if (isBuyableCity) {
     return 0;
   }
 
   let profit = 0;
-  const productPrices: FirestoreProduct = prices[product.name];
+  const productPrices: GetPricesProduct = prices[product.name];
 
   // for a buyable (non craftable) product
   if (!product.craft) {

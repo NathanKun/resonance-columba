@@ -1,6 +1,24 @@
 import { CityName } from "@/data/Cities";
 import { Trend } from "./trend";
 
+export interface GetPricesProductCityPrice {
+  trend: Trend;
+  variation: number;
+  time: number;
+}
+
+export interface GetPricesProductPrice {
+  [city: CityName]: GetPricesProductCityPrice;
+}
+
+export interface GetPricesProduct {
+  [type: string]: GetPricesProductPrice;
+}
+
+export interface GetPricesProducts {
+  [pdtName: string]: GetPricesProduct;
+}
+
 export interface FireStoreProductCityPrice {
   trend: Trend;
   variation: number;
@@ -23,5 +41,5 @@ export interface FirestoreProducts {
 }
 
 export interface GetPricesResponse {
-  data: FirestoreProducts;
+  data: GetPricesProducts;
 }

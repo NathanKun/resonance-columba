@@ -90,7 +90,7 @@ export default function PricesTable() {
           }
 
           const { variation, trend, time } = productPriceFromApi;
-          let timeDiffNum = Math.ceil((Date.now() / 1000 - time._seconds) / 60); // in minutes
+          let timeDiffNum = Math.ceil((Date.now() / 1000 - time) / 60); // in minutes
           let timeDiff: string;
           if (timeDiffNum >= 60) {
             timeDiffNum = timeDiffNum / 60;
