@@ -31,7 +31,7 @@ export const calculateProfit = (
   const realTimeSellPrice = prices[product.name]?.["sell"]?.[currentColumnCity]?.price;
   const realTimeBuyPrice = prices[product.name]?.["buy"]?.[sourceCity]?.price;
   if (realTimeSellPrice && realTimeBuyPrice) {
-    return Math.round(realTimeSellPrice * 1.04 - realTimeBuyPrice * 0.92);
+    return Math.round(realTimeSellPrice - realTimeBuyPrice); // no bargin profit
   }
 
   let profit = 0;
@@ -44,11 +44,11 @@ export const calculateProfit = (
     for (const buyCity of Object.keys(product.buyPrices)) {
       let productBuyPrice = product.buyPrices[buyCity] ?? 0;
       const buyVariation = productPrices.buy?.[buyCity]?.variation ?? 0;
-      productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100) * 0.92; // estimated buy price
+      productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100); // no bargin buy price
 
       let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
       const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-      productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+      productSellPrice = Math.round((productSellPrice * sellVariation) / 100); // no bargin sell price
 
       const cityProfit = Math.round(productSellPrice - productBuyPrice);
       profit = Math.max(profit, cityProfit);
@@ -76,7 +76,7 @@ export const calculateProfit = (
       // otherwise the calculation below will be incorrect
       const materialBuyVariation = prices[material]?.buy?.[sourceCity]?.variation ?? 0;
       let materialBuyPrice = PRODUCTS.find((p) => p.name === material)?.buyPrices?.[sourceCity] ?? 0;
-      materialBuyPrice = Math.round((materialBuyPrice * materialBuyVariation) / 100) * 0.92; // estimated buy price
+      materialBuyPrice = Math.round((materialBuyPrice * materialBuyVariation) / 100); // no bargin buy price
 
       productCraftPrice += materialBuyPrice * materialQuantity;
     }
@@ -86,7 +86,7 @@ export const calculateProfit = (
     } else {
       let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
       const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-      productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+      productSellPrice = Math.round((productSellPrice * sellVariation) / 100); // no bargin sell price
 
       profit = Math.round(productSellPrice - productCraftPrice);
     }
