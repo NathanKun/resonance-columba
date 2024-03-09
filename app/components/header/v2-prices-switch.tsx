@@ -11,6 +11,7 @@ import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
 import { pink } from "@mui/material/colors";
 import { alpha } from "@mui/material/styles";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { usePathname } from "next/navigation";
 import { Fragment, useContext, useState } from "react";
 
@@ -31,6 +32,8 @@ export default function V2PricesSwitch() {
     if (checked) {
       setDialogOpen(true);
     }
+
+    sendGTMEvent({ event: "v2_prices_switch", category: "price", action: checked ? "enable" : "disable" });
   };
 
   return (

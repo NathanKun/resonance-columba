@@ -7,6 +7,7 @@ import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
 import { createContext, useCallback, useEffect, useState } from "react";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 export interface PriceContextProps {
   prices: GetPricesProducts;
   isV2Prices: boolean;
@@ -90,6 +91,8 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         fetchData(useV2);
         console.error("set-price failed", error);
       });
+
+    sendGTMEvent({ event: "set_price", category: "price", action: "set" });
   };
 
   const setUseV2Prices = (newUseV2: boolean) => {
