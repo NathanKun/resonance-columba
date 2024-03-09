@@ -482,14 +482,14 @@ export default function PricesTable() {
           name="sourceCities"
           allOptions={CITIES}
           selectedOptions={selectedCities.sourceCities}
-          handleChange={(event: any) => setSourceCities(event.target.value)}
+          handleChange={(selected: CityName[]) => setSourceCities(selected)}
         />
         <MultipleSelect
           label="目标城市"
           name="targetCities"
           allOptions={CITIES}
           selectedOptions={selectedCities.targetCities}
-          handleChange={(event: any) => setTargetCities(event.target.value)}
+          handleChange={(selected: CityName[]) => setTargetCities(selected)}
         />
         <IconButton onClick={switchSourceAndTargetCities} size="small">
           <SyncAltIcon />

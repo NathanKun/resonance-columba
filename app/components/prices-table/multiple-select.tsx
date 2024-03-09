@@ -7,6 +7,20 @@ import Select from "@mui/material/Select";
 export default function MultipleSelect(props: any) {
   const { allOptions, selectedOptions, handleChange, label, name } = props;
 
+  const internalHandleChange = (event: any) => {
+    const selected = event.target.value;
+    if (selected.includes("allBtn")) {
+      const allSelectedBeforeChange = allOptions.length === selectedOptions.length;
+      if (allSelectedBeforeChange) {
+        handleChange([]);
+      } else {
+        handleChange(allOptions);
+      }
+    } else {
+      handleChange(selected);
+    }
+  };
+
   return (
     <FormControl className="max-[385px]:w-14 max-[450px]:w-20 max-[639px]:w-28 sm:w-52 md:w-70 lg:w-96 mr-1 sm:mr-4">
       <InputLabel
@@ -22,7 +36,7 @@ export default function MultipleSelect(props: any) {
         id={"multiple-select-" + name}
         multiple
         value={selectedOptions}
-        onChange={handleChange}
+        onChange={internalHandleChange}
         input={<OutlinedInput label={label} />}
         sx={{
           fontSize: "0.7rem",
@@ -45,6 +59,9 @@ export default function MultipleSelect(props: any) {
             {option}
           </MenuItem>
         ))}
+        <MenuItem key="allBtn" value="allBtn">
+          {allOptions.length === selectedOptions.length ? "全取消" : "全选"}
+        </MenuItem>
       </Select>
     </FormControl>
   );
