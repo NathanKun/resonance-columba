@@ -1,6 +1,7 @@
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GoogleAnalytics } from "@next/third-parties/google";
+// import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { Noto_Sans_SC } from "next/font/google";
 import { env } from "process";
 import Header from "./components/header/header";
@@ -32,8 +33,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="w-full">{children}</div>
           </main>
         </PriceProvider>
-        <GoogleAnalytics gaId={env.NEXT_PUBLIC_GOOGLE_ANALYTICS!} />
       </body>
+      <GoogleTagManager gtmId={env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER!} />
     </html>
   );
 }
