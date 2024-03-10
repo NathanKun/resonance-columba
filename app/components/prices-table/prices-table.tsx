@@ -459,7 +459,7 @@ export default function PricesTable() {
     return result;
   }, [getVariationCellMuiProps, isV2Prices, setPrice]);
 
-  const columnVisibility = useMemo(() => {
+  const baseColumnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;
     const invisibleCities = CITIES.filter((city) => !visibleCities?.includes(city));
     const result: { [key: string]: boolean } = {};
@@ -473,6 +473,25 @@ export default function PricesTable() {
     });
     return result;
   }, [selectedCities.targetCities]);
+
+  const [manualVisibilityOverride, setManualVisibilityOverride] = useState<{ [key: string]: boolean }>({});
+  const onColumnVisibilityChange = (updater: any): void => {
+    const newSettings = updater();
+    setManualVisibilityOverride({ ...manualVisibilityOverride, ...newSettings });
+  };
+
+  const columnVisibility = useMemo(() => {
+    // merge base visibility with manual override
+    // except if a column is already false in base, don't allow it to be true
+    const result = { ...baseColumnVisibility };
+    Object.keys(manualVisibilityOverride).forEach((key) => {
+      if (baseColumnVisibility[key] === false) {
+        return;
+      }
+      result[key] = manualVisibilityOverride[key];
+    });
+    return result;
+  }, [baseColumnVisibility, manualVisibilityOverride]);
 
   const renderCitySelects = useCallback(() => {
     return (
@@ -530,6 +549,7 @@ export default function PricesTable() {
     state: {
       columnVisibility,
     },
+    onColumnVisibilityChange: onColumnVisibilityChange,
 
     displayColumnDefOptions: {
       "mrt-row-expand": {
