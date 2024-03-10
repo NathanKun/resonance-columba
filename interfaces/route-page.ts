@@ -24,6 +24,10 @@ export interface CityProductProfitAccumulatedExchange extends Exchange {
   restockCount: number;
   restockAccumulatedProfit: number;
   restockAccumulatedLot: number;
+
+  // fatigue
+  fatigue?: number;
+  profitPerFatigue?: number;
 }
 
 export interface CityGroupedExchanges {

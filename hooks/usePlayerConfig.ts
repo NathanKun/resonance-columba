@@ -14,10 +14,10 @@ export default function usePlayerConfig() {
       raiseFatigue: 0,
     },
     prestige: {
-      修格里城: 0,
-      曼德矿场: 0,
-      澄明数据中心: 0,
-      七号自由港: 0,
+      修格里城: 8,
+      曼德矿场: 8,
+      澄明数据中心: 8,
+      七号自由港: 8,
     },
   };
 

@@ -1,4 +1,5 @@
 import { CITY_BELONGS_TO, CityName } from "@/data/Cities";
+import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
@@ -206,7 +207,21 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
         exchange.restockCount = restockCount;
         exchange.restockAccumulatedProfit = restockCount * exchange.accumulatedProfit;
         exchange.restockAccumulatedLot = restockCount * exchange.accumulatedLot;
+
+        // fatigue calculation
+        const fatigue = getRouteFatigue(fromCity, toCity);
+        if (fatigue) {
+          const bargainFatigue = playerConfig.bargain.bargainFatigue ?? 0;
+          const raiseFatigue = playerConfig.bargain.raiseFatigue ?? 0;
+          const totalFatigue = fatigue + bargainFatigue + raiseFatigue;
+          exchange.fatigue = totalFatigue;
+          exchange.profitPerFatigue = Math.round(exchange.restockAccumulatedProfit / totalFatigue);
+        }
       }
     }
   }
+};
+
+export const getRouteFatigue = (city1: CityName, city2: CityName) => {
+  return FATIGUES.find((fatigue) => fatigue.cities.includes(city1) && fatigue.cities.includes(city2))?.fatigue;
 };
