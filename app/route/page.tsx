@@ -1,10 +1,9 @@
 "use client";
 
 import { CITIES, CityName } from "@/data/Cities";
-import { PRESTIGES } from "@/data/Prestige";
-import { PRODUCTS } from "@/data/Products";
 import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
+import { calculateAccumulatedValues, calculateExchanges, groupeExchangesByCity } from "@/utils/route-page-utils";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {
@@ -27,37 +26,6 @@ import TableRow from "@mui/material/TableRow";
 import { useContext, useMemo } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import { PriceContext } from "../price-provider";
-interface Buy {
-  fromCity: CityName;
-  product: string;
-  buyPrice: number;
-  buyLot: number;
-}
-
-interface Exchange extends Buy {
-  toCity: CityName;
-  sellPrice: number;
-  singleProfit: number;
-  lotProfit: number;
-}
-
-interface CityProductProfitAccumulatedExchange extends Exchange {
-  // not restock
-  accumulatedProfit: number;
-  loss: boolean; // true if acculated a 0 or negative profit
-  accumulatedLot: number;
-
-  // restock
-  restockCount: number;
-  restockAccumulatedProfit: number;
-  restockAccumulatedLot: number;
-}
-
-interface CityGroupedExchanges {
-  [fromCity: CityName]: {
-    [toCity: CityName]: CityProductProfitAccumulatedExchange[];
-  };
-}
 
 export default function RoutePage() {
   const { prices, isV2Prices } = useContext(PriceContext);
@@ -102,205 +70,22 @@ export default function RoutePage() {
   };
 
   /* calculation */
-  const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
-
-  const calculateExchanges = (fromCities: CityName[], toCities: CityName[]) => {
-    const exchanges: Exchange[] = [];
-
-    for (const fromCity of fromCities) {
-      const availableProducts = getProductsOfCity(fromCity);
-      const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCity]);
-      if (!buyPrestige) {
-        console.warn(`Prestige configurtation not found for ${fromCity} level ${playerConfig.prestige[fromCity]}`);
-        continue;
-      }
-      const buys: Buy[] = availableProducts
-        // group routes by fromCity and toCity
-        .flatMap<Buy>((product) => {
-          // not support craftable products yet
-          if (product.craft) {
-            return [];
-          }
-
-          // skip if no buy lot data
-          let buyLot = product.buyLot?.[fromCity] ?? 0;
-          if (buyLot === 0) {
-            console.warn(`Buy lot not found for ${product.name} in ${fromCity}`);
-            return [];
-          }
-
-          // apply prestige to buy lot
-          buyLot = Math.round(buyLot * (1 + buyPrestige.extraBuy));
-
-          // calculate current buy price
-          // skip any product that has missing data
-          const currentPriceObject = prices[product.name]?.["buy"]?.[fromCity];
-          if (!currentPriceObject) {
-            console.warn(`Buy price data not found for ${product.name} in ${fromCity}`);
-            return [];
-          }
-
-          let buyPrice = 0;
-
-          // if v2 prices, use the price directly
-          if (isV2Prices && currentPriceObject.price) {
-            buyPrice = currentPriceObject.price;
-          }
-          // if v1 prices, calculate the price with variation and base price
-          else {
-            const currentVariation = currentPriceObject.variation ?? 0;
-            const basePrice = product.buyPrices[fromCity] ?? 0;
-            buyPrice = Math.round((basePrice * currentVariation) / 100);
-          }
-
-          // skip if buy price is 0
-          if (buyPrice === 0) {
-            console.warn(`Buy price is 0 for ${product.name} in ${fromCity}`);
-            return [];
-          }
-
-          // apply bargain to buy price
-          const bargain = playerConfig.bargain.bargainPercent ?? 0;
-          buyPrice = Math.round(buyPrice * (1 - bargain / 100));
-
-          // apply prestiged tax to buy price
-          const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
-          buyPrice = Math.round(buyPrice * (1 + tax));
-
-          return [
-            {
-              product: product.name,
-              buyPrice,
-              buyLot,
-              fromCity,
-            } as Buy,
-          ];
-        });
-
-      for (const toCity of toCities) {
-        if (fromCity === toCity) {
-          continue;
-        }
-
-        const oneRouteExchanges: Exchange[] = buys.flatMap((buy) => {
-          const currentPriceObject = prices[buy.product]?.["sell"]?.[toCity];
-          if (!currentPriceObject) {
-            console.warn(`Sell price data not found for ${buy.product} in ${toCity}`);
-            return [];
-          }
-
-          let sellPrice = 0;
-
-          if (isV2Prices && currentPriceObject.price) {
-            sellPrice = currentPriceObject.price;
-          } else {
-            const currentVariation = currentPriceObject.variation ?? 0;
-            const basePrice = PRODUCTS.find((product) => product.name === buy.product)?.sellPrices[toCity] ?? 0;
-            sellPrice = Math.round((basePrice * currentVariation) / 100);
-          }
-
-          if (sellPrice === 0) {
-            console.warn(`Sell price is 0 for ${buy.product} in ${toCity}`);
-            return [];
-          }
-
-          // apply raise to sell price
-          const raise = playerConfig.bargain.raisePercent ?? 0;
-          sellPrice = Math.round(sellPrice * (1 + raise / 100));
-
-          // apply prestiged tax to sell price
-          const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCity]);
-          if (!sellPrestige) {
-            console.warn(`Prestige configurtation not found for ${toCity} level ${playerConfig.prestige[toCity]}`);
-            return [];
-          }
-
-          const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-          sellPrice = Math.round(sellPrice * (1 - tax));
-
-          const singleProfit = Math.round(sellPrice - buy.buyPrice);
-          const lotProfit = Math.round(singleProfit * buy.buyLot);
-
-          return [
-            {
-              ...buy,
-              sellPrice,
-              singleProfit,
-              lotProfit,
-              toCity,
-            },
-          ];
-        });
-
-        exchanges.push(...oneRouteExchanges);
-      }
-    }
-
-    return exchanges;
-  };
-
   // all possible single product exchange routes
-  const singleProductExchanges = calculateExchanges(selectedCities.sourceCities, selectedCities.targetCities).sort(
-    (a, b) => b.lotProfit - a.lotProfit
+  const singleProductExchanges = calculateExchanges(
+    playerConfig,
+    selectedCities.sourceCities,
+    selectedCities.targetCities,
+    prices,
+    isV2Prices
   );
 
   // group by fromCity then toCity
-  const cityGroupedExchanges = singleProductExchanges.reduce<CityGroupedExchanges>(
-    (acc: CityGroupedExchanges, exchange: Exchange) => {
-      if (!acc[exchange.fromCity]) {
-        acc[exchange.fromCity] = {};
-      }
-
-      if (!acc[exchange.fromCity][exchange.toCity]) {
-        acc[exchange.fromCity][exchange.toCity] = [];
-      }
-
-      acc[exchange.fromCity][exchange.toCity].push({
-        ...exchange,
-        accumulatedProfit: 0,
-        loss: false,
-        accumulatedLot: 0,
-        restockCount: 0,
-        restockAccumulatedProfit: 0,
-        restockAccumulatedLot: 0,
-      });
-      return acc;
-    },
-    {}
-  );
-
-  // sort each toCity exchanges by lotProfit, then calculate accumulatedProfit
-  for (const fromCity in cityGroupedExchanges) {
-    for (const toCity in cityGroupedExchanges[fromCity]) {
-      cityGroupedExchanges[fromCity][toCity] = cityGroupedExchanges[fromCity][toCity].sort(
-        (a, b) => b.lotProfit - a.lotProfit
-      );
-
-      let accProfit = 0;
-      let accLot = 0;
-      for (let i = 0; i < cityGroupedExchanges[fromCity][toCity].length; i++) {
-        const exchange = cityGroupedExchanges[fromCity][toCity][i];
-
-        // not restock calculation
-        accProfit += exchange.lotProfit;
-        accLot += exchange.buyLot;
-
-        exchange.accumulatedProfit = accProfit;
-        exchange.loss = exchange.lotProfit <= 0;
-        exchange.accumulatedLot = accLot;
-
-        // restock calculation
-        const restockCount = Math.floor(playerConfig.maxLot / exchange.accumulatedLot);
-        exchange.restockCount = restockCount;
-        exchange.restockAccumulatedProfit = restockCount * exchange.accumulatedProfit;
-        exchange.restockAccumulatedLot = restockCount * exchange.accumulatedLot;
-      }
-    }
-  }
+  const cityGroupedExchanges = groupeExchangesByCity(singleProductExchanges);
+  calculateAccumulatedValues(playerConfig, cityGroupedExchanges);
 
   return (
     <ThemeProvider theme={theme}>
-      <Typography className="mx-4 my-2">利润计算：无税收 无抬价 无议价 无进货卡。个性化利润计算开发中。</Typography>
+      <Typography className="mx-4 my-2">个性化利润计算开发中。</Typography>
       <Typography className="mx-4 my-2">路线中的产品已经按按单批利润进行了排序。</Typography>
       <Typography className="mx-4 my-2">累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
 
