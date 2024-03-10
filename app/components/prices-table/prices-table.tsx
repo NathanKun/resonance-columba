@@ -18,7 +18,6 @@ import {
 } from "material-react-table";
 import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
-import { useCookies } from "react-cookie";
 import { PriceContext } from "../../price-provider";
 import MultipleSelect from "./multiple-select";
 import TrendCell from "./trend-cell";
@@ -28,10 +27,10 @@ import VariationInput from "./variation-input";
 
 export default function PricesTable() {
   const { prices, isV2Prices, setPrice } = useContext(PriceContext);
-  const [cookie, setCookie] = useCookies(["selectedCities"]);
-  const [selectedCities, setSelectedCities] = useState<SelectedCities>(
-    cookie.selectedCities ?? { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] }
-  );
+  const [selectedCities, setSelectedCities] = useState<SelectedCities>(() => {
+    const selectedCitiesStr = localStorage.getItem("selectedCities");
+    return selectedCitiesStr ? JSON.parse(selectedCitiesStr) : { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] };
+  });
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
     () =>
@@ -48,29 +47,26 @@ export default function PricesTable() {
   const cellBorderStyle =
     theme.palette.mode === "dark" ? "1px solid rgba(31, 41, 55, 1)" : "1px solid rgba(224, 224, 224, 1)";
 
-  const updateSelectedCitiesCookieAndState = useCallback(
-    (newSelectedCities: SelectedCities) => {
-      const newStr = JSON.stringify(newSelectedCities);
-      setCookie("selectedCities", newStr);
-      setSelectedCities(newSelectedCities);
-    },
-    [setCookie]
-  );
+  const updateSelectedCitiesLsAndState = useCallback((newSelectedCities: SelectedCities) => {
+    const newStr = JSON.stringify(newSelectedCities);
+    localStorage.setItem("selectedCities", newStr);
+    setSelectedCities(newSelectedCities);
+  }, []);
 
   const setSourceCities = useCallback(
     (selected: CityName[]) => {
       const newSelectedCities = { ...selectedCities, sourceCities: selected };
-      updateSelectedCitiesCookieAndState(newSelectedCities);
+      updateSelectedCitiesLsAndState(newSelectedCities);
     },
-    [selectedCities, updateSelectedCitiesCookieAndState]
+    [selectedCities, updateSelectedCitiesLsAndState]
   );
 
   const setTargetCities = useCallback(
     (selected: CityName[]) => {
       const newSelectedCities = { ...selectedCities, targetCities: selected };
-      updateSelectedCitiesCookieAndState(newSelectedCities);
+      updateSelectedCitiesLsAndState(newSelectedCities);
     },
-    [selectedCities, updateSelectedCitiesCookieAndState]
+    [selectedCities, updateSelectedCitiesLsAndState]
   );
 
   const switchSourceAndTargetCities = useCallback(() => {
@@ -78,8 +74,8 @@ export default function PricesTable() {
       sourceCities: selectedCities.targetCities,
       targetCities: selectedCities.sourceCities,
     };
-    updateSelectedCitiesCookieAndState(newSelectedCities);
-  }, [selectedCities, updateSelectedCitiesCookieAndState]);
+    updateSelectedCitiesLsAndState(newSelectedCities);
+  }, [selectedCities, updateSelectedCitiesLsAndState]);
 
   // build table rows
   const data = useMemo<ProductRow[]>(() => {
@@ -459,7 +455,7 @@ export default function PricesTable() {
     return result;
   }, [getVariationCellMuiProps, isV2Prices, setPrice]);
 
-  const columnVisibility = useMemo(() => {
+  const baseColumnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;
     const invisibleCities = CITIES.filter((city) => !visibleCities?.includes(city));
     const result: { [key: string]: boolean } = {};
@@ -473,6 +469,25 @@ export default function PricesTable() {
     });
     return result;
   }, [selectedCities.targetCities]);
+
+  const [manualVisibilityOverride, setManualVisibilityOverride] = useState<{ [key: string]: boolean }>({});
+  const onColumnVisibilityChange = (updater: any): void => {
+    const newSettings = updater();
+    setManualVisibilityOverride({ ...manualVisibilityOverride, ...newSettings });
+  };
+
+  const columnVisibility = useMemo(() => {
+    // merge base visibility with manual override
+    // except if a column is already false in base, don't allow it to be true
+    const result = { ...baseColumnVisibility };
+    Object.keys(manualVisibilityOverride).forEach((key) => {
+      if (baseColumnVisibility[key] === false) {
+        return;
+      }
+      result[key] = manualVisibilityOverride[key];
+    });
+    return result;
+  }, [baseColumnVisibility, manualVisibilityOverride]);
 
   const renderCitySelects = useCallback(() => {
     return (
@@ -530,6 +545,7 @@ export default function PricesTable() {
     state: {
       columnVisibility,
     },
+    onColumnVisibilityChange,
 
     displayColumnDefOptions: {
       "mrt-row-expand": {
