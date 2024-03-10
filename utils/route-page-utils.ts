@@ -1,4 +1,4 @@
-import { CityName } from "@/data/Cities";
+import { CITY_BELONGS_TO, CityName } from "@/data/Cities";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
@@ -18,9 +18,12 @@ export const calculateExchanges = (
 
   for (const fromCity of fromCities) {
     const availableProducts = getProductsOfCity(fromCity);
-    const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCity]);
+    const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
+    const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCityMaster]);
     if (!buyPrestige) {
-      console.warn(`Prestige configurtation not found for ${fromCity} level ${playerConfig.prestige[fromCity]}`);
+      console.warn(
+        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfig.prestige[fromCityMaster]}`
+      );
       continue;
     }
     const buys: Buy[] = availableProducts
@@ -59,7 +62,7 @@ export const calculateExchanges = (
         else {
           const currentVariation = currentPriceObject.variation ?? 0;
           const basePrice = product.buyPrices[fromCity] ?? 0;
-          buyPrice = Math.round((basePrice * currentVariation) / 100);
+          buyPrice = (basePrice * currentVariation) / 100;
         }
 
         // skip if buy price is 0
@@ -70,7 +73,7 @@ export const calculateExchanges = (
 
         // apply bargain to buy price
         const bargain = playerConfig.bargain.bargainPercent ?? 0;
-        buyPrice = Math.round(buyPrice * (1 - bargain / 100));
+        buyPrice = buyPrice * (1 - bargain / 100);
 
         // apply prestiged tax to buy price
         const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
@@ -91,6 +94,15 @@ export const calculateExchanges = (
         continue;
       }
 
+      const toCityMaster = CITY_BELONGS_TO[toCity] ?? toCity;
+      const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCityMaster]);
+      if (!sellPrestige) {
+        console.warn(
+          `Prestige configurtation not found for ${toCityMaster} level ${playerConfig.prestige[toCityMaster]}`
+        );
+        continue;
+      }
+
       const oneRouteExchanges: Exchange[] = buys.flatMap((buy) => {
         const currentPriceObject = prices[buy.product]?.["sell"]?.[toCity];
         if (!currentPriceObject) {
@@ -105,7 +117,7 @@ export const calculateExchanges = (
         } else {
           const currentVariation = currentPriceObject.variation ?? 0;
           const basePrice = PRODUCTS.find((product) => product.name === buy.product)?.sellPrices[toCity] ?? 0;
-          sellPrice = Math.round((basePrice * currentVariation) / 100);
+          sellPrice = (basePrice * currentVariation) / 100;
         }
 
         if (sellPrice === 0) {
@@ -117,17 +129,14 @@ export const calculateExchanges = (
         const raise = playerConfig.bargain.raisePercent ?? 0;
         sellPrice = Math.round(sellPrice * (1 + raise / 100));
 
-        // apply prestiged tax to sell price
-        const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCity]);
-        if (!sellPrestige) {
-          console.warn(`Prestige configurtation not found for ${toCity} level ${playerConfig.prestige[toCity]}`);
-          return [];
-        }
+        // calculate profit
+        let singleProfit = sellPrice - buy.buyPrice;
 
+        // apply prestiged tax to profit
         const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-        sellPrice = Math.round(sellPrice * (1 - tax));
+        singleProfit = Math.round(singleProfit * (1 - tax));
 
-        const singleProfit = Math.round(sellPrice - buy.buyPrice);
+        // lot profit
         const lotProfit = Math.round(singleProfit * buy.buyLot);
 
         return [
@@ -145,7 +154,7 @@ export const calculateExchanges = (
     }
   }
 
-  return exchanges.sort((a, b) => b.lotProfit - a.lotProfit);
+  return exchanges;
 };
 
 export const groupeExchangesByCity = (exchanges: Exchange[]): CityGroupedExchanges => {
@@ -172,11 +181,11 @@ export const groupeExchangesByCity = (exchanges: Exchange[]): CityGroupedExchang
 };
 
 export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroupedExchanges: CityGroupedExchanges) => {
-  // sort each toCity exchanges by lotProfit, then calculate accumulatedProfit
+  // sort each toCity exchanges by single profit, then calculate accumulatedProfit
   for (const fromCity in cityGroupedExchanges) {
     for (const toCity in cityGroupedExchanges[fromCity]) {
       cityGroupedExchanges[fromCity][toCity] = cityGroupedExchanges[fromCity][toCity].sort(
-        (a, b) => b.lotProfit - a.lotProfit
+        (a, b) => b.singleProfit - a.singleProfit
       );
 
       let accProfit = 0;

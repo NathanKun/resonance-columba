@@ -85,8 +85,8 @@ export default function RoutePage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Typography className="mx-4 my-2">个性化利润计算开发中。</Typography>
-      <Typography className="mx-4 my-2">路线中的产品已经按按单批利润进行了排序。</Typography>
+      <Typography className="mx-4 my-2">买价卖价为砍价抬价税后价格。</Typography>
+      <Typography className="mx-4 my-2">路线中的产品已经按利润进行了排序。</Typography>
       <Typography className="mx-4 my-2">累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
 
       <Box className="m-4">
@@ -129,7 +129,7 @@ export default function RoutePage() {
             inputProps={{ min: 0, max: 9999 }}
           />
         </Box>
-        <Typography>砍价抬价</Typography>
+        <Typography>砍价 抬价</Typography>
         <Box className="m-4">
           <TextField
             label="砍价"
@@ -166,7 +166,7 @@ export default function RoutePage() {
             onChange={(e) => onBargainChange("raiseFatigue", e.target.value)}
           /> */}
         </Box>
-        <Typography>声望等级：影响税收与单票商品购入量</Typography>
+        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。</Typography>
         <Box className="m-4">
           <TextField
             label="修格里城"
@@ -224,7 +224,7 @@ export default function RoutePage() {
                           <TableCell>产品</TableCell>
                           <TableCell align="right">买价</TableCell>
                           <TableCell align="right">卖价</TableCell>
-                          <TableCell align="right">数量</TableCell>
+                          <TableCell align="right">单票仓位</TableCell>
                           <TableCell align="right">单票利润</TableCell>
                           <TableCell align="right">单票累计利润</TableCell>
                           <TableCell align="right">单票累计仓位</TableCell>
