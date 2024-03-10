@@ -1,11 +1,22 @@
 "use client";
 
 import { CITIES, CityName } from "@/data/Cities";
+import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
+import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import { IconButton, ThemeProvider, Typography, createTheme, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  TextField,
+  ThemeProvider,
+  Typography,
+  createTheme,
+  useMediaQuery,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -16,14 +27,14 @@ import TableRow from "@mui/material/TableRow";
 import { useContext, useMemo } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import { PriceContext } from "../price-provider";
-interface BuyConfig {
+interface Buy {
   fromCity: CityName;
   product: string;
   buyPrice: number;
   buyLot: number;
 }
 
-interface Exchange extends BuyConfig {
+interface Exchange extends Buy {
   toCity: CityName;
   sellPrice: number;
   singleProfit: number;
@@ -31,9 +42,15 @@ interface Exchange extends BuyConfig {
 }
 
 interface CityProductProfitAccumulatedExchange extends Exchange {
+  // not restock
   accumulatedProfit: number;
   loss: boolean; // true if acculated a 0 or negative profit
   accumulatedLot: number;
+
+  // restock
+  restockCount: number;
+  restockAccumulatedProfit: number;
+  restockAccumulatedLot: number;
 }
 
 interface CityGroupedExchanges {
@@ -44,6 +61,8 @@ interface CityGroupedExchanges {
 
 export default function RoutePage() {
   const { prices, isV2Prices } = useContext(PriceContext);
+
+  /* theme */
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
     () =>
@@ -58,10 +77,31 @@ export default function RoutePage() {
     [prefersDarkMode]
   );
 
+  /* city selects */
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
     localStorageKey: "routeSelectedCities",
   });
 
+  /* player config */
+  const { playerConfig, setPlayerConfig } = usePlayerConfig();
+
+  const onPlayerConfigChange = (field: string, value: any) => {
+    setPlayerConfig((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const onBargainChange = (field: string, value: string) => {
+    if (value && !isNaN(parseInt(value))) {
+      onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: parseInt(value) });
+    }
+  };
+
+  const onPrestigeChange = (city: CityName, value: string) => {
+    if (value && !isNaN(parseInt(value))) {
+      onPlayerConfigChange("prestige", { ...playerConfig.prestige, [city]: parseInt(value) });
+    }
+  };
+
+  /* calculation */
   const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
 
   const calculateExchanges = (fromCities: CityName[], toCities: CityName[]) => {
@@ -69,24 +109,34 @@ export default function RoutePage() {
 
     for (const fromCity of fromCities) {
       const availableProducts = getProductsOfCity(fromCity);
-      const buyConfigs: BuyConfig[] = availableProducts
+      const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCity]);
+      if (!buyPrestige) {
+        console.warn(`Prestige configurtation not found for ${fromCity} level ${playerConfig.prestige[fromCity]}`);
+        continue;
+      }
+      const buys: Buy[] = availableProducts
         // group routes by fromCity and toCity
-        .flatMap<BuyConfig>((product) => {
+        .flatMap<Buy>((product) => {
           // not support craftable products yet
           if (product.craft) {
             return [];
           }
 
           // skip if no buy lot data
-          const buyLot = product.buyLot?.[fromCity] ?? 0;
+          let buyLot = product.buyLot?.[fromCity] ?? 0;
           if (buyLot === 0) {
+            console.warn(`Buy lot not found for ${product.name} in ${fromCity}`);
             return [];
           }
+
+          // apply prestige to buy lot
+          buyLot = Math.round(buyLot * (1 + buyPrestige.extraBuy));
 
           // calculate current buy price
           // skip any product that has missing data
           const currentPriceObject = prices[product.name]?.["buy"]?.[fromCity];
           if (!currentPriceObject) {
+            console.warn(`Buy price data not found for ${product.name} in ${fromCity}`);
             return [];
           }
 
@@ -105,8 +155,17 @@ export default function RoutePage() {
 
           // skip if buy price is 0
           if (buyPrice === 0) {
+            console.warn(`Buy price is 0 for ${product.name} in ${fromCity}`);
             return [];
           }
+
+          // apply bargain to buy price
+          const bargain = playerConfig.bargain.bargainPercent ?? 0;
+          buyPrice = Math.round(buyPrice * (1 - bargain / 100));
+
+          // apply prestiged tax to buy price
+          const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+          buyPrice = Math.round(buyPrice * (1 + tax));
 
           return [
             {
@@ -114,7 +173,7 @@ export default function RoutePage() {
               buyPrice,
               buyLot,
               fromCity,
-            } as BuyConfig,
+            } as Buy,
           ];
         });
 
@@ -123,9 +182,10 @@ export default function RoutePage() {
           continue;
         }
 
-        const oneRouteExchanges: Exchange[] = buyConfigs.flatMap((config) => {
-          const currentPriceObject = prices[config.product]?.["sell"]?.[toCity];
+        const oneRouteExchanges: Exchange[] = buys.flatMap((buy) => {
+          const currentPriceObject = prices[buy.product]?.["sell"]?.[toCity];
           if (!currentPriceObject) {
+            console.warn(`Sell price data not found for ${buy.product} in ${toCity}`);
             return [];
           }
 
@@ -135,20 +195,35 @@ export default function RoutePage() {
             sellPrice = currentPriceObject.price;
           } else {
             const currentVariation = currentPriceObject.variation ?? 0;
-            const basePrice = PRODUCTS.find((product) => product.name === config.product)?.sellPrices[toCity] ?? 0;
+            const basePrice = PRODUCTS.find((product) => product.name === buy.product)?.sellPrices[toCity] ?? 0;
             sellPrice = Math.round((basePrice * currentVariation) / 100);
           }
 
           if (sellPrice === 0) {
+            console.warn(`Sell price is 0 for ${buy.product} in ${toCity}`);
             return [];
           }
 
-          const singleProfit = Math.round(sellPrice - config.buyPrice);
-          const lotProfit = Math.round(singleProfit * config.buyLot);
+          // apply raise to sell price
+          const raise = playerConfig.bargain.raisePercent ?? 0;
+          sellPrice = Math.round(sellPrice * (1 + raise / 100));
+
+          // apply prestiged tax to sell price
+          const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCity]);
+          if (!sellPrestige) {
+            console.warn(`Prestige configurtation not found for ${toCity} level ${playerConfig.prestige[toCity]}`);
+            return [];
+          }
+
+          const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+          sellPrice = Math.round(sellPrice * (1 - tax));
+
+          const singleProfit = Math.round(sellPrice - buy.buyPrice);
+          const lotProfit = Math.round(singleProfit * buy.buyLot);
 
           return [
             {
-              ...config,
+              ...buy,
               sellPrice,
               singleProfit,
               lotProfit,
@@ -185,6 +260,9 @@ export default function RoutePage() {
         accumulatedProfit: 0,
         loss: false,
         accumulatedLot: 0,
+        restockCount: 0,
+        restockAccumulatedProfit: 0,
+        restockAccumulatedLot: 0,
       });
       return acc;
     },
@@ -198,17 +276,24 @@ export default function RoutePage() {
         (a, b) => b.lotProfit - a.lotProfit
       );
 
-      let accumulatedProfit = 0;
-      let accumulatedLot = 0;
+      let accProfit = 0;
+      let accLot = 0;
       for (let i = 0; i < cityGroupedExchanges[fromCity][toCity].length; i++) {
         const exchange = cityGroupedExchanges[fromCity][toCity][i];
 
-        accumulatedProfit += exchange.lotProfit;
-        accumulatedLot += exchange.buyLot;
+        // not restock calculation
+        accProfit += exchange.lotProfit;
+        accLot += exchange.buyLot;
 
-        exchange.accumulatedProfit = accumulatedProfit;
+        exchange.accumulatedProfit = accProfit;
         exchange.loss = exchange.lotProfit <= 0;
-        exchange.accumulatedLot = accumulatedLot;
+        exchange.accumulatedLot = accLot;
+
+        // restock calculation
+        const restockCount = Math.floor(playerConfig.maxLot / exchange.accumulatedLot);
+        exchange.restockCount = restockCount;
+        exchange.restockAccumulatedProfit = restockCount * exchange.accumulatedProfit;
+        exchange.restockAccumulatedLot = restockCount * exchange.accumulatedLot;
       }
     }
   }
@@ -219,7 +304,7 @@ export default function RoutePage() {
       <Typography className="mx-4 my-2">路线中的产品已经按按单批利润进行了排序。</Typography>
       <Typography className="mx-4 my-2">累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
 
-      <div className="m-4">
+      <Box className="m-4">
         <MultipleSelect
           label="原产地"
           name="sourceCities"
@@ -237,7 +322,101 @@ export default function RoutePage() {
         <IconButton onClick={switchSourceAndTargetCities} size="small">
           <SyncAltIcon />
         </IconButton>
-      </div>
+      </Box>
+
+      <Box
+        className="m-4"
+        sx={{
+          "& .MuiFormControl-root": {
+            width: "10rem",
+            margin: "0.5rem",
+          },
+        }}
+      >
+        <Typography>玩家配置</Typography>
+        <Box className="m-4">
+          <TextField
+            label="货舱大小"
+            type="number"
+            size="small"
+            value={playerConfig.maxLot}
+            onChange={(e) => onPlayerConfigChange("maxLot", e.target.value)}
+            inputProps={{ min: 0, max: 9999 }}
+          />
+        </Box>
+        <Typography>砍价抬价</Typography>
+        <Box className="m-4">
+          <TextField
+            label="砍价"
+            type="number"
+            size="small"
+            InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+            inputProps={{ min: 0, max: 20 }}
+            value={playerConfig.bargain.bargainPercent}
+            onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
+          />
+          {/* <TextField
+            label="砍价疲劳"
+            type="number"
+            size="small"
+            inputProps={{ min: 0, max: 100 }}
+            value={playerConfig.bargain.bargainFatigue}
+            onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
+          /> */}
+          <TextField
+            label="抬价"
+            type="number"
+            size="small"
+            InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+            inputProps={{ min: 0, max: 20 }}
+            value={playerConfig.bargain.raisePercent}
+            onChange={(e) => onBargainChange("raisePercent", e.target.value)}
+          />
+          {/* <TextField
+            label="抬价疲劳"
+            type="number"
+            size="small"
+            inputProps={{ min: 0, max: 100 }}
+            value={playerConfig.bargain.raiseFatigue}
+            onChange={(e) => onBargainChange("raiseFatigue", e.target.value)}
+          /> */}
+        </Box>
+        <Typography>声望等级：影响税收与单票商品购入量</Typography>
+        <Box className="m-4">
+          <TextField
+            label="修格里城"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["修格里城"]}
+            onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
+          />
+          <TextField
+            label="曼德矿场"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["曼德矿场"]}
+            onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
+          />
+          <TextField
+            label="澄明数据中心"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["澄明数据中心"]}
+            onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
+          />
+          <TextField
+            label="七号自由港"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["七号自由港"]}
+            onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
+          />
+        </Box>
+      </Box>
 
       {Object.keys(cityGroupedExchanges).map((fromCity) => {
         return (
@@ -262,8 +441,11 @@ export default function RoutePage() {
                           <TableCell align="right">卖价</TableCell>
                           <TableCell align="right">数量</TableCell>
                           <TableCell align="right">单票利润</TableCell>
-                          <TableCell align="right">累计利润</TableCell>
-                          <TableCell align="right">累计仓位</TableCell>
+                          <TableCell align="right">单票累计利润</TableCell>
+                          <TableCell align="right">单票累计仓位</TableCell>
+                          <TableCell align="right">补货累计利润</TableCell>
+                          <TableCell align="right">补货累计仓位</TableCell>
+                          <TableCell align="right">补货次数</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -282,6 +464,9 @@ export default function RoutePage() {
                             <TableCell align="right">{row.lotProfit}</TableCell>
                             <TableCell align="right">{row.accumulatedProfit}</TableCell>
                             <TableCell align="right">{row.accumulatedLot}</TableCell>
+                            <TableCell align="right">{row.restockAccumulatedProfit}</TableCell>
+                            <TableCell align="right">{row.restockAccumulatedLot}</TableCell>
+                            <TableCell align="right">{row.restockCount}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

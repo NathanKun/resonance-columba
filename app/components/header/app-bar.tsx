@@ -63,7 +63,7 @@ export default function HeaderAppBar() {
             <Box className="grow" />
 
             {/* Desktop Nav Menu */}
-            <Box className="grow-0 hidden min-[835px]:flex text-black">
+            <Box className="grow-0 hidden min-[852px]:flex text-black">
               <Link href="/" className="ml-2">
                 <Button variant="text" className="text-black px-0" startIcon={<TableViewIcon />}>
                   数据
@@ -95,7 +95,7 @@ export default function HeaderAppBar() {
             </Box>
 
             {/* Mobile Nav Menu */}
-            <Box className="grow-0 flex min-[835px]:hidden">
+            <Box className="grow-0 flex min-[852px]:hidden">
               <IconButton
                 size="large"
                 aria-label="account of current user"
