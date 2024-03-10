@@ -85,31 +85,20 @@ export default function RoutePage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Typography className="mx-4 my-2">买价卖价为砍价抬价税后价格。</Typography>
-      <Typography className="mx-4 my-2">路线中的产品已经按利润进行了排序。</Typography>
-      <Typography className="mx-4 my-2">单票仓位未算入可能存在的角色生活技能的20%加成。</Typography>
-      <Typography className="mx-4 my-2">累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
-
-      <Box className="m-4">
-        <MultipleSelect
-          label="原产地"
-          name="sourceCities"
-          allOptions={CITIES}
-          selectedOptions={selectedCities.sourceCities}
-          handleChange={(selected: CityName[]) => setSourceCities(selected)}
-        />
-        <MultipleSelect
-          label="目标城市"
-          name="targetCities"
-          allOptions={CITIES}
-          selectedOptions={selectedCities.targetCities}
-          handleChange={(selected: CityName[]) => setTargetCities(selected)}
-        />
-        <IconButton onClick={switchSourceAndTargetCities} size="small">
-          <SyncAltIcon />
-        </IconButton>
-      </Box>
-
+      <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+        <div className="flex justify-between items-center mb-4">
+          <Typography component="h2">科伦巴商会友情提示</Typography>
+        </div>
+        <div className="flex flex-col">
+          <Typography>买价为砍价税后价格。</Typography>
+          <Typography>卖价为抬价后价格。</Typography>
+          <Typography>利润为税后利润。</Typography>
+          <Typography>路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
+          <Typography>列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
+          <Typography>单票仓位未算入可能存在的角色生活技能的20%加成。</Typography>
+          <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
+        </div>
+      </div>
       <Box
         className="m-4"
         sx={{
@@ -119,7 +108,7 @@ export default function RoutePage() {
           },
         }}
       >
-        <Typography>玩家配置</Typography>
+        <Typography>无垠号</Typography>
         <Box className="m-4">
           <TextField
             label="货舱大小"
@@ -130,25 +119,8 @@ export default function RoutePage() {
             inputProps={{ min: 0, max: 9999 }}
           />
         </Box>
-        <Typography>砍价 抬价</Typography>
+        <Typography>抬价 砍价</Typography>
         <Box className="m-4">
-          <TextField
-            label="砍价"
-            type="number"
-            size="small"
-            InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-            inputProps={{ min: 0, max: 20 }}
-            value={playerConfig.bargain.bargainPercent}
-            onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
-          />
-          <TextField
-            label="砍价疲劳"
-            type="number"
-            size="small"
-            inputProps={{ min: 0, max: 100 }}
-            value={playerConfig.bargain.bargainFatigue}
-            onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
-          />
           <TextField
             label="抬价"
             type="number"
@@ -166,8 +138,25 @@ export default function RoutePage() {
             value={playerConfig.bargain.raiseFatigue}
             onChange={(e) => onBargainChange("raiseFatigue", e.target.value)}
           />
+          <TextField
+            label="砍价"
+            type="number"
+            size="small"
+            InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+            inputProps={{ min: 0, max: 20 }}
+            value={playerConfig.bargain.bargainPercent}
+            onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
+          />
+          <TextField
+            label="砍价疲劳"
+            type="number"
+            size="small"
+            inputProps={{ min: 0, max: 100 }}
+            value={playerConfig.bargain.bargainFatigue}
+            onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
+          />
         </Box>
-        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。</Typography>
+        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。附属城市声望跟随主城。</Typography>
         <Box className="m-4">
           <TextField
             label="修格里城"
@@ -201,6 +190,29 @@ export default function RoutePage() {
             value={playerConfig.prestige["七号自由港"]}
             onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
           />
+        </Box>
+      </Box>
+
+      <Box className="m-4">
+        <Typography>线路</Typography>
+        <Box className="m-4">
+          <MultipleSelect
+            label="原产地"
+            name="sourceCities"
+            allOptions={CITIES}
+            selectedOptions={selectedCities.sourceCities}
+            handleChange={(selected: CityName[]) => setSourceCities(selected)}
+          />
+          <MultipleSelect
+            label="目标城市"
+            name="targetCities"
+            allOptions={CITIES}
+            selectedOptions={selectedCities.targetCities}
+            handleChange={(selected: CityName[]) => setTargetCities(selected)}
+          />
+          <IconButton onClick={switchSourceAndTargetCities} size="small">
+            <SyncAltIcon />
+          </IconButton>
         </Box>
       </Box>
 
