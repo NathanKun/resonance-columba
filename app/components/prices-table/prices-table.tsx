@@ -38,6 +38,9 @@ export default function PricesTable() {
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
         },
+        typography: {
+          fontSize: 12,
+        },
       }),
     [prefersDarkMode]
   );
@@ -183,7 +186,6 @@ export default function PricesTable() {
           "&:before": {
             backgroundColor: `${color} !important`,
           },
-          fontSize: "0.7rem",
           textAlign: "center",
           padding: "0",
         },
@@ -271,6 +273,11 @@ export default function PricesTable() {
               header: "单个利润",
               size: 50,
               enableEditing: false,
+              muiTableBodyCellProps: {
+                sx: {
+                  textAlign: "right",
+                },
+              },
             },
             {
               id: `targetCity-${city}-lotprofit`,
@@ -278,6 +285,11 @@ export default function PricesTable() {
               header: "单批利润",
               size: 50,
               enableEditing: false,
+              muiTableBodyCellProps: {
+                sx: {
+                  textAlign: "right",
+                },
+              },
             },
           ]
             // remove time column for v2 prices
@@ -554,7 +566,6 @@ export default function PricesTable() {
     },
     muiTableHeadCellProps: () => ({
       sx: {
-        fontSize: "0.7rem",
         borderLeft: cellBorderStyle,
         borderRight: cellBorderStyle,
         "& .MuiBadge-root": {
@@ -564,7 +575,6 @@ export default function PricesTable() {
     }),
     muiTableBodyCellProps: {
       sx: {
-        fontSize: "0.7rem",
         lineHeight: "0.8rem",
         borderLeft: cellBorderStyle,
         borderRight: cellBorderStyle,
