@@ -2,7 +2,8 @@
 
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
-import { ProductRow, ProductRowCityPrice, SelectedCities } from "@/interfaces/prices-table";
+import useSelectedCities from "@/hooks/useSelectedCities";
+import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
@@ -27,9 +28,8 @@ import VariationInput from "./variation-input";
 
 export default function PricesTable() {
   const { prices, isV2Prices, setPrice } = useContext(PriceContext);
-  const [selectedCities, setSelectedCities] = useState<SelectedCities>(() => {
-    const selectedCitiesStr = localStorage.getItem("selectedCities");
-    return selectedCitiesStr ? JSON.parse(selectedCitiesStr) : { sourceCities: [CITIES[0]], targetCities: [CITIES[1]] };
+  const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
+    localStorageKey: "selectedCities",
   });
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
@@ -37,6 +37,9 @@ export default function PricesTable() {
       createTheme({
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
+        },
+        typography: {
+          fontSize: 12,
         },
       }),
     [prefersDarkMode]
@@ -46,36 +49,6 @@ export default function PricesTable() {
     theme.palette.mode === "dark" ? lighten(theme.palette.background.default, 0.05) : theme.palette.background.default;
   const cellBorderStyle =
     theme.palette.mode === "dark" ? "1px solid rgba(31, 41, 55, 1)" : "1px solid rgba(224, 224, 224, 1)";
-
-  const updateSelectedCitiesLsAndState = useCallback((newSelectedCities: SelectedCities) => {
-    const newStr = JSON.stringify(newSelectedCities);
-    localStorage.setItem("selectedCities", newStr);
-    setSelectedCities(newSelectedCities);
-  }, []);
-
-  const setSourceCities = useCallback(
-    (selected: CityName[]) => {
-      const newSelectedCities = { ...selectedCities, sourceCities: selected };
-      updateSelectedCitiesLsAndState(newSelectedCities);
-    },
-    [selectedCities, updateSelectedCitiesLsAndState]
-  );
-
-  const setTargetCities = useCallback(
-    (selected: CityName[]) => {
-      const newSelectedCities = { ...selectedCities, targetCities: selected };
-      updateSelectedCitiesLsAndState(newSelectedCities);
-    },
-    [selectedCities, updateSelectedCitiesLsAndState]
-  );
-
-  const switchSourceAndTargetCities = useCallback(() => {
-    const newSelectedCities = {
-      sourceCities: selectedCities.targetCities,
-      targetCities: selectedCities.sourceCities,
-    };
-    updateSelectedCitiesLsAndState(newSelectedCities);
-  }, [selectedCities, updateSelectedCitiesLsAndState]);
 
   // build table rows
   const data = useMemo<ProductRow[]>(() => {
@@ -183,7 +156,6 @@ export default function PricesTable() {
           "&:before": {
             backgroundColor: `${color} !important`,
           },
-          fontSize: "0.7rem",
           textAlign: "center",
           padding: "0",
         },
@@ -271,6 +243,11 @@ export default function PricesTable() {
               header: "单个利润",
               size: 50,
               enableEditing: false,
+              muiTableBodyCellProps: {
+                sx: {
+                  textAlign: "right",
+                },
+              },
             },
             {
               id: `targetCity-${city}-lotprofit`,
@@ -278,6 +255,11 @@ export default function PricesTable() {
               header: "单批利润",
               size: 50,
               enableEditing: false,
+              muiTableBodyCellProps: {
+                sx: {
+                  textAlign: "right",
+                },
+              },
             },
           ]
             // remove time column for v2 prices
@@ -554,7 +536,6 @@ export default function PricesTable() {
     },
     muiTableHeadCellProps: () => ({
       sx: {
-        fontSize: "0.7rem",
         borderLeft: cellBorderStyle,
         borderRight: cellBorderStyle,
         "& .MuiBadge-root": {
@@ -564,7 +545,6 @@ export default function PricesTable() {
     }),
     muiTableBodyCellProps: {
       sx: {
-        fontSize: "0.7rem",
         lineHeight: "0.8rem",
         borderLeft: cellBorderStyle,
         borderRight: cellBorderStyle,

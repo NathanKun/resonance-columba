@@ -19,7 +19,7 @@ export default function V2PricesSwitch() {
   const { isV2Prices, setUseV2Prices } = useContext(PriceContext);
   const [dialogOpen, setDialogOpen] = useState(false);
   const pathname = usePathname();
-  const allowedPaths = ["/"];
+  const allowedPaths = ["/", "/route"];
 
   const handleDialogClose = () => {
     setDialogOpen(false);
