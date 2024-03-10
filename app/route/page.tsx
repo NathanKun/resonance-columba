@@ -87,6 +87,7 @@ export default function RoutePage() {
     <ThemeProvider theme={theme}>
       <Typography className="mx-4 my-2">买价卖价为砍价抬价税后价格。</Typography>
       <Typography className="mx-4 my-2">路线中的产品已经按利润进行了排序。</Typography>
+      <Typography className="mx-4 my-2">单票仓位未算入可能存在的角色生活技能的20%加成。</Typography>
       <Typography className="mx-4 my-2">累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
 
       <Box className="m-4">
@@ -140,14 +141,14 @@ export default function RoutePage() {
             value={playerConfig.bargain.bargainPercent}
             onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
           />
-          {/* <TextField
+          <TextField
             label="砍价疲劳"
             type="number"
             size="small"
             inputProps={{ min: 0, max: 100 }}
             value={playerConfig.bargain.bargainFatigue}
             onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
-          /> */}
+          />
           <TextField
             label="抬价"
             type="number"
@@ -157,14 +158,14 @@ export default function RoutePage() {
             value={playerConfig.bargain.raisePercent}
             onChange={(e) => onBargainChange("raisePercent", e.target.value)}
           />
-          {/* <TextField
+          <TextField
             label="抬价疲劳"
             type="number"
             size="small"
             inputProps={{ min: 0, max: 100 }}
             value={playerConfig.bargain.raiseFatigue}
             onChange={(e) => onBargainChange("raiseFatigue", e.target.value)}
-          /> */}
+          />
         </Box>
         <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。</Typography>
         <Box className="m-4">
@@ -210,7 +211,7 @@ export default function RoutePage() {
               return (
                 <div
                   key={`table-${fromCity}-${toCity}`}
-                  className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-4xl mx-auto my-2 w-full"
+                  className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full"
                 >
                   <Typography className="my-4">
                     {fromCity}
@@ -231,6 +232,8 @@ export default function RoutePage() {
                           <TableCell align="right">补货累计利润</TableCell>
                           <TableCell align="right">补货累计仓位</TableCell>
                           <TableCell align="right">补货次数</TableCell>
+                          <TableCell align="right">疲劳</TableCell>
+                          <TableCell align="right">单位疲劳利润</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -252,6 +255,8 @@ export default function RoutePage() {
                             <TableCell align="right">{row.restockAccumulatedProfit}</TableCell>
                             <TableCell align="right">{row.restockAccumulatedLot}</TableCell>
                             <TableCell align="right">{row.restockCount}</TableCell>
+                            <TableCell align="right">{row.fatigue}</TableCell>
+                            <TableCell align="right">{row.profitPerFatigue}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
