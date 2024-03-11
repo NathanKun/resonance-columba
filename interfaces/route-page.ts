@@ -28,6 +28,8 @@ export interface CityProductProfitAccumulatedExchange extends Exchange {
   // fatigue
   fatigue?: number;
   profitPerFatigue?: number;
+
+  isForFillCargo?: boolean;
 }
 
 export interface CityGroupedExchanges {

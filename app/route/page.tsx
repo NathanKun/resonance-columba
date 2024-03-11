@@ -113,7 +113,9 @@ export default function RoutePage() {
   /* route recommendation */
   const recommendations = [];
   for (let i = 1; i <= 7; i++) {
-    recommendations.push(getBestRoutesByNumberOfBuyingProductTypes(fromCities, i, cityGroupedExchangesAllTargetCities));
+    recommendations.push(
+      getBestRoutesByNumberOfBuyingProductTypes(fromCities, i, cityGroupedExchangesAllTargetCities, playerConfig)
+    );
   }
   // console.log(cityGroupedExchangesAllTargetCities, fromCities, recommendations);
 
@@ -154,6 +156,7 @@ export default function RoutePage() {
 
         <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
         <Box className="m-4">
+          {/* <NumberInputIntroduction /> */}
           <TextField
             label="修格里城"
             type="number"
@@ -282,14 +285,15 @@ export default function RoutePage() {
                             <TableCell>累计利润</TableCell>
                             <TableCell>进货卡需求</TableCell>
                             <TableCell>商品种类</TableCell>
+                            <TableCell>剩余空仓购买</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {exchangesCombination
                             .slice(0, 3) // only show top 3
-                            .map((row) => (
+                            .map((row, index) => (
                               <TableRow
-                                key={`recommendation-${index}-${row.fromCity}-${row.toCity}`}
+                                key={`recommendation-${index}-${row.fromCity}-${row.toCity}-option-${index}`}
                                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                               >
                                 <TableCell>{row.fromCity}</TableCell>
@@ -297,7 +301,15 @@ export default function RoutePage() {
                                 <TableCell>{row.profitOfCombination}</TableCell>
                                 <TableCell>{row.restockCount}</TableCell>
                                 <TableCell>
-                                  {row.choosenExchanges.map((exchange) => exchange.product).join(", ")}
+                                  {row.choosenExchanges
+                                    .filter((exchange) => !exchange.isForFillCargo)
+                                    .map((exchange) => exchange.product)
+                                    .join(", ")}
+                                </TableCell>
+                                <TableCell>
+                                  {row.choosenExchanges
+                                    .filter((exchange) => exchange.isForFillCargo)
+                                    .map((exchange) => exchange.product)}
                                 </TableCell>
                               </TableRow>
                             ))}
