@@ -265,9 +265,6 @@ export default function RoutePage() {
                 起始城市查看从这个城市出发的最优线路，或清空起始城市查看整体最优线路。
               </Typography>
             </div>
-            <div className="flex flex-col">
-              <Typography>233</Typography>
-            </div>
           </div>
 
           {recommendations.map((exchangesCombination, index) => {
