@@ -2,7 +2,7 @@ import { Product } from "@/interfaces/product";
 
 export const PRODUCTS: Product[] = [
   {
-    name: "发动机",
+    name: "发动机(210w",
     sellPrices: {
       修格里城: null,
       铁盟哨站: 3464,
@@ -23,7 +23,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "弹丸加速装置",
+    name: "弹丸加速装置(30w",
     sellPrices: {
       修格里城: null,
       铁盟哨站: null,
@@ -88,7 +88,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "防弹背心",
+    name: "防弹背心(210w",
     sellPrices: {
       修格里城: 2933,
       铁盟哨站: null,
@@ -109,7 +109,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "精钢",
+    name: "精钢(20w",
     sellPrices: {
       修格里城: 1411,
       铁盟哨站: null,
@@ -130,7 +130,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "桦石发财树",
+    name: "桦石发财树(70w",
     sellPrices: {
       修格里城: 5279,
       铁盟哨站: 5401,
@@ -151,7 +151,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "石墨烯",
+    name: "石墨烯(210w",
     sellPrices: {
       修格里城: 2557,
       铁盟哨站: 2964,
@@ -172,7 +172,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "人工晶花",
+    name: "人工晶花(10w",
     sellPrices: {
       修格里城: 1997,
       铁盟哨站: 2081,
@@ -214,7 +214,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "游戏机",
+    name: "游戏机(50w",
     sellPrices: {
       修格里城: 3424,
       铁盟哨站: 3424,
@@ -235,7 +235,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "银矿石",
+    name: "银矿石(30w",
     sellPrices: {
       修格里城: 2650,
       铁盟哨站: 2650,
@@ -256,7 +256,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "游戏卡带",
+    name: "游戏卡带(10w",
     sellPrices: {
       修格里城: 732.3,
       铁盟哨站: 731,
@@ -361,7 +361,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "抗污染防护服",
+    name: "抗污染防护服(40w",
     sellPrices: {
       修格里城: 3108,
       铁盟哨站: 3191,
@@ -424,7 +424,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "阿妮塔小型桦树发电机",
+    name: "阿妮塔小型桦树发电机(280w",
     sellPrices: {
       修格里城: 7852,
       铁盟哨站: 7990,
@@ -445,7 +445,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "石墨烯电池",
+    name: "石墨烯电池(210w",
     sellPrices: {
       修格里城: 4530,
       铁盟哨站: 4646,
@@ -466,7 +466,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "阿妮塔101民用无人机",
+    name: "阿妮塔101民用无人机(50w",
     sellPrices: {
       修格里城: 1935,
       铁盟哨站: 2012,
@@ -487,7 +487,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "家用太阳能电池组",
+    name: "家用太阳能电池组(30w",
     sellPrices: {
       修格里城: 1452,
       铁盟哨站: 1509,
@@ -508,7 +508,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "琥珀",
+    name: "琥珀(130w",
     sellPrices: {
       修格里城: 2419,
       铁盟哨站: 2307,
@@ -529,7 +529,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "孔雀石",
+    name: "孔雀石(50w",
     sellPrices: {
       修格里城: 1782,
       铁盟哨站: 1700,
@@ -550,7 +550,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "绿松石",
+    name: "绿松石(50w",
     sellPrices: {
       修格里城: 1247,
       铁盟哨站: 1178,
@@ -592,7 +592,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "图形加速卡",
+    name: "图形加速卡(210w",
     sellPrices: {
       修格里城: 3409,
       铁盟哨站: 3256,
@@ -634,7 +634,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "钛矿石",
+    name: "钛矿石(70w",
     sellPrices: {
       修格里城: 1750,
       铁盟哨站: 1716,
@@ -655,7 +655,7 @@ export const PRODUCTS: Product[] = [
     type: "Normal",
   },
   {
-    name: "铁轨用特种钢材",
+    name: "铁轨用特种钢材(10w",
     sellPrices: {
       修格里城: 1166,
       铁盟哨站: 1112,
@@ -676,7 +676,7 @@ export const PRODUCTS: Product[] = [
     type: "Normal",
   },
   {
-    name: "沙金",
+    name: "沙金(40w",
     sellPrices: {
       修格里城: 2943,
       铁盟哨站: 2943,
@@ -697,7 +697,7 @@ export const PRODUCTS: Product[] = [
     type: "Special",
   },
   {
-    name: "青金石",
+    name: "青金石(70w",
     sellPrices: {
       修格里城: 2170,
       铁盟哨站: 2170,
