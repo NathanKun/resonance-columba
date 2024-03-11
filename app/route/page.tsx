@@ -115,7 +115,7 @@ export default function RoutePage() {
   for (let i = 1; i <= 7; i++) {
     recommendations.push(getBestRoutesByNumberOfBuyingProductTypes(fromCities, i, cityGroupedExchangesAllTargetCities));
   }
-  console.log(cityGroupedExchangesAllTargetCities, fromCities, recommendations);
+  // console.log(cityGroupedExchangesAllTargetCities, fromCities, recommendations);
 
   return (
     <ThemeProvider theme={theme}>

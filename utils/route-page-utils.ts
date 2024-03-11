@@ -203,10 +203,10 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
         exchange.accumulatedLot = accLot;
 
         // restock calculation
-        const restockCount = Math.floor(playerConfig.maxLot / exchange.accumulatedLot);
+        const restockCount = Math.max(0, Math.floor(playerConfig.maxLot / exchange.accumulatedLot) - 1);
         exchange.restockCount = restockCount;
-        exchange.restockAccumulatedProfit = restockCount * exchange.accumulatedProfit;
-        exchange.restockAccumulatedLot = restockCount * exchange.accumulatedLot;
+        exchange.restockAccumulatedProfit = (restockCount + 1) * exchange.accumulatedProfit;
+        exchange.restockAccumulatedLot = (restockCount + 1) * exchange.accumulatedLot;
 
         // fatigue calculation
         const fatigue = getRouteFatigue(fromCity, toCity);
