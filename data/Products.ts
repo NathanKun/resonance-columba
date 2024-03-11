@@ -1636,7 +1636,7 @@ export const PRODUCTS: Product[] = pdts.filter((product) => {
       if (buyPrices.length === 0) {
         return false;
       }
-      if (Math.min(...buyPrices) < 500) {
+      if (Math.min(...buyPrices) < 300) {
         return false;
       }
     }
