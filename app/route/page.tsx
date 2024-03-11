@@ -68,8 +68,8 @@ export default function RoutePage() {
   };
 
   const onBargainChange = (field: string, value: string) => {
-    if (value && !isNaN(parseInt(value))) {
-      onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: parseInt(value) });
+    if (value && !isNaN(parseFloat(value))) {
+      onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: parseFloat(value) });
     }
   };
 
@@ -195,7 +195,7 @@ export default function RoutePage() {
             type="number"
             size="small"
             InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-            inputProps={{ min: 0, max: 20 }}
+            inputProps={{ min: 0, max: 20, step: 0.1 }}
             value={playerConfig.bargain.raisePercent}
             onChange={(e) => onBargainChange("raisePercent", e.target.value)}
           />
@@ -212,7 +212,7 @@ export default function RoutePage() {
             type="number"
             size="small"
             InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-            inputProps={{ min: 0, max: 20 }}
+            inputProps={{ min: 0, max: 20, step: 0.1 }}
             value={playerConfig.bargain.bargainPercent}
             onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
           />
