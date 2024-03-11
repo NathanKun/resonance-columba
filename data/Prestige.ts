@@ -89,4 +89,20 @@ export const PRESTIGES: PrestigeConfig[] = [
     },
     extraBuy: 1.8,
   },
+  {
+    level: 19,
+    generalTax: 0.055,
+    specialTax: {
+      七号自由港: 0.025,
+    },
+    extraBuy: 1.9,
+  },
+  {
+    level: 20,
+    generalTax: 0.05,
+    specialTax: {
+      七号自由港: 0.02,
+    },
+    extraBuy: 2,
+  },
 ];
