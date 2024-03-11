@@ -152,13 +152,13 @@ export default function RoutePage() {
           />
         </Box>
 
-        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。附属城市声望跟随主城。</Typography>
+        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级到18级。附属城市声望跟随主城。</Typography>
         <Box className="m-4">
           <TextField
             label="修格里城"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 20 }}
+            inputProps={{ min: 8, max: 18 }}
             value={playerConfig.prestige["修格里城"]}
             onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
           />
@@ -166,7 +166,7 @@ export default function RoutePage() {
             label="曼德矿场"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 20 }}
+            inputProps={{ min: 8, max: 18 }}
             value={playerConfig.prestige["曼德矿场"]}
             onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
           />
@@ -174,7 +174,7 @@ export default function RoutePage() {
             label="澄明数据中心"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 20 }}
+            inputProps={{ min: 8, max: 18 }}
             value={playerConfig.prestige["澄明数据中心"]}
             onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
           />
@@ -182,7 +182,7 @@ export default function RoutePage() {
             label="七号自由港"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 20 }}
+            inputProps={{ min: 8, max: 18 }}
             value={playerConfig.prestige["七号自由港"]}
             onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
           />
