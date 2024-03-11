@@ -186,7 +186,7 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
   for (const fromCity in cityGroupedExchanges) {
     for (const toCity in cityGroupedExchanges[fromCity]) {
       cityGroupedExchanges[fromCity][toCity] = cityGroupedExchanges[fromCity][toCity].sort(
-        (a, b) => b.singleProfit - a.singleProfit
+        (a, b) => b.singleProfit - a.singleProfit // reverse sort
       );
 
       let accProfit = 0;
@@ -224,4 +224,43 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
 
 export const getRouteFatigue = (city1: CityName, city2: CityName) => {
   return FATIGUES.find((fatigue) => fatigue.cities.includes(city1) && fatigue.cities.includes(city2))?.fatigue;
+};
+
+export const getBestRoutesByNumberOfBuyingProductTypes = (
+  fromCities: CityName[],
+  nbOfType: number, // number of different kind of product to buy from the same city
+  cityGroupedExchanges: CityGroupedExchanges
+) => {
+  const combinations = [];
+  for (const fromCity of fromCities) {
+    for (const toCity in cityGroupedExchanges[fromCity]) {
+      const exchanges = cityGroupedExchanges[fromCity][toCity];
+
+      if (exchanges.length < nbOfType) {
+        console.info(`Not enough type of exchanges ${nbOfType} for ${fromCity} to ${toCity}`);
+        continue;
+      }
+
+      // take the first nbOfType exchanges
+      const choosenExchanges = exchanges.slice(0, nbOfType);
+
+      // skip if start losing
+      const loss = choosenExchanges.some((exchange) => exchange.loss);
+      if (loss) {
+        console.info(`${nbOfType} Loss in ${fromCity} to ${toCity}`);
+        continue;
+      }
+
+      const profitOfCombination = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedProfit;
+      const restockCount = choosenExchanges[choosenExchanges.length - 1].restockCount;
+      combinations.push({
+        fromCity,
+        toCity,
+        choosenExchanges,
+        profitOfCombination,
+        restockCount,
+      });
+    }
+  }
+  return combinations.sort((a, b) => b.profitOfCombination - a.profitOfCombination);
 };

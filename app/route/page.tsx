@@ -3,10 +3,20 @@
 import { CITIES, CityName } from "@/data/Cities";
 import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
-import { calculateAccumulatedValues, calculateExchanges, groupeExchangesByCity } from "@/utils/route-page-utils";
+import { CityGroupedExchanges } from "@/interfaces/route-page";
+import {
+  calculateAccumulatedValues,
+  calculateExchanges,
+  getBestRoutesByNumberOfBuyingProductTypes,
+  groupeExchangesByCity,
+} from "@/utils/route-page-utils";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   IconButton,
   InputAdornment,
@@ -70,18 +80,42 @@ export default function RoutePage() {
   };
 
   /* calculation */
+  // when no source city is selected, use all cities as source cities
+  const fromCities = useMemo(
+    () => (selectedCities.sourceCities.length >= 1 ? [selectedCities.sourceCities[0]] : CITIES),
+    [selectedCities.sourceCities]
+  );
+
   // all possible single product exchange routes
-  const singleProductExchanges = calculateExchanges(
-    playerConfig,
-    selectedCities.sourceCities,
-    selectedCities.targetCities,
-    prices,
-    isV2Prices
+  const singleProductExchangesAllTargetCities = useMemo(
+    () => calculateExchanges(playerConfig, fromCities, CITIES, prices, isV2Prices),
+    [isV2Prices, playerConfig, prices, fromCities]
   );
 
   // group by fromCity then toCity
-  const cityGroupedExchanges = groupeExchangesByCity(singleProductExchanges);
-  calculateAccumulatedValues(playerConfig, cityGroupedExchanges);
+  const cityGroupedExchangesAllTargetCities: CityGroupedExchanges = groupeExchangesByCity(
+    singleProductExchangesAllTargetCities
+  );
+  calculateAccumulatedValues(playerConfig, cityGroupedExchangesAllTargetCities);
+
+  // filter out exchanges that are not in selected target cities, for displaying in detailed simulation
+  const cityGroupedExchangesSelectedTargetCities: CityGroupedExchanges = {};
+  for (const fromCity in cityGroupedExchangesAllTargetCities) {
+    cityGroupedExchangesSelectedTargetCities[fromCity] = {};
+    for (const toCity in cityGroupedExchangesAllTargetCities[fromCity]) {
+      if (selectedCities.targetCities.includes(toCity)) {
+        cityGroupedExchangesSelectedTargetCities[fromCity][toCity] =
+          cityGroupedExchangesAllTargetCities[fromCity][toCity];
+      }
+    }
+  }
+
+  /* route recommendation */
+  const recommendations = [];
+  for (let i = 1; i <= 7; i++) {
+    recommendations.push(getBestRoutesByNumberOfBuyingProductTypes(fromCities, i, cityGroupedExchangesAllTargetCities));
+  }
+  console.log(cityGroupedExchangesAllTargetCities, fromCities, recommendations);
 
   return (
     <ThemeProvider theme={theme}>
@@ -93,10 +127,7 @@ export default function RoutePage() {
           <Typography>买价为砍价税后价格。</Typography>
           <Typography>卖价为抬价后价格。</Typography>
           <Typography>利润为税后利润。</Typography>
-          <Typography>路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
-          <Typography>列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
           <Typography>单票仓位未算入可能存在的角色生活技能的20%加成。</Typography>
-          <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
         </div>
       </div>
       <Box
@@ -119,6 +150,43 @@ export default function RoutePage() {
             inputProps={{ min: 0, max: 9999 }}
           />
         </Box>
+
+        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。附属城市声望跟随主城。</Typography>
+        <Box className="m-4">
+          <TextField
+            label="修格里城"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["修格里城"]}
+            onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
+          />
+          <TextField
+            label="曼德矿场"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["曼德矿场"]}
+            onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
+          />
+          <TextField
+            label="澄明数据中心"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["澄明数据中心"]}
+            onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
+          />
+          <TextField
+            label="七号自由港"
+            type="number"
+            size="small"
+            inputProps={{ min: 8, max: 20 }}
+            value={playerConfig.prestige["七号自由港"]}
+            onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
+          />
+        </Box>
+
         <Typography>抬价 砍价</Typography>
         <Box className="m-4">
           <TextField
@@ -156,41 +224,6 @@ export default function RoutePage() {
             onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
           />
         </Box>
-        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级以上。附属城市声望跟随主城。</Typography>
-        <Box className="m-4">
-          <TextField
-            label="修格里城"
-            type="number"
-            size="small"
-            inputProps={{ min: 8, max: 20 }}
-            value={playerConfig.prestige["修格里城"]}
-            onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
-          />
-          <TextField
-            label="曼德矿场"
-            type="number"
-            size="small"
-            inputProps={{ min: 8, max: 20 }}
-            value={playerConfig.prestige["曼德矿场"]}
-            onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
-          />
-          <TextField
-            label="澄明数据中心"
-            type="number"
-            size="small"
-            inputProps={{ min: 8, max: 20 }}
-            value={playerConfig.prestige["澄明数据中心"]}
-            onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
-          />
-          <TextField
-            label="七号自由港"
-            type="number"
-            size="small"
-            inputProps={{ min: 8, max: 20 }}
-            value={playerConfig.prestige["七号自由港"]}
-            onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
-          />
-        </Box>
       </Box>
 
       <Box className="m-4">
@@ -216,70 +249,152 @@ export default function RoutePage() {
         </Box>
       </Box>
 
-      {Object.keys(cityGroupedExchanges).map((fromCity) => {
-        return (
-          <div key={fromCity}>
-            {Object.keys(cityGroupedExchanges[fromCity]).map((toCity) => {
-              return (
-                <div
-                  key={`table-${fromCity}-${toCity}`}
-                  className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full"
-                >
-                  <Typography className="my-4">
-                    {fromCity}
-                    <RouteOutlinedIcon className="mx-2" />
-                    {toCity}
-                  </Typography>
-                  <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>产品</TableCell>
-                          <TableCell align="right">买价</TableCell>
-                          <TableCell align="right">卖价</TableCell>
-                          <TableCell align="right">单票仓位</TableCell>
-                          <TableCell align="right">单票利润</TableCell>
-                          <TableCell align="right">单票累计利润</TableCell>
-                          <TableCell align="right">单票累计仓位</TableCell>
-                          <TableCell align="right">补货累计利润</TableCell>
-                          <TableCell align="right">补货累计仓位</TableCell>
-                          <TableCell align="right">补货次数</TableCell>
-                          <TableCell align="right">疲劳</TableCell>
-                          <TableCell align="right">单位疲劳利润</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {cityGroupedExchanges[fromCity][toCity].map((row) => (
-                          <TableRow
-                            key={`row-${row.product}-${row.fromCity}-${row.toCity}`}
-                            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                            className={row.loss ? "line-through" : ""}
-                          >
-                            <TableCell component="th" scope="row">
-                              {row.product}
-                            </TableCell>
-                            <TableCell align="right">{row.buyPrice}</TableCell>
-                            <TableCell align="right">{row.sellPrice}</TableCell>
-                            <TableCell align="right">{row.buyLot}</TableCell>
-                            <TableCell align="right">{row.lotProfit}</TableCell>
-                            <TableCell align="right">{row.accumulatedProfit}</TableCell>
-                            <TableCell align="right">{row.accumulatedLot}</TableCell>
-                            <TableCell align="right">{row.restockAccumulatedProfit}</TableCell>
-                            <TableCell align="right">{row.restockAccumulatedLot}</TableCell>
-                            <TableCell align="right">{row.restockCount}</TableCell>
-                            <TableCell align="right">{row.fatigue}</TableCell>
-                            <TableCell align="right">{row.profitPerFatigue}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </div>
-              );
-            })}
+      <Accordion className="">
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
+          最优线路推荐
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+            <div className="flex justify-between items-center mb-4">
+              <Typography component="h3">
+                选择
+                <Typography fontSize={20} component="strong">
+                  一个
+                </Typography>
+                起始城市查看从这个城市出发的最优线路，或清空起始城市查看整体最优线路。
+              </Typography>
+            </div>
+            <div className="flex flex-col">
+              <Typography>233</Typography>
+            </div>
           </div>
-        );
-      })}
+
+          {recommendations.map((exchangesCombination, index) => {
+            return (
+              exchangesCombination.length > 0 && (
+                <Box key={`recomendation-${index}`} className="m-4">
+                  <Typography>购买{index + 1}种商品</Typography>
+                  <Box className="m-4">
+                    <TableContainer component={Paper}>
+                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>起始城市</TableCell>
+                            <TableCell>终点城市</TableCell>
+                            <TableCell>累计利润</TableCell>
+                            <TableCell>进货卡需求</TableCell>
+                            <TableCell>商品种类</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {exchangesCombination
+                            .slice(0, 3) // only show top 3
+                            .map((row) => (
+                              <TableRow
+                                key={`recommendation-${index}-${row.fromCity}-${row.toCity}`}
+                                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                              >
+                                <TableCell>{row.fromCity}</TableCell>
+                                <TableCell>{row.toCity}</TableCell>
+                                <TableCell>{row.profitOfCombination}</TableCell>
+                                <TableCell>{row.restockCount}</TableCell>
+                                <TableCell>
+                                  {row.choosenExchanges.map((exchange) => exchange.product).join(", ")}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                </Box>
+              )
+            );
+          })}
+        </AccordionDetails>
+      </Accordion>
+      <Accordion className="mb-12">
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
+          详细模拟
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+            <div className="flex justify-between items-center mb-4">
+              <Typography component="h3">选择一个或多个起始城市以及终点城市，查看所有线路以及最优交易组合。</Typography>
+            </div>
+            <div className="flex flex-col">
+              <Typography>路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
+              <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
+              <Typography>列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
+            </div>
+          </div>
+
+          {Object.keys(cityGroupedExchangesSelectedTargetCities).map((fromCity) => {
+            return (
+              <div key={fromCity}>
+                {Object.keys(cityGroupedExchangesSelectedTargetCities[fromCity]).map((toCity) => {
+                  return (
+                    <div
+                      key={`table-${fromCity}-${toCity}`}
+                      className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full"
+                    >
+                      <Typography className="my-4">
+                        {fromCity}
+                        <RouteOutlinedIcon className="mx-2" />
+                        {toCity}
+                      </Typography>
+                      <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>产品</TableCell>
+                              <TableCell align="right">买价</TableCell>
+                              <TableCell align="right">卖价</TableCell>
+                              <TableCell align="right">单票仓位</TableCell>
+                              <TableCell align="right">单票利润</TableCell>
+                              <TableCell align="right">单票累计利润</TableCell>
+                              <TableCell align="right">单票累计仓位</TableCell>
+                              <TableCell align="right">补货累计利润</TableCell>
+                              <TableCell align="right">补货累计仓位</TableCell>
+                              <TableCell align="right">补货次数</TableCell>
+                              <TableCell align="right">疲劳</TableCell>
+                              <TableCell align="right">单位疲劳利润</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {cityGroupedExchangesSelectedTargetCities[fromCity][toCity].map((row) => (
+                              <TableRow
+                                key={`row-${row.product}-${row.fromCity}-${row.toCity}`}
+                                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                className={row.loss ? "line-through" : ""}
+                              >
+                                <TableCell component="th" scope="row">
+                                  {row.product}
+                                </TableCell>
+                                <TableCell align="right">{row.buyPrice}</TableCell>
+                                <TableCell align="right">{row.sellPrice}</TableCell>
+                                <TableCell align="right">{row.buyLot}</TableCell>
+                                <TableCell align="right">{row.lotProfit}</TableCell>
+                                <TableCell align="right">{row.accumulatedProfit}</TableCell>
+                                <TableCell align="right">{row.accumulatedLot}</TableCell>
+                                <TableCell align="right">{row.restockAccumulatedProfit}</TableCell>
+                                <TableCell align="right">{row.restockAccumulatedLot}</TableCell>
+                                <TableCell align="right">{row.restockCount}</TableCell>
+                                <TableCell align="right">{row.fatigue}</TableCell>
+                                <TableCell align="right">{row.profitPerFatigue}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </AccordionDetails>
+      </Accordion>
     </ThemeProvider>
   );
 }
