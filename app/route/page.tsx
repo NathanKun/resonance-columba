@@ -152,7 +152,7 @@ export default function RoutePage() {
           />
         </Box>
 
-        <Typography>声望等级：影响税收与单票商品购入量，仅支持8级到18级。附属城市声望跟随主城。</Typography>
+        <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
         <Box className="m-4">
           <TextField
             label="修格里城"
