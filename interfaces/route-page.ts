@@ -37,3 +37,25 @@ export interface CityGroupedExchanges {
     [toCity: CityName]: CityProductProfitAccumulatedExchange[];
   };
 }
+
+export interface OnegraphRecommendations {
+  [fromCity: string]: {
+    [toCity: string]: OnegraphCityRecommendation;
+  };
+}
+
+export interface OnegraphCityRecommendation {
+  goExchanges: CityProductProfitAccumulatedExchange[];
+  returnExchanges?: CityProductProfitAccumulatedExchange[];
+}
+export interface OneGraphRouteDialogProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  data?: OneGraphRouteDialogData;
+}
+
+export interface OneGraphRouteDialogData {
+  fromCity: string;
+  toCity: string;
+  onegraphData: OnegraphCityRecommendation;
+}

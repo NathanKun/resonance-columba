@@ -1,4 +1,4 @@
-import { CITY_BELONGS_TO, CityName } from "@/data/Cities";
+import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
 import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
@@ -227,11 +227,13 @@ export const getRouteFatigue = (city1: CityName, city2: CityName) => {
 };
 
 export const getBestRoutesByNumberOfBuyingProductTypes = (
-  fromCities: CityName[],
+  fromCity: CityName,
   nbOfType: number, // number of different kind of product to buy from the same city
   cityGroupedExchanges: CityGroupedExchanges,
   playerConfig: PlayerConfig
 ) => {
+  const fromCities = fromCity === "any" ? CITIES : [fromCity];
+
   const combinations = [];
   for (const fromCity of fromCities) {
     for (const toCity in cityGroupedExchanges[fromCity]) {
