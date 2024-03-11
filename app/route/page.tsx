@@ -158,7 +158,7 @@ export default function RoutePage() {
             label="修格里城"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 18 }}
+            inputProps={{ min: 8, max: 20 }}
             value={playerConfig.prestige["修格里城"]}
             onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
           />
@@ -166,7 +166,7 @@ export default function RoutePage() {
             label="曼德矿场"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 18 }}
+            inputProps={{ min: 8, max: 20 }}
             value={playerConfig.prestige["曼德矿场"]}
             onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
           />
@@ -174,7 +174,7 @@ export default function RoutePage() {
             label="澄明数据中心"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 18 }}
+            inputProps={{ min: 8, max: 20 }}
             value={playerConfig.prestige["澄明数据中心"]}
             onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
           />
@@ -182,7 +182,7 @@ export default function RoutePage() {
             label="七号自由港"
             type="number"
             size="small"
-            inputProps={{ min: 8, max: 18 }}
+            inputProps={{ min: 8, max: 20 }}
             value={playerConfig.prestige["七号自由港"]}
             onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
           />
