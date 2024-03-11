@@ -237,7 +237,6 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
       const exchanges = cityGroupedExchanges[fromCity][toCity];
 
       if (exchanges.length < nbOfType) {
-        console.info(`Not enough type of exchanges ${nbOfType} for ${fromCity} to ${toCity}`);
         continue;
       }
 
@@ -247,7 +246,6 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
       // skip if start losing
       const loss = choosenExchanges.some((exchange) => exchange.loss);
       if (loss) {
-        console.info(`${nbOfType} Loss in ${fromCity} to ${toCity}`);
         continue;
       }
 
