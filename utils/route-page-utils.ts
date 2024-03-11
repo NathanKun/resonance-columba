@@ -1,10 +1,10 @@
-import { CITY_BELONGS_TO, CityName } from "@/data/Cities";
+import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
 import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { PlayerConfig } from "@/interfaces/player-config";
-import { Buy, CityGroupedExchanges, Exchange } from "@/interfaces/route-page";
+import { Buy, CityGroupedExchanges, CityProductProfitAccumulatedExchange, Exchange } from "@/interfaces/route-page";
 
 const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
 
@@ -227,10 +227,13 @@ export const getRouteFatigue = (city1: CityName, city2: CityName) => {
 };
 
 export const getBestRoutesByNumberOfBuyingProductTypes = (
-  fromCities: CityName[],
+  fromCity: CityName,
   nbOfType: number, // number of different kind of product to buy from the same city
-  cityGroupedExchanges: CityGroupedExchanges
+  cityGroupedExchanges: CityGroupedExchanges,
+  playerConfig: PlayerConfig
 ) => {
+  const fromCities = fromCity === "any" ? CITIES : [fromCity];
+
   const combinations = [];
   for (const fromCity of fromCities) {
     for (const toCity in cityGroupedExchanges[fromCity]) {
@@ -249,8 +252,39 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
         continue;
       }
 
-      const profitOfCombination = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedProfit;
+      let profitOfCombination = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedProfit;
       const restockCount = choosenExchanges[choosenExchanges.length - 1].restockCount;
+
+      // fill the remaining cargo with the next best exchanges
+      // first, find the remaining cargo size
+      const usedLot = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedLot;
+      const remainingLot = playerConfig.maxLot - usedLot;
+
+      // check if there is a next profitable exchange
+      if (exchanges.length > nbOfType) {
+        const nextExchange = exchanges[nbOfType];
+        // next exchange is losing, no more profitable exchanges, break
+        if (nextExchange.loss) {
+          break;
+        }
+
+        const availableProducts = nextExchange.buyLot * (restockCount + 1);
+        const addedLot = Math.min(remainingLot, availableProducts);
+        const addedProfit = addedLot * nextExchange.singleProfit;
+
+        const newAccExchange: CityProductProfitAccumulatedExchange = {
+          ...nextExchange,
+          accumulatedProfit: addedProfit,
+          accumulatedLot: addedLot,
+          restockCount: -1,
+          restockAccumulatedProfit: -1,
+          restockAccumulatedLot: -1,
+          isForFillCargo: true,
+        };
+
+        choosenExchanges.push(newAccExchange);
+      }
+
       combinations.push({
         fromCity,
         toCity,
