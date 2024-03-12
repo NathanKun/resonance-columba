@@ -261,14 +261,7 @@ export default function PricesTable() {
                 },
               },
             },
-          ]
-            // remove time column for v2 prices
-            .filter((column) => {
-              if (column.id === `targetCity-${city}-time` && isV2Prices) {
-                return false;
-              }
-              return true;
-            }),
+          ],
         } as MRT_ColumnDef<ProductRow>;
       }) ?? [];
 
@@ -424,18 +417,11 @@ export default function PricesTable() {
           size: 50,
           enableEditing: false,
         },
-      ]
-        // remove time column for v2 prices
-        .filter((column) => {
-          if (column.id === "source-time" && isV2Prices) {
-            return false;
-          }
-          return true;
-        }),
+      ],
     });
 
     return result;
-  }, [getVariationCellMuiProps, isV2Prices, setPrice]);
+  }, [getVariationCellMuiProps, setPrice]);
 
   const baseColumnVisibility = useMemo(() => {
     const visibleCities = selectedCities.targetCities;
