@@ -6,6 +6,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.08,
     specialTax: {
       七号自由港: 0.05,
+      阿妮塔能源研究所: 0.05,
     },
     extraBuy: 0.8,
   },
@@ -14,6 +15,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.08,
     specialTax: {
       七号自由港: 0.05,
+      阿妮塔能源研究所: 0.05,
     },
     extraBuy: 0.9,
   },
@@ -22,6 +24,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.075,
     specialTax: {
       七号自由港: 0.045,
+      阿妮塔能源研究所: 0.045,
     },
     extraBuy: 1,
   },
@@ -30,6 +33,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.075,
     specialTax: {
       七号自由港: 0.045,
+      阿妮塔能源研究所: 0.045,
     },
     extraBuy: 1.1,
   },
@@ -38,6 +42,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.07,
     specialTax: {
       七号自由港: 0.04,
+      阿妮塔能源研究所: 0.04,
     },
     extraBuy: 1.2,
   },
@@ -46,6 +51,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.07,
     specialTax: {
       七号自由港: 0.04,
+      阿妮塔能源研究所: 0.04,
     },
     extraBuy: 1.3,
   },
@@ -54,6 +60,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.065,
     specialTax: {
       七号自由港: 0.035,
+      阿妮塔能源研究所: 0.035,
     },
     extraBuy: 1.4,
   },
@@ -62,6 +69,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.065,
     specialTax: {
       七号自由港: 0.035,
+      阿妮塔能源研究所: 0.035,
     },
     extraBuy: 1.5,
   },
@@ -70,6 +78,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.06,
     specialTax: {
       七号自由港: 0.03,
+      阿妮塔能源研究所: 0.03,
     },
     extraBuy: 1.6,
   },
@@ -78,6 +87,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.06,
     specialTax: {
       七号自由港: 0.03,
+      阿妮塔能源研究所: 0.03,
     },
     extraBuy: 1.7,
   },
@@ -86,6 +96,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.055,
     specialTax: {
       七号自由港: 0.025,
+      阿妮塔能源研究所: 0.025,
     },
     extraBuy: 1.8,
   },
@@ -94,6 +105,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.055,
     specialTax: {
       七号自由港: 0.025,
+      阿妮塔能源研究所: 0.025,
     },
     extraBuy: 1.9,
   },
@@ -102,6 +114,7 @@ export const PRESTIGES: PrestigeConfig[] = [
     generalTax: 0.05,
     specialTax: {
       七号自由港: 0.02,
+      阿妮塔能源研究所: 0.02,
     },
     extraBuy: 2,
   },
