@@ -388,7 +388,11 @@ export default function RoutePage() {
                             },
                           }}
                         >
-                          <Button className="w-full h-full" onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>
+                          <Button
+                            className="w-full h-full show-onegraph-route-dialog-btn"
+                            data-onegraph-route-dialog-btn={`${fromCity}-${toCity}`}
+                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
+                          >
                             {RankIcon}
                             <span className={`align-middle ${textClass}`}>{profit}</span>
                           </Button>
