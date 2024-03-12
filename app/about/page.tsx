@@ -14,9 +14,6 @@ export default function AboutPage() {
           项目的目标是代替传统的共享Excel文件，为雷索纳斯的玩家提供一个商品价格共享平台，以便玩家们可以更好的规划跑商。
         </p>
         <p className="text-gray-600 dark:text-gray-300">
-          项目目前还处于非常早期的阶段，还可能有大量的重构和改动，可能暂时不方便接受PR，但欢迎提交discussion和issue。
-        </p>
-        <p className="text-gray-600 dark:text-gray-300">
           项目目前仅实现了大部分共享Excel的功能，之后会逐步增加更多的功能。
         </p>
         <p className="text-gray-600 dark:text-gray-300">
@@ -24,14 +21,19 @@ export default function AboutPage() {
           <Link href="https://space.bilibili.com/37824929" className="text-blue-500 dark:text-blue-400">
             黑子不是黑Black
           </Link>
-          的共享Excel https://www.kdocs.cn/l/cuPZppRuRJjO
+          的共享Excel。
         </p>
+        <p className="text-gray-600 dark:text-gray-300">感谢 粥盐籽 星辰月影 的数据支持与设计建议。</p>
+        <p className="text-gray-600 dark:text-gray-300">感谢 💎 的算法支持与设计建议。</p>
+        <p className="text-gray-600 dark:text-gray-300">感谢Github上的贡献者与issue提交者。</p>
+        <p className="text-gray-600 dark:text-gray-300">感谢索斯学会的技术支持。</p>
         <p className="text-gray-600 dark:text-gray-300">
           项目Github仓库:{" "}
           <Link href="https://github.com/nathankun/resonance-columba">
             https://github.com/nathankun/resonance-columba
           </Link>
         </p>
+        <p className="text-gray-600 dark:text-gray-300">欢迎提交discussion，issue和PR。</p>
         <p className="text-gray-600 dark:text-gray-300">雷索纳斯交流群 474679095</p>
       </div>
     </div>
