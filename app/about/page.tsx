@@ -24,7 +24,7 @@ export default function AboutPage() {
           的共享Excel。
         </p>
         <p className="text-gray-600 dark:text-gray-300">感谢 粥盐籽 星辰月影 的数据支持与设计建议。</p>
-        <p className="text-gray-600 dark:text-gray-300">感谢 💎 的算法支持与设计建议。</p>
+        <p className="text-gray-600 dark:text-gray-300">感谢 洛菈米娅 的算法支持与设计建议。</p>
         <p className="text-gray-600 dark:text-gray-300">感谢Github上的贡献者与issue提交者。</p>
         <p className="text-gray-600 dark:text-gray-300">感谢索斯学会的技术支持。</p>
         <p className="text-gray-600 dark:text-gray-300">
