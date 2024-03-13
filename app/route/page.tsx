@@ -43,6 +43,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
@@ -132,6 +133,7 @@ export default function RoutePage() {
     const onegraphData = onegraphRecommendations[fromCity][toCity];
     setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData });
     setOnegraphRouteDialogOpen(true);
+    trackOnegraphDialogBtnClick(fromCity, toCity);
   };
   const [onegraphMaxRestock, setMaxRestock] = useState(5);
   const [onegraphShowFatigue, setOnegraphShowFatigue] = useState(false);
@@ -230,6 +232,15 @@ export default function RoutePage() {
     return results;
   }, [cityGroupedExchangesAllTargetCities, playerConfig, selectedCityForReco]);
 
+  /* tracking */
+  const onTabChange = (tab: string) => {
+    sendGTMEvent({ event: "route_page_tab_change", lable: tab });
+  };
+
+  const trackOnegraphDialogBtnClick = (fromCity: string, toCity: string) => {
+    sendGTMEvent({ event: "onegraph_route_dialog_open", label: `${fromCity} to ${toCity}` });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box>
@@ -239,11 +250,11 @@ export default function RoutePage() {
             onChange={(_e: React.SyntheticEvent, newIndex: number) => setTabIndex(newIndex)}
             aria-label="basic tabs example"
           >
-            <Tab label="一图流" />
-            <Tab label="个性化设置" />
-            <Tab label="最优线路详细信息" />
-            <Tab label="硬核模拟" />
-            <Tab label="计算说明" />
+            <Tab label="一图流" onClick={() => onTabChange("onegraph")} />
+            <Tab label="个性化设置" onClick={() => onTabChange("personalization")} />
+            <Tab label="最优线路详细信息" onClick={() => onTabChange("detailed-recommendation")} />
+            <Tab label="硬核模拟" onClick={() => onTabChange("hard-core-simulation")} />
+            <Tab label="计算说明" onClick={() => onTabChange("explaination")} />
           </Tabs>
         </Box>
 
@@ -415,11 +426,7 @@ export default function RoutePage() {
                             } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
                           }}
                         >
-                          <Button
-                            className="w-full h-full show-onegraph-route-dialog-btn"
-                            data-onegraph-route-dialog-btn={`${fromCity}-${toCity}`}
-                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
-                          >
+                          <Button className="w-full h-full" onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>
                             <span className={`block align-bottom ${textClass}`}>
                               {RankIcon}
                               {profit}
