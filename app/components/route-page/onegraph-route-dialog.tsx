@@ -62,7 +62,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 <DialogContentText>回程利润：{returnRestockAccumulatedProfit}</DialogContentText>
                 <DialogContentText>回程进货书需求：{returnRestockCount}</DialogContentText>
                 <DialogContentText>需要购买的产品：{returnProductsToBuy}</DialogContentText>
-                <DialogContentText>回程疲劳：{returnFatigue}</DialogContentText>
+                <DialogContentText>
+                  回程疲劳：{returnFatigue}
+                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+                </DialogContentText>
                 <DialogContentText>回程利润/疲劳：{returnProfitPerFatigue}</DialogContentText>
               </Box>
               <Box className="m-8">
@@ -72,7 +75,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 <DialogContentText>总进货书需求：{restockCount + returnRestockCount}</DialogContentText>
                 <DialogContentText>
                   总疲劳：{fatigue + returnFatigue}
-                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${(bargainFatigue + raiseFatigue) * 2})` : ""}
                 </DialogContentText>
                 <DialogContentText>
                   总利润/总疲劳：
