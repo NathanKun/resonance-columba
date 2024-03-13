@@ -26,7 +26,6 @@ export default function HeaderAppBar() {
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-    console.log(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
