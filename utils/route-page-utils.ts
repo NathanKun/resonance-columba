@@ -17,6 +17,11 @@ export const calculateExchanges = (
 ) => {
   const exchanges: Exchange[] = [];
 
+  // skip if Server side rendering
+  if (typeof window === "undefined") {
+    return exchanges;
+  }
+
   for (const fromCity of fromCities) {
     const availableProducts = getProductsOfCity(fromCity);
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
