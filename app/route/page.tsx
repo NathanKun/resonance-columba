@@ -136,7 +136,7 @@ export default function RoutePage() {
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
     const onegraphData = onegraphRecommendations[fromCity][toCity];
-    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData });
+    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData, playerConfig });
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
   };

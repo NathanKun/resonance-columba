@@ -15,8 +15,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
     return null;
   }
 
-  const { fromCity, toCity, onegraphData } = data;
+  const { fromCity, toCity, onegraphData, playerConfig } = data;
   const { goExchanges, returnExchanges } = onegraphData;
+  const { bargain } = playerConfig;
+  const { bargainFatigue, raiseFatigue } = bargain;
 
   // the last exchange has the total profit and restock data
   const goLastExchange: CityProductProfitAccumulatedExchange = goExchanges[goExchanges.length - 1];
@@ -48,7 +50,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
             <DialogContentText>利润：{restockAccumulatedProfit}</DialogContentText>
             <DialogContentText>进货书需求：{restockCount}</DialogContentText>
             <DialogContentText>需要购买的产品：{productsToBuy}</DialogContentText>
-            <DialogContentText>疲劳：{fatigue}</DialogContentText>
+            <DialogContentText>
+              疲劳：{fatigue}
+              {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+            </DialogContentText>
             <DialogContentText>利润/疲劳：{profitPerFatigue}</DialogContentText>
           </Box>
           {hasReturn && (
@@ -65,7 +70,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                   总利润：{restockAccumulatedProfit + returnRestockAccumulatedProfit}
                 </DialogContentText>
                 <DialogContentText>总进货书需求：{restockCount + returnRestockCount}</DialogContentText>
-                <DialogContentText>总疲劳：{fatigue + returnFatigue}</DialogContentText>
+                <DialogContentText>
+                  总疲劳：{fatigue + returnFatigue}
+                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+                </DialogContentText>
                 <DialogContentText>
                   总利润/总疲劳：
                   {Math.round((restockAccumulatedProfit + returnRestockAccumulatedProfit) / (fatigue + returnFatigue))}
