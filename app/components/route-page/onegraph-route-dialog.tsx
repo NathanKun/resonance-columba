@@ -22,12 +22,16 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const goLastExchange: CityProductProfitAccumulatedExchange = goExchanges[goExchanges.length - 1];
   const { restockAccumulatedProfit, restockCount } = goLastExchange;
   const productsToBuy = goExchanges.map((exchange: Exchange) => exchange.product).join(", ");
+  const fatigue = goLastExchange.fatigue ?? 0;
+  const profitPerFatigue = goLastExchange.profitPerFatigue ?? 0;
 
   const hasReturn = returnExchanges && returnExchanges.length > 0;
   const returnLastExchange = hasReturn ? returnExchanges[returnExchanges.length - 1] : null;
   const returnRestockAccumulatedProfit = returnLastExchange ? returnLastExchange.restockAccumulatedProfit : 0;
   const returnRestockCount = returnLastExchange ? returnLastExchange.restockCount : 0;
   const returnProductsToBuy = hasReturn ? returnExchanges.map((exchange: Exchange) => exchange.product).join(", ") : "";
+  const returnFatigue = returnLastExchange ? returnLastExchange.fatigue ?? 0 : 0;
+  const returnProfitPerFatigue = returnLastExchange ? returnLastExchange.profitPerFatigue ?? 0 : 0;
 
   const handleClose = () => {
     setOpen(false);
@@ -44,6 +48,8 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
             <DialogContentText>利润：{restockAccumulatedProfit}</DialogContentText>
             <DialogContentText>进货书需求：{restockCount}</DialogContentText>
             <DialogContentText>需要购买的产品：{productsToBuy}</DialogContentText>
+            <DialogContentText>疲劳：{fatigue}</DialogContentText>
+            <DialogContentText>利润/疲劳：{profitPerFatigue}</DialogContentText>
           </Box>
           {hasReturn && (
             <>
@@ -51,12 +57,19 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 <DialogContentText>回程利润：{returnRestockAccumulatedProfit}</DialogContentText>
                 <DialogContentText>回程进货书需求：{returnRestockCount}</DialogContentText>
                 <DialogContentText>需要购买的产品：{returnProductsToBuy}</DialogContentText>
+                <DialogContentText>回程疲劳：{returnFatigue}</DialogContentText>
+                <DialogContentText>回程利润/疲劳：{returnProfitPerFatigue}</DialogContentText>
               </Box>
               <Box className="m-8">
                 <DialogContentText>
                   总利润：{restockAccumulatedProfit + returnRestockAccumulatedProfit}
                 </DialogContentText>
                 <DialogContentText>总进货书需求：{restockCount + returnRestockCount}</DialogContentText>
+                <DialogContentText>总疲劳：{fatigue + returnFatigue}</DialogContentText>
+                <DialogContentText>
+                  总利润/总疲劳：
+                  {Math.round((restockAccumulatedProfit + returnRestockAccumulatedProfit) / (fatigue + returnFatigue))}
+                </DialogContentText>
               </Box>
             </>
           )}
