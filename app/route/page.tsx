@@ -69,6 +69,11 @@ export default function RoutePage() {
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
+  const tabNames = ["一图流", "个性化设置", "最优线路详细信息", "硬核模拟", "计算说明"];
+  const onTabChange = (newIndex: number) => {
+    setTabIndex(newIndex);
+    trackTabChange(newIndex);
+  };
 
   /* city selects */
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
@@ -233,8 +238,8 @@ export default function RoutePage() {
   }, [cityGroupedExchangesAllTargetCities, playerConfig, selectedCityForReco]);
 
   /* tracking */
-  const onTabChange = (tab: string) => {
-    sendGTMEvent({ event: "route_page_tab_change", lable: tab });
+  const trackTabChange = (index: number) => {
+    sendGTMEvent({ event: "route_page_tab_change", label: tabNames[index] });
   };
 
   const trackOnegraphDialogBtnClick = (fromCity: string, toCity: string) => {
@@ -247,14 +252,12 @@ export default function RoutePage() {
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={tabIndex}
-            onChange={(_e: React.SyntheticEvent, newIndex: number) => setTabIndex(newIndex)}
+            onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}
             aria-label="basic tabs example"
           >
-            <Tab label="一图流" onClick={() => onTabChange("onegraph")} />
-            <Tab label="个性化设置" onClick={() => onTabChange("personalization")} />
-            <Tab label="最优线路详细信息" onClick={() => onTabChange("detailed-recommendation")} />
-            <Tab label="硬核模拟" onClick={() => onTabChange("hard-core-simulation")} />
-            <Tab label="计算说明" onClick={() => onTabChange("explaination")} />
+            {tabNames.map((tabName, index) => (
+              <Tab label={tabName} key={`tab-${index}`} />
+            ))}
           </Tabs>
         </Box>
 
