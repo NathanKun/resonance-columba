@@ -256,10 +256,7 @@ export default function RoutePage() {
                 </Typography>
                 表格中的数值可查看路线详情。
               </Typography>
-              <Typography>建议前往个性化设置页面，填写货舱大小以及声望等级，以获得更准确的结果。</Typography>
-              <Typography component="strong" fontSize={26}>
-                测试中
-              </Typography>
+              <Typography>强烈建议先前往个性化设置页面，填写货舱大小以及声望等级，以获得更准确的结果。</Typography>
             </div>
           </div>
 
@@ -550,57 +547,60 @@ export default function RoutePage() {
             </FormControl>
           </Box>
 
-          {detailedRecommendations.reverse().map((exchangesCombination, index) => {
-            return (
-              exchangesCombination.length > 0 && (
-                <Box key={`recomendation-${index}`} className="m-4">
-                  <Typography>购买{detailedRecommendations.length - index}种商品</Typography>
-                  <Box className="m-4">
-                    <TableContainer component={Paper}>
-                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>起始城市</TableCell>
-                            <TableCell>终点城市</TableCell>
-                            <TableCell>累计利润</TableCell>
-                            <TableCell>进货书需求</TableCell>
-                            <TableCell>购买的商品种类</TableCell>
-                            <TableCell>剩余空仓购买</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {exchangesCombination
-                            .slice(0, 3) // only show top 3
-                            .map((row, index) => (
-                              <TableRow
-                                key={`recommendation-${index}-${row.fromCity}-${row.toCity}-option-${index}`}
-                                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                              >
-                                <TableCell>{row.fromCity}</TableCell>
-                                <TableCell>{row.toCity}</TableCell>
-                                <TableCell>{row.profitOfCombination}</TableCell>
-                                <TableCell>{row.restockCount}</TableCell>
-                                <TableCell>
-                                  {row.choosenExchanges
-                                    .filter((exchange) => !exchange.isForFillCargo)
-                                    .map((exchange) => exchange.product)
-                                    .join(", ")}
-                                </TableCell>
-                                <TableCell>
-                                  {row.choosenExchanges
-                                    .filter((exchange) => exchange.isForFillCargo)
-                                    .map((exchange) => exchange.product)}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+          {detailedRecommendations
+            .slice()
+            .reverse()
+            .map((exchangesCombination, index) => {
+              return (
+                exchangesCombination.length > 0 && (
+                  <Box key={`recomendation-${index}`} className="m-4">
+                    <Typography>购买{detailedRecommendations.length - index}种商品</Typography>
+                    <Box className="m-4">
+                      <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>起始城市</TableCell>
+                              <TableCell>终点城市</TableCell>
+                              <TableCell>累计利润</TableCell>
+                              <TableCell>进货书需求</TableCell>
+                              <TableCell>购买的商品种类</TableCell>
+                              <TableCell>剩余空仓购买</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {exchangesCombination
+                              .slice(0, 3) // only show top 3
+                              .map((row, index) => (
+                                <TableRow
+                                  key={`recommendation-${index}-${row.fromCity}-${row.toCity}-option-${index}`}
+                                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                >
+                                  <TableCell>{row.fromCity}</TableCell>
+                                  <TableCell>{row.toCity}</TableCell>
+                                  <TableCell>{row.profitOfCombination}</TableCell>
+                                  <TableCell>{row.restockCount}</TableCell>
+                                  <TableCell>
+                                    {row.choosenExchanges
+                                      .filter((exchange) => !exchange.isForFillCargo)
+                                      .map((exchange) => exchange.product)
+                                      .join(", ")}
+                                  </TableCell>
+                                  <TableCell>
+                                    {row.choosenExchanges
+                                      .filter((exchange) => exchange.isForFillCargo)
+                                      .map((exchange) => exchange.product)}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
                   </Box>
-                </Box>
-              )
-            );
-          })}
+                )
+              );
+            })}
         </div>
 
         {/* 详细模拟 */}
