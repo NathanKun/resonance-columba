@@ -134,6 +134,7 @@ export default function RoutePage() {
     setOnegraphRouteDialogOpen(true);
   };
   const [onegraphMaxRestock, setMaxRestock] = useState(5);
+  const [onegraphShowFatigue, setOnegraphShowFatigue] = useState(false);
   const onegraphRecommendations = useMemo<OnegraphRecommendations>(() => {
     const results: OnegraphRecommendations = {};
     const findOneGraphExchanges = (fromCity: CityName, toCity: CityName) => {
@@ -260,31 +261,49 @@ export default function RoutePage() {
             </div>
           </div>
 
-          <Stack spacing={2} direction="row" className="w-1/2 mx-auto mb-2" alignItems="center">
-            <Typography sx={{ textWrap: "nowrap" }}>希望最多进货次数</Typography>
-            <Slider
-              aria-label="希望最多进货次数"
-              value={onegraphMaxRestock}
-              onChange={(_e, newVal) => setMaxRestock(newVal as number)}
-              min={0}
-              max={30}
-              size="small"
-            />
-            <Typography>{onegraphMaxRestock}</Typography>
+          <Box>
+            <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
+              <Typography sx={{ textWrap: "nowrap" }}>希望最多进货次数</Typography>
+              <Slider
+                className="w-60"
+                aria-label="希望最多进货次数"
+                value={onegraphMaxRestock}
+                onChange={(_e, newVal) => setMaxRestock(newVal as number)}
+                min={0}
+                max={30}
+                size="small"
+              />
+              <Typography>{onegraphMaxRestock}</Typography>
+            </Stack>
 
-            <FormControlLabel
-              className="w-60"
-              control={
-                <Switch
-                  checked={onegraphGoAndReturn}
-                  onChange={(e) => {
-                    setOnegraphGoAndReturn(e.target.checked);
-                  }}
-                />
-              }
-              label={<Typography>来回</Typography>}
-            />
-          </Stack>
+            <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
+              <FormControlLabel
+                className="w-30"
+                control={
+                  <Switch
+                    checked={onegraphGoAndReturn}
+                    onChange={(e) => {
+                      setOnegraphGoAndReturn(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>来回</Typography>}
+              />
+
+              <FormControlLabel
+                className="w-30"
+                control={
+                  <Switch
+                    checked={onegraphShowFatigue}
+                    onChange={(e) => {
+                      setOnegraphShowFatigue(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>显示单位疲劳利润</Typography>}
+              />
+            </Stack>
+          </Box>
 
           <TableContainer
             component={Paper}
@@ -301,6 +320,12 @@ export default function RoutePage() {
                 },
                 "& td": {
                   width: "6rem",
+                },
+                "& .onegraph-cell-fromcity-source": {
+                  width: "2rem",
+                },
+                "& .onegraph-cell-fromcity-cityname": {
+                  width: "7rem",
                 },
               }}
             >
@@ -326,13 +351,13 @@ export default function RoutePage() {
                   <TableRow key={`onegraph-row-${fromCity}`}>
                     {/** spaning 起点 cell */}
                     {index === 0 && (
-                      <TableCell component="th" rowSpan={CITIES.length}>
+                      <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
                         起点
                       </TableCell>
                     )}
 
                     {/** city name */}
-                    <TableCell component="th">{fromCity}</TableCell>
+                    <TableCell className="onegraph-cell-fromcity-cityname">{fromCity}</TableCell>
 
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
@@ -348,12 +373,18 @@ export default function RoutePage() {
                       }
 
                       let profit = lastExchange.restockAccumulatedProfit;
+                      let profitPerFatigue = lastExchange.profitPerFatigue;
+
                       if (onegraphGoAndReturn) {
                         const returnExchanges = onegraphRecommendations[fromCity]?.[toCity].returnExchanges;
                         if (returnExchanges && returnExchanges.length > 0) {
                           const lastReturnExchange = returnExchanges[returnExchanges.length - 1];
                           if (lastReturnExchange) {
                             profit += lastReturnExchange.restockAccumulatedProfit;
+
+                            // calculate profit per fatigue for go and return
+                            const toalFatigue = (lastExchange.fatigue ?? 0) + (lastReturnExchange.fatigue ?? 0);
+                            profitPerFatigue = Math.round(profit / toalFatigue);
                           }
                         }
                       }
@@ -373,16 +404,15 @@ export default function RoutePage() {
                         RankIcon = <></>;
                         textClass = "";
                       }
+
                       return (
                         <TableCell
                           key={key}
                           align="center"
                           sx={{
-                            "&": {
-                              background: `linear-gradient(90deg, ${
-                                prefersDarkMode ? "darkred" : "lightcoral"
-                              } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
-                            },
+                            background: `linear-gradient(90deg, ${
+                              prefersDarkMode ? "darkred" : "lightcoral"
+                            } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
                           }}
                         >
                           <Button
@@ -390,8 +420,12 @@ export default function RoutePage() {
                             data-onegraph-route-dialog-btn={`${fromCity}-${toCity}`}
                             onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
                           >
-                            {RankIcon}
-                            <span className={`align-middle ${textClass}`}>{profit}</span>
+                            <span className={`block align-bottom ${textClass}`}>
+                              {RankIcon}
+                              {profit}
+                            </span>
+
+                            {onegraphShowFatigue && <span className="block">{profitPerFatigue}</span>}
                           </Button>
                         </TableCell>
                       );
@@ -679,9 +713,7 @@ export default function RoutePage() {
                                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                 className={row.loss ? "line-through" : ""}
                               >
-                                <TableCell component="th" scope="row">
-                                  {row.product}
-                                </TableCell>
+                                <TableCell scope="row">{row.product}</TableCell>
                                 <TableCell align="right">{row.buyPrice}</TableCell>
                                 <TableCell align="right">{row.sellPrice}</TableCell>
                                 <TableCell align="right">{row.buyLot}</TableCell>

@@ -17,6 +17,16 @@ export const calculateExchanges = (
 ) => {
   const exchanges: Exchange[] = [];
 
+  // skip if Server side rendering
+  if (typeof window === "undefined") {
+    return exchanges;
+  }
+
+  // skip if no price data
+  if (!prices || Object.keys(prices).length === 0) {
+    return exchanges;
+  }
+
   for (const fromCity of fromCities) {
     const availableProducts = getProductsOfCity(fromCity);
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
@@ -49,7 +59,7 @@ export const calculateExchanges = (
         // skip any product that has missing data
         const currentPriceObject = prices[product.name]?.["buy"]?.[fromCity];
         if (!currentPriceObject) {
-          console.warn(`Buy price data not found for ${product.name} in ${fromCity}`);
+          console.warn(`Buy price data not found for ${product.name} in ${fromCity}`, prices);
           return [];
         }
 
@@ -106,8 +116,13 @@ export const calculateExchanges = (
 
       const oneRouteExchanges: Exchange[] = buys.flatMap((buy) => {
         const currentPriceObject = prices[buy.product]?.["sell"]?.[toCity];
+        // skip if this product is buyable in this toCity
+        if (PRODUCTS.find((product) => product.name === buy.product)?.buyPrices[toCity]) {
+          return [];
+        }
+
         if (!currentPriceObject) {
-          console.warn(`Sell price data not found for ${buy.product} in ${toCity}`);
+          console.warn(`Sell price data not found for ${buy.product} in ${toCity}`, prices);
           return [];
         }
 
