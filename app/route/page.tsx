@@ -43,6 +43,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tabs from "@mui/material/Tabs";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
@@ -68,6 +69,11 @@ export default function RoutePage() {
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
+  const tabNames = ["一图流", "个性化设置", "最优线路详细信息", "硬核模拟", "计算说明"];
+  const onTabChange = (newIndex: number) => {
+    setTabIndex(newIndex);
+    trackTabChange(newIndex);
+  };
 
   /* city selects */
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
@@ -130,8 +136,9 @@ export default function RoutePage() {
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
     const onegraphData = onegraphRecommendations[fromCity][toCity];
-    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData });
+    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData, playerConfig });
     setOnegraphRouteDialogOpen(true);
+    trackOnegraphDialogBtnClick(fromCity, toCity);
   };
   const [onegraphMaxRestock, setMaxRestock] = useState(5);
   const [onegraphShowFatigue, setOnegraphShowFatigue] = useState(false);
@@ -230,20 +237,27 @@ export default function RoutePage() {
     return results;
   }, [cityGroupedExchangesAllTargetCities, playerConfig, selectedCityForReco]);
 
+  /* tracking */
+  const trackTabChange = (index: number) => {
+    sendGTMEvent({ event: "route_page_tab_change", label: tabNames[index] });
+  };
+
+  const trackOnegraphDialogBtnClick = (fromCity: string, toCity: string) => {
+    sendGTMEvent({ event: "onegraph_route_dialog_open", label: `${fromCity} to ${toCity}` });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={tabIndex}
-            onChange={(_e: React.SyntheticEvent, newIndex: number) => setTabIndex(newIndex)}
+            onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}
             aria-label="basic tabs example"
           >
-            <Tab label="一图流" />
-            <Tab label="个性化设置" />
-            <Tab label="最优线路详细信息" />
-            <Tab label="硬核模拟" />
-            <Tab label="计算说明" />
+            {tabNames.map((tabName, index) => (
+              <Tab label={tabName} key={`tab-${index}`} />
+            ))}
           </Tabs>
         </Box>
 
@@ -415,11 +429,7 @@ export default function RoutePage() {
                             } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
                           }}
                         >
-                          <Button
-                            className="w-full h-full show-onegraph-route-dialog-btn"
-                            data-onegraph-route-dialog-btn={`${fromCity}-${toCity}`}
-                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
-                          >
+                          <Button className="w-full h-full" onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>
                             <span className={`block align-bottom ${textClass}`}>
                               {RankIcon}
                               {profit}

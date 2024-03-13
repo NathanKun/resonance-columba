@@ -1,4 +1,5 @@
 import { CityName } from "@/data/Cities";
+import { PlayerConfig } from "./player-config";
 
 export interface Buy {
   fromCity: CityName;
@@ -58,4 +59,5 @@ export interface OneGraphRouteDialogData {
   fromCity: string;
   toCity: string;
   onegraphData: OnegraphCityRecommendation;
+  playerConfig: PlayerConfig;
 }
