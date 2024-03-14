@@ -251,7 +251,13 @@ export default function RoutePage() {
     <ThemeProvider theme={theme}>
       <Box>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={tabIndex} onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}>
+          <Tabs
+            value={tabIndex}
+            onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+          >
             {tabNames.map((tabName, index) => (
               <Tab label={tabName} key={`tab-${index}`} />
             ))}
