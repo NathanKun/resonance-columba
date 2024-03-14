@@ -28,7 +28,6 @@ import {
   Slider,
   Stack,
   Switch,
-  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -46,6 +45,7 @@ import Tabs from "@mui/material/Tabs";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
+import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
 import { PriceContext } from "../price-provider";
 
@@ -85,18 +85,19 @@ export default function RoutePage() {
   const { playerConfig, setPlayerConfig } = usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
+    console.log(field, value);
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
   };
 
-  const onBargainChange = (field: string, value: string) => {
-    if (value && !isNaN(parseFloat(value))) {
-      onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: parseFloat(value) });
+  const onBargainChange = (field: string, value: number) => {
+    if (!isNaN(value)) {
+      onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: value });
     }
   };
 
-  const onPrestigeChange = (city: CityName, value: string) => {
-    if (value && !isNaN(parseInt(value))) {
-      onPlayerConfigChange("prestige", { ...playerConfig.prestige, [city]: parseInt(value) });
+  const onPrestigeChange = (city: CityName, value: number) => {
+    if (!isNaN(value)) {
+      onPlayerConfigChange("prestige", { ...playerConfig.prestige, [city]: value });
     }
   };
 
@@ -466,88 +467,98 @@ export default function RoutePage() {
             >
               <Typography>无垠号</Typography>
               <Box className="m-4">
-                <TextField
+                <NumberInput
                   label="货舱大小"
-                  type="number"
-                  size="small"
+                  min={100}
+                  max={3000}
+                  defaultValue={500}
+                  type="integer"
                   value={playerConfig.maxLot}
-                  onChange={(e) => onPlayerConfigChange("maxLot", e.target.value)}
-                  inputProps={{ min: 0, max: 9999 }}
+                  setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
                 />
               </Box>
 
               <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
               <Box className="m-4">
-                {/* <NumberInputIntroduction /> */}
-                <TextField
+                <NumberInput
                   label="修格里城"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 8, max: 20 }}
+                  min={8}
+                  max={20}
+                  defaultValue={8}
+                  type="integer"
                   value={playerConfig.prestige["修格里城"]}
-                  onChange={(e) => onPrestigeChange("修格里城", e.target.value)}
+                  setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="曼德矿场"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 8, max: 20 }}
+                  min={8}
+                  max={20}
+                  defaultValue={8}
+                  type="integer"
                   value={playerConfig.prestige["曼德矿场"]}
-                  onChange={(e) => onPrestigeChange("曼德矿场", e.target.value)}
+                  setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="澄明数据中心"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 8, max: 20 }}
+                  min={8}
+                  max={20}
+                  defaultValue={8}
+                  type="integer"
                   value={playerConfig.prestige["澄明数据中心"]}
-                  onChange={(e) => onPrestigeChange("澄明数据中心", e.target.value)}
+                  setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="七号自由港"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 8, max: 20 }}
+                  min={8}
+                  max={20}
+                  defaultValue={8}
+                  type="integer"
                   value={playerConfig.prestige["七号自由港"]}
-                  onChange={(e) => onPrestigeChange("七号自由港", e.target.value)}
+                  setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
                 />
               </Box>
 
               <Typography>抬价 砍价</Typography>
               <Box className="m-4">
-                <TextField
+                <NumberInput
                   label="抬价"
-                  type="number"
-                  size="small"
                   InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                  inputProps={{ min: 0, max: 20, step: 0.1 }}
+                  min={0}
+                  max={20}
+                  defaultValue={0}
+                  type="float"
+                  decimalPlaces={1}
                   value={playerConfig.bargain.raisePercent}
-                  onChange={(e) => onBargainChange("raisePercent", e.target.value)}
+                  setValue={(newValue) => onBargainChange("raisePercent", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="抬价疲劳"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 0, max: 100 }}
+                  min={0}
+                  max={100}
+                  defaultValue={0}
+                  type="integer"
                   value={playerConfig.bargain.raiseFatigue}
-                  onChange={(e) => onBargainChange("raiseFatigue", e.target.value)}
+                  setValue={(newValue) => onBargainChange("raiseFatigue", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="砍价"
-                  type="number"
-                  size="small"
                   InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                  inputProps={{ min: 0, max: 20, step: 0.1 }}
+                  min={0}
+                  max={20}
+                  defaultValue={0}
+                  type="float"
+                  decimalPlaces={1}
                   value={playerConfig.bargain.bargainPercent}
-                  onChange={(e) => onBargainChange("bargainPercent", e.target.value)}
+                  setValue={(newValue) => onBargainChange("bargainPercent", newValue)}
                 />
-                <TextField
+                <NumberInput
                   label="砍价疲劳"
-                  type="number"
-                  size="small"
-                  inputProps={{ min: 0, max: 100 }}
+                  min={0}
+                  max={100}
+                  defaultValue={0}
+                  type="integer"
                   value={playerConfig.bargain.bargainFatigue}
-                  onChange={(e) => onBargainChange("bargainFatigue", e.target.value)}
+                  setValue={(newValue) => onBargainChange("bargainFatigue", newValue)}
                 />
               </Box>
             </Box>
