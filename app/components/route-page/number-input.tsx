@@ -1,14 +1,7 @@
-/* @flow */
-
 import { OutlinedInputProps, TextField } from "@mui/material";
 import numbro from "numbro";
 import { useEffect, useState } from "react";
 
-// <NumberInput value={VALUE_TYPE} />
-//
-// NumberInput takes in a number or a null value; Null value indicates that the
-// input is empty i.e., '' in traditional react <input /> world. onChange event
-// also takes in the VALUE_TYPE.
 type VALUE_TYPE = number | undefined;
 
 const toFormattedString = (value: VALUE_TYPE): string => {
@@ -50,13 +43,6 @@ const constrainedValue = (value: VALUE_TYPE, min: VALUE_TYPE, max: VALUE_TYPE): 
 
   return value;
 };
-
-/// react-number-input
-/// <NumberInput value={0}    /> => [    0]
-/// <NumberInput value={null} /> => [     ]
-/// <NumberInput value={1000} /> => [ 1000]
-///
-/// <input /> field which maps to a value of type `number`.
 
 type Props = {
   label: string;
