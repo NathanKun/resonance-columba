@@ -21,7 +21,6 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -45,6 +44,7 @@ import Tabs from "@mui/material/Tabs";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
+import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
 import { PriceContext } from "../price-provider";
@@ -251,11 +251,7 @@ export default function RoutePage() {
     <ThemeProvider theme={theme}>
       <Box>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={tabIndex}
-            onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}
-            aria-label="basic tabs example"
-          >
+          <Tabs value={tabIndex} onChange={(_e: React.SyntheticEvent, newIndex: number) => onTabChange(newIndex)}>
             {tabNames.map((tabName, index) => (
               <Tab label={tabName} key={`tab-${index}`} />
             ))}
@@ -317,6 +313,20 @@ export default function RoutePage() {
                 }
                 label={<Typography>显示单位疲劳利润</Typography>}
               />
+            </Stack>
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="center"
+              className="mb-2 justify-center"
+              sx={{
+                "& .MuiFormControl-root": {
+                  width: "7rem",
+                  margin: "0.5rem",
+                },
+              }}
+            >
+              <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
             </Stack>
           </Box>
 
@@ -446,6 +456,7 @@ export default function RoutePage() {
               </TableBody>
             </Table>
           </TableContainer>
+
           <OneGraphRouteDialog
             open={onegraphRouteDialogOpen}
             setOpen={setOnegraphRouteDialogOpen}
@@ -520,46 +531,7 @@ export default function RoutePage() {
 
               <Typography>抬价 砍价</Typography>
               <Box className="m-4">
-                <NumberInput
-                  label="抬价"
-                  InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                  min={0}
-                  max={20}
-                  defaultValue={0}
-                  type="float"
-                  decimalPlaces={1}
-                  value={playerConfig.bargain.raisePercent}
-                  setValue={(newValue) => onBargainChange("raisePercent", newValue)}
-                />
-                <NumberInput
-                  label="抬价疲劳"
-                  min={0}
-                  max={100}
-                  defaultValue={0}
-                  type="integer"
-                  value={playerConfig.bargain.raiseFatigue}
-                  setValue={(newValue) => onBargainChange("raiseFatigue", newValue)}
-                />
-                <NumberInput
-                  label="砍价"
-                  InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                  min={0}
-                  max={20}
-                  defaultValue={0}
-                  type="float"
-                  decimalPlaces={1}
-                  value={playerConfig.bargain.bargainPercent}
-                  setValue={(newValue) => onBargainChange("bargainPercent", newValue)}
-                />
-                <NumberInput
-                  label="砍价疲劳"
-                  min={0}
-                  max={100}
-                  defaultValue={0}
-                  type="integer"
-                  value={playerConfig.bargain.bargainFatigue}
-                  setValue={(newValue) => onBargainChange("bargainFatigue", newValue)}
-                />
+                <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
               </Box>
             </Box>
           </div>
