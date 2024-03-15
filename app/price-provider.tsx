@@ -5,7 +5,7 @@ import { useHasFocus } from "@/hooks/useHasFocus";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 import { sendGTMEvent } from "@next/third-parties/google";
 export interface PriceContextProps {
@@ -34,7 +34,15 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   const fetchInterval = 1000 * 60; // 1 minute
   const [data, setData] = useState<GetPricesProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
-  const [useV2, setUseV2] = useState<boolean>(false);
+  // const [useV2, setUseV2] = useState<boolean>(false);
+  const queryParameters = useMemo(() => {
+    if (typeof window === "undefined") {
+      return new URLSearchParams();
+    }
+    return new URLSearchParams(window.location.search);
+  }, []);
+  const useV2 = queryParameters.get("v2") === "true";
+  const setUseV2 = (param: any) => {}; // fake function
   const focus = useHasFocus();
 
   const fetchData = useCallback((useV2: boolean) => {
@@ -96,7 +104,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   };
 
   const setUseV2Prices = (newUseV2: boolean) => {
-    setUseV2((oldUseV2) => {
+    setUseV2((oldUseV2: boolean) => {
       // if state changed, fetch new data
       if (oldUseV2 !== newUseV2) {
         fetchData(newUseV2);
