@@ -11,6 +11,8 @@ import {
   groupeExchangesByCity,
 } from "@/utils/route-page-utils";
 import { Button } from "@mui/base/Button";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Looks3Icon from "@mui/icons-material/Looks3";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoIcon from "@mui/icons-material/LooksTwo";
@@ -281,8 +283,11 @@ export default function RoutePage() {
           <Box>
             <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
               <Typography sx={{ textWrap: "nowrap" }}>希望最多进货次数</Typography>
+              <IconButton onClick={() => setMaxRestock(onegraphMaxRestock - 1)} size="small">
+                <ArrowLeftIcon />
+              </IconButton>
               <Slider
-                className="w-60"
+                className="w-20 sm:w-60"
                 aria-label="希望最多进货次数"
                 value={onegraphMaxRestock}
                 onChange={(_e, newVal) => setMaxRestock(newVal as number)}
@@ -290,6 +295,9 @@ export default function RoutePage() {
                 max={30}
                 size="small"
               />
+              <IconButton onClick={() => setMaxRestock(onegraphMaxRestock + 1)} size="small">
+                <ArrowRightIcon />
+              </IconButton>
               <Typography>{onegraphMaxRestock}</Typography>
             </Stack>
 
