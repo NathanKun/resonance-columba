@@ -19,7 +19,7 @@ export const FATIGUES: Fatigue[] = [
   { cities: ["曼德矿场", "阿妮塔能源研究所"], fatigue: 39 },
   { cities: ["曼德矿场", "七号自由港"], fatigue: 34 },
   { cities: ["曼德矿场", "澄明数据中心"], fatigue: 27 },
-  { cities: ["曼德矿场", "修格里城"], fatigue: 26 },
+  { cities: ["曼德矿场", "修格里城"], fatigue: 23 },
   { cities: ["曼德矿场", "铁盟哨站"], fatigue: 23 },
   { cities: ["曼德矿场", "荒原站"], fatigue: 23 },
   { cities: ["淘金乐园", "阿妮塔能源研究所"], fatigue: 44 },
