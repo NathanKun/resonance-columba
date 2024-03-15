@@ -50,7 +50,7 @@ import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog"
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
-  const { prices, isV2Prices } = useContext(PriceContext);
+  const { prices } = useContext(PriceContext);
 
   /* theme */
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -104,8 +104,8 @@ export default function RoutePage() {
   /* calculation */
   // all possible single product exchange routes
   const singleProductExchangesAllTargetCities = useMemo(
-    () => calculateExchanges(playerConfig, CITIES, CITIES, prices, isV2Prices),
-    [isV2Prices, playerConfig, prices]
+    () => calculateExchanges(playerConfig, CITIES, CITIES, prices),
+    [playerConfig, prices]
   );
 
   // group by fromCity then toCity
