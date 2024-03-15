@@ -1,3 +1,4 @@
+import { PRODUCTS } from "@/data/Products";
 import {
   FireStoreProductCityPrice,
   FirestoreProducts,
@@ -16,11 +17,28 @@ export const convertFirebaseDataToGetPricesData = (data: FirestoreProducts): Get
       const typeData: GetPricesProductPrice = {};
       for (const city in pdt[type]) {
         const cityData: FireStoreProductCityPrice = pdt[type][city];
+        let price = cityData.price;
+        // no price in data, calculate it with base price and variation
+        if (!price) {
+          const pdtInfo = PRODUCTS.find((p) => p.name === pdtName);
+          let basePrice: number | null = 0;
+          if (pdtInfo) {
+            if (type === "buy") {
+              basePrice = pdtInfo.buyPrices[city];
+            } else {
+              basePrice = pdtInfo.sellPrices[city];
+            }
+          }
+          if (basePrice) {
+            price = Math.round((basePrice * cityData.variation) / 100);
+          }
+        }
+
         typeData[city] = {
           trend: cityData.trend,
           variation: cityData.variation,
           time: cityData.time._seconds,
-          price: cityData.price,
+          price,
         } as GetPricesProductCityPrice;
       }
       pdtData[type] = typeData;
