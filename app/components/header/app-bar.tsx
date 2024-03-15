@@ -19,7 +19,6 @@ import * as React from "react";
 import { useState } from "react";
 import LogoSvgIcon from "./logo-icon";
 import QQBtn from "./qq-btn";
-import V2PricesSwitch from "./v2-prices-switch";
 
 export default function HeaderAppBar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -57,7 +56,7 @@ export default function HeaderAppBar() {
               科伦巴商会
             </MuiLink>
 
-            <V2PricesSwitch />
+            {/* <V2PricesSwitch /> */}
 
             <Box className="grow" />
 
