@@ -1,3 +1,4 @@
+import { CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import {
   FireStoreProductCityPrice,
@@ -20,18 +21,7 @@ export const convertFirebaseDataToGetPricesData = (data: FirestoreProducts): Get
         let price = cityData.price;
         // no price in data, calculate it with base price and variation
         if (!price) {
-          const pdtInfo = PRODUCTS.find((p) => p.name === pdtName);
-          let basePrice: number | null = 0;
-          if (pdtInfo) {
-            if (type === "buy") {
-              basePrice = pdtInfo.buyPrices[city];
-            } else {
-              basePrice = pdtInfo.sellPrices[city];
-            }
-          }
-          if (basePrice) {
-            price = Math.round((basePrice * cityData.variation) / 100);
-          }
+          price = calculatePrice(pdtName, city as CityName, type as "buy" | "sell", cityData.variation) ?? undefined;
         }
 
         typeData[city] = {
@@ -47,4 +37,20 @@ export const convertFirebaseDataToGetPricesData = (data: FirestoreProducts): Get
   }
 
   return responseData;
+};
+
+const calculatePrice = (pdtName: string, city: CityName, type: "buy" | "sell", variation: number): number | null => {
+  const pdtInfo = PRODUCTS.find((p) => p.name === pdtName);
+  let basePrice: number | null = 0;
+  if (pdtInfo) {
+    if (type === "buy") {
+      basePrice = pdtInfo.buyPrices[city];
+    } else {
+      basePrice = pdtInfo.sellPrices[city];
+    }
+  }
+  if (basePrice) {
+    return Math.round((basePrice * variation) / 100);
+  }
+  return null;
 };
