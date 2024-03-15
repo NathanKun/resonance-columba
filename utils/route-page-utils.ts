@@ -12,8 +12,7 @@ export const calculateExchanges = (
   playerConfig: PlayerConfig,
   fromCities: CityName[],
   toCities: CityName[],
-  prices: GetPricesProducts,
-  isV2Prices: boolean
+  prices: GetPricesProducts
 ) => {
   const exchanges: Exchange[] = [];
 
@@ -65,11 +64,11 @@ export const calculateExchanges = (
 
         let buyPrice = 0;
 
-        // if v2 prices, use the price directly
-        if (isV2Prices && currentPriceObject.price) {
+        // if has price property use it directly
+        if (currentPriceObject.price) {
           buyPrice = currentPriceObject.price;
         }
-        // if v1 prices, calculate the price with variation and base price
+        // else, calculate the price with variation and base price
         else {
           const currentVariation = currentPriceObject.variation ?? 0;
           const basePrice = product.buyPrices[fromCity] ?? 0;
@@ -128,7 +127,7 @@ export const calculateExchanges = (
 
         let sellPrice = 0;
 
-        if (isV2Prices && currentPriceObject.price) {
+        if (currentPriceObject.price) {
           sellPrice = currentPriceObject.price;
         } else {
           const currentVariation = currentPriceObject.variation ?? 0;

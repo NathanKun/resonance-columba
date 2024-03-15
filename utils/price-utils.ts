@@ -55,7 +55,7 @@ export const calculateProfit = (
     let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
 
     const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-    productSellPrice = Math.round((productSellPrice * sellVariation) / 100) * 1.04; // estimated sell price
+    productSellPrice = Math.round((productSellPrice * sellVariation) / 100);
 
     profit = Math.round(productSellPrice - productBuyPrice);
   }
