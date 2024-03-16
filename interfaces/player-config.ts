@@ -13,4 +13,10 @@ export interface PlayerConfig {
   prestige: {
     [cityName: CityName]: number;
   };
+
+  roles: {
+    [roleName: string]: {
+      resonance: number;
+    };
+  };
 }
