@@ -2,6 +2,7 @@ import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
 import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
+import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { PlayerConfig } from "@/interfaces/player-config";
 import {
@@ -57,6 +58,45 @@ export const calculateExchanges = (
           console.warn(`Buy lot not found for ${product.name} in ${fromCity}`);
           return [];
         }
+
+        // apply role resonance skill to buy lot
+        let resonanceSkillBuyMorePercent = 0;
+        for (const roleName in playerConfig.roles) {
+          // player's role's data
+          const playerRole = playerConfig.roles[roleName];
+          const level = playerRole.resonance;
+          if (level === 0) {
+            continue;
+          }
+
+          // get resonance skill for this role and level
+          const rollResonances = ROLE_RESONANCE_SKILLS[roleName];
+          const skill = rollResonances?.[level];
+          if (!skill) {
+            console.warn(`Resonance skill not found for ${roleName} level ${level}`);
+            continue;
+          }
+
+          // get buy more percent for this product and city
+          const buyMore = skill.buyMore;
+          const currentProductBuyMorePercent = buyMore?.product?.[product.name] ?? 0;
+          resonanceSkillBuyMorePercent += currentProductBuyMorePercent;
+
+          if (currentProductBuyMorePercent > 0) {
+            console.log(
+              `Role ${playerRole} level ${level} has ${currentProductBuyMorePercent}% buy more for ${product.name}`
+            );
+          }
+
+          const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
+          resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
+
+          if (currentCityBuyMorePercent > 0) {
+            console.log(`Role ${playerRole} level ${level} has ${currentCityBuyMorePercent}% buy more for ${fromCity}`);
+          }
+        }
+
+        buyLot *= 1 + resonanceSkillBuyMorePercent / 100;
 
         // apply prestige to buy lot
         buyLot = Math.round(buyLot * (1 + buyPrestige.extraBuy));
