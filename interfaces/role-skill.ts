@@ -1,10 +1,14 @@
-import { CityName } from "@/data/Cities";
-
-export interface RoleSkill {
+export interface ResonanceSkill {
   buyMore: {
-    products: string[];
-    cities: {
-      [key: CityName]: {};
+    product?: {
+      [pdtName: string]: number; // percentage, example: 10
+    };
+    city?: {
+      [cityName: string]: number;
     };
   };
+}
+
+export interface ResonanceSkills {
+  [resonance: number]: ResonanceSkill;
 }
