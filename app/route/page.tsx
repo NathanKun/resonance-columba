@@ -50,6 +50,7 @@ import MultipleSelect from "../components/prices-table/multiple-select";
 import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
+import RoleSkillSelects from "../components/route-page/role-skill-selects";
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
@@ -85,10 +86,9 @@ export default function RoutePage() {
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
 
   /* player config */
-  const { playerConfig, setPlayerConfig } = usePlayerConfig();
+  const { playerConfig, setPlayerConfig, setRoleResonance } = usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
-    console.log(field, value);
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -108,7 +108,7 @@ export default function RoutePage() {
   // all possible single product exchange routes
   const singleProductExchangesAllTargetCities = useMemo(
     () => calculateExchanges(playerConfig, CITIES, CITIES, prices),
-    [playerConfig, prices]
+    [prices, playerConfig]
   );
 
   // group by fromCity then toCity
@@ -481,6 +481,11 @@ export default function RoutePage() {
               <Typography>抬价 砍价</Typography>
               <Box className="m-4">
                 <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
+              </Box>
+
+              <Typography>乘员共振</Typography>
+              <Box className="m-4">
+                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
               </Box>
             </Box>
           </div>
