@@ -46,9 +46,21 @@ export interface OnegraphRecommendations {
 }
 
 export interface OnegraphCityRecommendation {
-  goExchanges: CityProductProfitAccumulatedExchange[];
-  returnExchanges?: CityProductProfitAccumulatedExchange[];
+  goReco: OnegraphCityRecommendationDetail;
+  returnReco?: OnegraphCityRecommendationDetail;
+  totalProfit: number;
+  totalFatigue: number;
+  totalProfitPerFatigue: number;
 }
+
+export interface OnegraphCityRecommendationDetail {
+  exchanges?: CityProductProfitAccumulatedExchange[];
+  noRestockRoute: NoRestockRoute;
+  profit: number;
+  fatigue: number;
+  profitPerFatigue: number;
+}
+
 export interface OneGraphRouteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -60,4 +72,20 @@ export interface OneGraphRouteDialogData {
   toCity: string;
   onegraphData: OnegraphCityRecommendation;
   playerConfig: PlayerConfig;
+  goAndReturn: boolean;
+}
+
+export interface NoRestockRoute {
+  fromCity: CityName;
+  toCity: CityName;
+  profit: number;
+  products: string[];
+  fatigue: number;
+  totalLot: number;
+}
+
+export interface NoRestockRoutes {
+  [fromCity: string]: {
+    [toCity: string]: NoRestockRoute;
+  };
 }

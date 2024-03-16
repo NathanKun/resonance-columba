@@ -1,4 +1,4 @@
-import { CityProductProfitAccumulatedExchange, Exchange, OneGraphRouteDialogProps } from "@/interfaces/route-page";
+import { OneGraphRouteDialogProps, OnegraphCityRecommendationDetail } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -9,44 +9,59 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/system/Box";
 import * as React from "react";
 
+interface DisplayData {
+  profit: number;
+  fatigue: number;
+  profitPerFatigue: number;
+  buyProducts: string;
+  fillCargoProduct?: string; // if use noRestockRoute or no isForFillCargo exchange in exchanges, fillCargoProduct is undefined
+  accumulatedLot: number;
+  restockCount: number;
+}
+
 export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const { open, setOpen, data } = props;
   if (!data) {
     return null;
   }
 
-  const { fromCity, toCity, onegraphData, playerConfig } = data;
-  const { goExchanges: goExchangesAll, returnExchanges: returnExchangesAll } = onegraphData;
+  const { fromCity, toCity, onegraphData, playerConfig, goAndReturn } = data;
+  const { goReco, returnReco, totalProfit, totalFatigue, totalProfitPerFatigue } = onegraphData;
   const { bargain } = playerConfig;
   const { bargainFatigue, raiseFatigue } = bargain;
 
-  const goExchanges = goExchangesAll.filter((e) => !e.isForFillCargo);
-  const goFillCargoExchange = goExchangesAll.find((e) => e.isForFillCargo);
-  const returnExchanges = returnExchangesAll?.filter((e) => !e.isForFillCargo);
-  const returnFillCargoExchange = returnExchangesAll?.find((e) => e.isForFillCargo);
+  const buildDisplayData = (reco: OnegraphCityRecommendationDetail): DisplayData => {
+    const hasExchanges = reco.exchanges && reco.exchanges.length > 0;
+    const goDisplayData: DisplayData = {
+      profit: reco.profit,
+      fatigue: reco.fatigue,
+      profitPerFatigue: reco.profitPerFatigue,
+      buyProducts: hasExchanges
+        ? reco
+            .exchanges!.filter((e) => !e.isForFillCargo)
+            .map((e) => e.product)
+            .join(", ")
+        : reco.noRestockRoute.products.join(", "),
+      fillCargoProduct: reco.exchanges?.find((e) => e.isForFillCargo)?.product ?? undefined,
+      accumulatedLot: hasExchanges ? reco.exchanges?.at(-1)?.restockAccumulatedLot ?? 0 : reco.noRestockRoute.totalLot,
+      restockCount: hasExchanges ? reco.exchanges?.at(-1)?.restockCount ?? 0 : 1,
+    };
 
-  // the last exchange has the total profit and restock data
-  const goLastExchange: CityProductProfitAccumulatedExchange | undefined = goExchanges.at(-1);
-  if (!goLastExchange) {
-    return null;
-  }
+    return goDisplayData;
+  };
 
-  const { restockAccumulatedProfit, restockCount } = goLastExchange;
-  const productsToBuy = goExchanges.map((exchange: Exchange) => exchange.product).join(", ");
-  const fatigue = goLastExchange.fatigue ?? 0;
-  const profitPerFatigue = goLastExchange.profitPerFatigue ?? 0;
-  const accumulatedLot = goLastExchange.restockAccumulatedLot;
-  const fillCargoProduct = goFillCargoExchange?.product;
-
-  const hasReturn = returnExchanges && returnExchanges.length > 0;
-  const returnLastExchange = hasReturn ? returnExchanges.at(-1) : null;
-  const returnRestockAccumulatedProfit = returnLastExchange ? returnLastExchange.restockAccumulatedProfit : 0;
-  const returnRestockCount = returnLastExchange ? returnLastExchange.restockCount : 0;
-  const returnProductsToBuy = hasReturn ? returnExchanges.map((exchange: Exchange) => exchange.product).join(", ") : "";
-  const returnFatigue = returnLastExchange ? returnLastExchange.fatigue ?? 0 : 0;
-  const returnProfitPerFatigue = returnLastExchange ? returnLastExchange.profitPerFatigue ?? 0 : 0;
-  const returnAccumulatedLot = returnLastExchange ? returnLastExchange.restockAccumulatedLot : 0;
-  const returnFillCargoProduct = hasReturn ? returnFillCargoExchange?.product : "";
+  const hasReturn = goAndReturn && returnReco;
+  const goDisplayData = buildDisplayData(goReco);
+  const returnDisplayData = goAndReturn && returnReco ? buildDisplayData(returnReco) : undefined;
+  const totalDisplayData =
+    goAndReturn && returnReco
+      ? {
+          profit: totalProfit,
+          fatigue: totalFatigue,
+          profitPerFatigue: totalProfitPerFatigue,
+          restockCount: goDisplayData.restockCount + returnDisplayData!.restockCount,
+        }
+      : undefined;
 
   const handleClose = () => {
     setOpen(false);
@@ -60,43 +75,41 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
         </DialogTitle>
         <DialogContent>
           <Box className="m-8">
-            <DialogContentText>利润：{restockAccumulatedProfit}</DialogContentText>
-            <DialogContentText>进货书需求：{restockCount}</DialogContentText>
-            <DialogContentText>需要购买的产品：{productsToBuy}</DialogContentText>
-            <DialogContentText>所需舱位：{accumulatedLot}</DialogContentText>
-            <DialogContentText>剩余舱位填舱产品：{fillCargoProduct}</DialogContentText>
+            <DialogContentText>利润：{goDisplayData.profit}</DialogContentText>
+            <DialogContentText>进货书需求：{goDisplayData.restockCount}</DialogContentText>
+            <DialogContentText>需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
+            <DialogContentText>剩余舱位填舱产品：{goDisplayData.fillCargoProduct}</DialogContentText>
+            <DialogContentText>所需舱位：{goDisplayData.accumulatedLot}</DialogContentText>
             <DialogContentText>
-              疲劳：{fatigue}
+              疲劳：{goDisplayData.fatigue}
               {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
             </DialogContentText>
-            <DialogContentText>利润/疲劳：{profitPerFatigue}</DialogContentText>
+            <DialogContentText>利润/疲劳：{goDisplayData.profitPerFatigue}</DialogContentText>
           </Box>
-          {hasReturn && (
+          {hasReturn && returnDisplayData && (
             <>
               <Box className="m-8">
-                <DialogContentText>回程利润：{returnRestockAccumulatedProfit}</DialogContentText>
-                <DialogContentText>回程进货书需求：{returnRestockCount}</DialogContentText>
-                <DialogContentText>需要购买的产品：{returnProductsToBuy}</DialogContentText>
-                <DialogContentText>所需舱位：{returnAccumulatedLot}</DialogContentText>
-                <DialogContentText>剩余舱位填舱产品：{returnFillCargoProduct}</DialogContentText>
+                <DialogContentText>回程利润：{returnDisplayData.profit}</DialogContentText>
+                <DialogContentText>回程进货书需求：{returnDisplayData.restockCount}</DialogContentText>
+                <DialogContentText>需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
+                <DialogContentText>剩余舱位填舱产品：{returnDisplayData.fillCargoProduct}</DialogContentText>
+                <DialogContentText>所需舱位：{returnDisplayData.accumulatedLot}</DialogContentText>
                 <DialogContentText>
-                  回程疲劳：{returnFatigue}
+                  回程疲劳：{returnDisplayData.fatigue}
                   {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
                 </DialogContentText>
-                <DialogContentText>回程利润/疲劳：{returnProfitPerFatigue}</DialogContentText>
+                <DialogContentText>回程利润/疲劳：{returnDisplayData.profitPerFatigue}</DialogContentText>
               </Box>
               <Box className="m-8">
+                <DialogContentText>总利润：{totalDisplayData!.profit}</DialogContentText>
+                <DialogContentText>总进货书需求：{totalDisplayData!.restockCount}</DialogContentText>
                 <DialogContentText>
-                  总利润：{restockAccumulatedProfit + returnRestockAccumulatedProfit}
-                </DialogContentText>
-                <DialogContentText>总进货书需求：{restockCount + returnRestockCount}</DialogContentText>
-                <DialogContentText>
-                  总疲劳：{fatigue + returnFatigue}
+                  总疲劳：{totalDisplayData!.fatigue}
                   {bargainFatigue || raiseFatigue ? ` (抬价砍价占${(bargainFatigue + raiseFatigue) * 2})` : ""}
                 </DialogContentText>
                 <DialogContentText>
                   总利润/总疲劳：
-                  {Math.round((restockAccumulatedProfit + returnRestockAccumulatedProfit) / (fatigue + returnFatigue))}
+                  {totalDisplayData!.profitPerFatigue}
                 </DialogContentText>
               </Box>
             </>

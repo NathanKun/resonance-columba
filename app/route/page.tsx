@@ -7,6 +7,7 @@ import { CityGroupedExchanges, OneGraphRouteDialogData, OnegraphRecommendations 
 import {
   calculateAccumulatedValues,
   calculateExchanges,
+  calculateOneGraphRecommendations,
   getBestRoutesByNumberOfBuyingProductTypes,
   groupeExchangesByCity,
 } from "@/utils/route-page-utils";
@@ -139,110 +140,29 @@ export default function RoutePage() {
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
     const onegraphData = onegraphRecommendations[fromCity][toCity];
-    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData: onegraphData, playerConfig });
+    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData, playerConfig, goAndReturn: onegraphGoAndReturn });
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
   };
   const [onegraphMaxRestock, setMaxRestock] = useState(5);
   const [onegraphShowFatigue, setOnegraphShowFatigue] = useState(false);
-  const onegraphRecommendations = useMemo<OnegraphRecommendations>(() => {
-    const results: OnegraphRecommendations = {};
-    const findOneGraphExchanges = (fromCity: CityName, toCity: CityName) => {
-      const exchanges = cityGroupedExchangesAllTargetCities[fromCity][toCity];
-
-      // find the most profitable exchanges which are just under maxRestock,
-      // the combination from the first to the choosenExchangeIndex
-      // is the best combination for maxRestock wanted
-      if (exchanges.length === 0) {
-        return undefined;
-      }
-
-      let choosenExchangeIndex = null;
-      for (let i = exchanges.length - 1; i >= 0; i--) {
-        if (exchanges[i].loss) {
-          continue;
-        }
-        if (exchanges[i].restockCount <= onegraphMaxRestock) {
-          choosenExchangeIndex = i;
-        } else {
-          break;
-        }
-      }
-
-      // if no exchanges are under maxRestock, skip
-      if (choosenExchangeIndex === null) {
-        return undefined; // todo: return a no restock exchange
-      }
-
-      const recomendationExchanges = exchanges.slice(0, choosenExchangeIndex + 1);
-
-      // find if there is a next profitable exchange which can be used to fill the cargo
-      const nextExchange = exchanges[choosenExchangeIndex + 1];
-      if (nextExchange && !nextExchange.loss) {
-        recomendationExchanges.push({
-          ...nextExchange,
-          accumulatedProfit: -1,
-          accumulatedLot: -1,
-          restockCount: -1,
-          restockAccumulatedProfit: -1,
-          restockAccumulatedLot: -1,
-          isForFillCargo: true,
-        });
-      }
-
-      console.log(recomendationExchanges);
-
-      return recomendationExchanges;
-    };
-    for (const fromCity in cityGroupedExchangesAllTargetCities) {
-      for (const toCity in cityGroupedExchangesAllTargetCities[fromCity]) {
-        if (!results[fromCity]) {
-          results[fromCity] = {};
-        }
-        const goExchanges = findOneGraphExchanges(fromCity, toCity);
-        if (!goExchanges) {
-          continue;
-        }
-        results[fromCity][toCity] = {
-          goExchanges,
-          returnExchanges: onegraphGoAndReturn ? findOneGraphExchanges(toCity, fromCity) : undefined,
-        };
-      }
-    }
-
-    return results;
-  }, [cityGroupedExchangesAllTargetCities, onegraphMaxRestock, onegraphGoAndReturn]);
+  const onegraphRecommendations = useMemo<OnegraphRecommendations>(
+    () => calculateOneGraphRecommendations(cityGroupedExchangesAllTargetCities, playerConfig, onegraphMaxRestock),
+    [cityGroupedExchangesAllTargetCities, onegraphMaxRestock, playerConfig]
+  );
   const topProfits = useMemo(() => {
     const profits = [];
     for (const fromCity in onegraphRecommendations) {
       for (const toCity in onegraphRecommendations[fromCity]) {
-        const goExchanges = onegraphRecommendations[fromCity][toCity].goExchanges.filter((e) => !e.isForFillCargo);
-        const lastExchange = goExchanges[goExchanges.length - 1];
-        let profit = 0;
-        if (lastExchange) {
-          profit = lastExchange.restockAccumulatedProfit;
-        }
-
-        // go and return: sum up the profit of the last return exchange
-        if (onegraphGoAndReturn) {
-          const returnExchanges = onegraphRecommendations[fromCity][toCity].returnExchanges?.filter(
-            (e) => !e.isForFillCargo
-          );
-          if (returnExchanges && returnExchanges.length > 0) {
-            const lastReturnExchange = returnExchanges[returnExchanges.length - 1];
-            if (lastReturnExchange) {
-              profit += lastReturnExchange.restockAccumulatedProfit;
-            }
-          }
-        }
-
+        const reco = onegraphRecommendations[fromCity][toCity];
+        const profit = onegraphGoAndReturn ? reco.totalProfit : reco.goReco.profit;
         if (profit > 0) {
           profits.push(profit);
         }
       }
     }
     return [...new Set(profits)].sort((a, b) => b - a).slice(0, 3);
-  }, [onegraphGoAndReturn, onegraphRecommendations]);
+  }, [onegraphRecommendations, onegraphGoAndReturn]);
 
   /* detailed route recommendation */
   const detailedRecommendations = useMemo(() => {
@@ -421,36 +341,26 @@ export default function RoutePage() {
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
                       const key = `onegraph-row-${fromCity}-cell-${toCity}`;
-                      const goExchanges = onegraphRecommendations[fromCity]?.[toCity]?.goExchanges.filter(
-                        (exchange) => !exchange.isForFillCargo
+                      const EmptyCell = () => (
+                        <TableCell key={key} align="center">
+                          -
+                        </TableCell>
                       );
-                      const lastExchange = goExchanges?.at(-1);
-                      if (!lastExchange) {
-                        return (
-                          <TableCell key={key} align="center">
-                            -
-                          </TableCell>
-                        );
+                      if (fromCity === toCity) {
+                        return EmptyCell();
                       }
 
-                      let profit = lastExchange.restockAccumulatedProfit;
-                      let profitPerFatigue = lastExchange.profitPerFatigue;
+                      const reco = onegraphRecommendations[fromCity]?.[toCity];
+                      const goProfit = reco?.goReco?.profit ?? 0;
+                      const goFatigue = reco?.goReco?.fatigue ?? 0;
+                      let profit = goProfit;
+                      let fatigue = goFatigue;
+                      let profitPerFatigue = reco?.goReco?.profitPerFatigue;
 
                       if (onegraphGoAndReturn) {
-                        const returnExchanges = (
-                          onegraphRecommendations[fromCity]?.[toCity].returnExchanges ?? []
-                        ).filter((exchange) => !exchange.isForFillCargo);
-
-                        if (returnExchanges && returnExchanges.length > 0) {
-                          const lastReturnExchange = returnExchanges[returnExchanges.length - 1];
-                          if (lastReturnExchange) {
-                            profit += lastReturnExchange.restockAccumulatedProfit;
-
-                            // calculate profit per fatigue for go and return
-                            const toalFatigue = (lastExchange.fatigue ?? 0) + (lastReturnExchange.fatigue ?? 0);
-                            profitPerFatigue = Math.round(profit / toalFatigue);
-                          }
-                        }
+                        profit = reco?.totalProfit ?? 0;
+                        fatigue = reco?.totalFatigue ?? 0;
+                        profitPerFatigue = reco?.totalProfitPerFatigue ?? 0;
                       }
 
                       const percentageToMax = Math.round((profit / topProfits[0] ?? 1) * 100);
