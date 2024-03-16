@@ -4,6 +4,7 @@ import { ResonanceSkill } from "@/interfaces/role-skill";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { Avatar, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Box } from "@mui/system";
+import Image from "next/image";
 
 interface RoleSkillSelectsProps {
   playerConfig: PlayerConfig;
@@ -69,7 +70,9 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
             {Object.entries(ROLE_RESONANCE_SKILLS).map(([role, resonanceSkills]) => (
               <TableRow key={`role-${role}`}>
                 <TableCell scope="row">
-                  <Avatar alt={role} src={`/roles/head/${role}.png`} />
+                  <Avatar>
+                    <Image src={`/roles/head/${role}.png`} alt={role} width={40} height={40} />
+                  </Avatar>
                   <span className="mx-auto block text-center pt-2">{role}</span>
                 </TableCell>
                 <TableCell scope="row">
