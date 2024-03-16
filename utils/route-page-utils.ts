@@ -82,18 +82,8 @@ export const calculateExchanges = (
           const currentProductBuyMorePercent = buyMore?.product?.[product.name] ?? 0;
           resonanceSkillBuyMorePercent += currentProductBuyMorePercent;
 
-          if (currentProductBuyMorePercent > 0) {
-            console.log(
-              `Role ${playerRole} level ${level} has ${currentProductBuyMorePercent}% buy more for ${product.name}`
-            );
-          }
-
           const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
           resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
-
-          if (currentCityBuyMorePercent > 0) {
-            console.log(`Role ${playerRole} level ${level} has ${currentCityBuyMorePercent}% buy more for ${fromCity}`);
-          }
         }
 
         buyLot *= 1 + resonanceSkillBuyMorePercent / 100;
