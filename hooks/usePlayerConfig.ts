@@ -19,6 +19,7 @@ export default function usePlayerConfig() {
       澄明数据中心: 8,
       七号自由港: 8,
     },
+    roles: {},
   };
 
   const [playerConfig, setPlayerConfig] = useState<PlayerConfig>(initial);
@@ -51,6 +52,21 @@ export default function usePlayerConfig() {
     });
   };
 
+  const setRoleResonance = (role: string, resonance: number) => {
+    internalSetPlayerConfig((oldConfig) => {
+      return {
+        ...oldConfig,
+        roles: {
+          ...oldConfig.roles,
+          [role]: {
+            ...oldConfig.roles?.[role],
+            resonance,
+          },
+        },
+      };
+    });
+  };
+
   /* prevents hydration error so that state is only initialized after server is defined */
   useEffect(() => {
     if (!isServer) {
@@ -59,5 +75,5 @@ export default function usePlayerConfig() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { playerConfig, setPlayerConfig: internalSetPlayerConfig };
+  return { playerConfig, setPlayerConfig: internalSetPlayerConfig, setRoleResonance };
 }
