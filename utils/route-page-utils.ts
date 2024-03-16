@@ -445,12 +445,12 @@ export const calculateOneGraphRecommendations = (
       const goNoRestockRoute = onegraphNoRestockRoutes[fromCity]?.[toCity];
       const goExchanges = findOneGraphExchanges(fromCity, toCity);
       const goProfit = goExchanges?.at(-1)?.restockAccumulatedProfit ?? goNoRestockRoute?.profit;
-      const goFatigue = goExchanges?.at(-1)?.fatigue ?? 0;
+      const goFatigue = goExchanges?.at(-1)?.fatigue ?? goNoRestockRoute?.fatigue;
 
       const returnNoRestockRoute = onegraphNoRestockRoutes[toCity]?.[fromCity];
       const returnExchanges = findOneGraphExchanges(toCity, fromCity);
       const returnProfit = returnExchanges?.at(-1)?.restockAccumulatedProfit ?? returnNoRestockRoute?.profit;
-      const returnFatigue = returnExchanges?.at(-1)?.fatigue ?? 0;
+      const returnFatigue = returnExchanges?.at(-1)?.fatigue ?? returnNoRestockRoute?.fatigue;
 
       const totalProfit = (goProfit ?? 0) + (returnProfit ?? 0);
       const totalFatigue = goFatigue + returnFatigue;
