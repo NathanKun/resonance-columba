@@ -273,12 +273,12 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
         continue;
       }
 
-      let profitOfCombination = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedProfit;
-      const restockCount = choosenExchanges[choosenExchanges.length - 1].restockCount;
+      let profitOfCombination = choosenExchanges.at(-1)!.restockAccumulatedProfit;
+      const restockCount = choosenExchanges.at(-1)!.restockCount;
 
       // fill the remaining cargo with the next best exchanges
       // first, find the remaining cargo size
-      const usedLot = choosenExchanges[choosenExchanges.length - 1].restockAccumulatedLot;
+      const usedLot = choosenExchanges.at(-1)!.restockAccumulatedLot;
       const remainingLot = playerConfig.maxLot - usedLot;
 
       // check if there is a next profitable exchange
@@ -304,6 +304,7 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
         };
 
         choosenExchanges.push(newAccExchange);
+        profitOfCombination += addedProfit;
       }
 
       combinations.push({
@@ -419,7 +420,7 @@ export const calculateOneGraphRecommendations = (
     if (nextExchange && !nextExchange.loss) {
       const usedLot = lastExchange.restockAccumulatedLot;
       const remainingLot = playerConfig.maxLot - usedLot;
-      const filledLot = Math.min(remainingLot, nextExchange.buyLot);
+      const filledLot = Math.min(remainingLot, nextExchange.buyLot * (lastExchange.restockCount + 1));
       const fillStockProfit = nextExchange.singleProfit * filledLot;
       const restockAccumulatedProfit = lastExchange.restockAccumulatedProfit + fillStockProfit;
       recomendationExchanges.push({
