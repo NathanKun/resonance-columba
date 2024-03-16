@@ -171,10 +171,28 @@ export default function RoutePage() {
 
       // if no exchanges are under maxRestock, skip
       if (choosenExchangeIndex === null) {
-        return undefined;
+        return undefined; // todo: return a no restock exchange
       }
 
-      return exchanges.slice(0, choosenExchangeIndex + 1);
+      const recomendationExchanges = exchanges.slice(0, choosenExchangeIndex + 1);
+
+      // find if there is a next profitable exchange which can be used to fill the cargo
+      const nextExchange = exchanges[choosenExchangeIndex + 1];
+      if (nextExchange && !nextExchange.loss) {
+        recomendationExchanges.push({
+          ...nextExchange,
+          accumulatedProfit: -1,
+          accumulatedLot: -1,
+          restockCount: -1,
+          restockAccumulatedProfit: -1,
+          restockAccumulatedLot: -1,
+          isForFillCargo: true,
+        });
+      }
+
+      console.log(recomendationExchanges);
+
+      return recomendationExchanges;
     };
     for (const fromCity in cityGroupedExchangesAllTargetCities) {
       for (const toCity in cityGroupedExchangesAllTargetCities[fromCity]) {
@@ -198,7 +216,7 @@ export default function RoutePage() {
     const profits = [];
     for (const fromCity in onegraphRecommendations) {
       for (const toCity in onegraphRecommendations[fromCity]) {
-        const goExchanges = onegraphRecommendations[fromCity][toCity].goExchanges;
+        const goExchanges = onegraphRecommendations[fromCity][toCity].goExchanges.filter((e) => !e.isForFillCargo);
         const lastExchange = goExchanges[goExchanges.length - 1];
         let profit = 0;
         if (lastExchange) {
@@ -207,7 +225,9 @@ export default function RoutePage() {
 
         // go and return: sum up the profit of the last return exchange
         if (onegraphGoAndReturn) {
-          const returnExchanges = onegraphRecommendations[fromCity][toCity].returnExchanges;
+          const returnExchanges = onegraphRecommendations[fromCity][toCity].returnExchanges?.filter(
+            (e) => !e.isForFillCargo
+          );
           if (returnExchanges && returnExchanges.length > 0) {
             const lastReturnExchange = returnExchanges[returnExchanges.length - 1];
             if (lastReturnExchange) {
@@ -401,8 +421,10 @@ export default function RoutePage() {
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
                       const key = `onegraph-row-${fromCity}-cell-${toCity}`;
-                      const goExchanges = onegraphRecommendations[fromCity]?.[toCity]?.goExchanges;
-                      const lastExchange = goExchanges?.[goExchanges.length - 1];
+                      const goExchanges = onegraphRecommendations[fromCity]?.[toCity]?.goExchanges.filter(
+                        (exchange) => !exchange.isForFillCargo
+                      );
+                      const lastExchange = goExchanges?.at(-1);
                       if (!lastExchange) {
                         return (
                           <TableCell key={key} align="center">
@@ -415,7 +437,10 @@ export default function RoutePage() {
                       let profitPerFatigue = lastExchange.profitPerFatigue;
 
                       if (onegraphGoAndReturn) {
-                        const returnExchanges = onegraphRecommendations[fromCity]?.[toCity].returnExchanges;
+                        const returnExchanges = (
+                          onegraphRecommendations[fromCity]?.[toCity].returnExchanges ?? []
+                        ).filter((exchange) => !exchange.isForFillCargo);
+
                         if (returnExchanges && returnExchanges.length > 0) {
                           const lastReturnExchange = returnExchanges[returnExchanges.length - 1];
                           if (lastReturnExchange) {
@@ -653,7 +678,7 @@ export default function RoutePage() {
             <div className="flex flex-col">
               <Typography>需要填写个性化设置。</Typography>
               <Typography>路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
-              <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计仓位同理。</Typography>
+              <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计舱位同理。</Typography>
               <Typography>列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
             </div>
           </div>
@@ -702,12 +727,12 @@ export default function RoutePage() {
                               <TableCell>产品</TableCell>
                               <TableCell align="right">买价</TableCell>
                               <TableCell align="right">卖价</TableCell>
-                              <TableCell align="right">单票仓位</TableCell>
+                              <TableCell align="right">单票舱位</TableCell>
                               <TableCell align="right">单票利润</TableCell>
                               <TableCell align="right">单票累计利润</TableCell>
-                              <TableCell align="right">单票累计仓位</TableCell>
+                              <TableCell align="right">单票累计舱位</TableCell>
                               <TableCell align="right">补货累计利润</TableCell>
-                              <TableCell align="right">补货累计仓位</TableCell>
+                              <TableCell align="right">补货累计舱位</TableCell>
                               <TableCell align="right">补货次数</TableCell>
                               <TableCell align="right">疲劳</TableCell>
                               <TableCell align="right">单位疲劳利润</TableCell>
@@ -752,8 +777,8 @@ export default function RoutePage() {
               <Typography>买价为砍价税后价格。</Typography>
               <Typography>卖价为抬价后价格。</Typography>
               <Typography>利润为税后利润。</Typography>
-              <Typography>单票仓位未算入可能存在的角色生活技能的20%加成。</Typography>
-              <Typography>利润排序使用的是单位仓位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
+              <Typography>单票舱位未算入可能存在的角色生活技能的20%加成。</Typography>
+              <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
             </div>
           </div>
         </div>

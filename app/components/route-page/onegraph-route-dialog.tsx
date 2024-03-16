@@ -16,24 +16,37 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   }
 
   const { fromCity, toCity, onegraphData, playerConfig } = data;
-  const { goExchanges, returnExchanges } = onegraphData;
+  const { goExchanges: goExchangesAll, returnExchanges: returnExchangesAll } = onegraphData;
   const { bargain } = playerConfig;
   const { bargainFatigue, raiseFatigue } = bargain;
 
+  const goExchanges = goExchangesAll.filter((e) => !e.isForFillCargo);
+  const goFillCargoExchange = goExchangesAll.find((e) => e.isForFillCargo);
+  const returnExchanges = returnExchangesAll?.filter((e) => !e.isForFillCargo);
+  const returnFillCargoExchange = returnExchangesAll?.find((e) => e.isForFillCargo);
+
   // the last exchange has the total profit and restock data
-  const goLastExchange: CityProductProfitAccumulatedExchange = goExchanges[goExchanges.length - 1];
+  const goLastExchange: CityProductProfitAccumulatedExchange | undefined = goExchanges.at(-1);
+  if (!goLastExchange) {
+    return null;
+  }
+
   const { restockAccumulatedProfit, restockCount } = goLastExchange;
   const productsToBuy = goExchanges.map((exchange: Exchange) => exchange.product).join(", ");
   const fatigue = goLastExchange.fatigue ?? 0;
   const profitPerFatigue = goLastExchange.profitPerFatigue ?? 0;
+  const accumulatedLot = goLastExchange.restockAccumulatedLot;
+  const fillCargoProduct = goFillCargoExchange?.product;
 
   const hasReturn = returnExchanges && returnExchanges.length > 0;
-  const returnLastExchange = hasReturn ? returnExchanges[returnExchanges.length - 1] : null;
+  const returnLastExchange = hasReturn ? returnExchanges.at(-1) : null;
   const returnRestockAccumulatedProfit = returnLastExchange ? returnLastExchange.restockAccumulatedProfit : 0;
   const returnRestockCount = returnLastExchange ? returnLastExchange.restockCount : 0;
   const returnProductsToBuy = hasReturn ? returnExchanges.map((exchange: Exchange) => exchange.product).join(", ") : "";
   const returnFatigue = returnLastExchange ? returnLastExchange.fatigue ?? 0 : 0;
   const returnProfitPerFatigue = returnLastExchange ? returnLastExchange.profitPerFatigue ?? 0 : 0;
+  const returnAccumulatedLot = returnLastExchange ? returnLastExchange.restockAccumulatedLot : 0;
+  const returnFillCargoProduct = hasReturn ? returnFillCargoExchange?.product : "";
 
   const handleClose = () => {
     setOpen(false);
@@ -50,6 +63,8 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
             <DialogContentText>利润：{restockAccumulatedProfit}</DialogContentText>
             <DialogContentText>进货书需求：{restockCount}</DialogContentText>
             <DialogContentText>需要购买的产品：{productsToBuy}</DialogContentText>
+            <DialogContentText>所需舱位：{accumulatedLot}</DialogContentText>
+            <DialogContentText>剩余舱位填舱产品：{fillCargoProduct}</DialogContentText>
             <DialogContentText>
               疲劳：{fatigue}
               {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
@@ -62,6 +77,8 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 <DialogContentText>回程利润：{returnRestockAccumulatedProfit}</DialogContentText>
                 <DialogContentText>回程进货书需求：{returnRestockCount}</DialogContentText>
                 <DialogContentText>需要购买的产品：{returnProductsToBuy}</DialogContentText>
+                <DialogContentText>所需舱位：{returnAccumulatedLot}</DialogContentText>
+                <DialogContentText>剩余舱位填舱产品：{returnFillCargoProduct}</DialogContentText>
                 <DialogContentText>
                   回程疲劳：{returnFatigue}
                   {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
