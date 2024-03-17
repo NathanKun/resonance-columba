@@ -86,7 +86,7 @@ export default function HeaderAppBar() {
               <QQBtn wrapperClassName="mx-2" buttonClassName="px-0" displayText={true} />
 
               <Link href="https://soli-reso.com/" className="ml-2" target="_blank">
-                <Button variant="outlined" className="" color="error">
+                <Button variant="outlined" sx={{ color: "black" }} color="error">
                   雷索纳斯官网
                 </Button>
               </Link>
