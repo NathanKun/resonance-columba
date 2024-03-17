@@ -167,7 +167,7 @@ const pdts: Product[] = [
       七号自由港: 2300,
     },
     buyLot: {
-      七号自由港: 10,
+      七号自由港: 7,
     },
     type: "Special",
   },
@@ -188,7 +188,7 @@ const pdts: Product[] = [
       七号自由港: 1777,
     },
     buyLot: {
-      七号自由港: 16,
+      七号自由港: 14,
     },
     type: "Special",
   },
@@ -1013,7 +1013,7 @@ const pdts: Product[] = [
       七号自由港: 1024,
     },
     buyLot: {
-      七号自由港: 29,
+      七号自由港: 21,
     },
     type: "Normal",
   },
@@ -1034,7 +1034,7 @@ const pdts: Product[] = [
       七号自由港: 777,
     },
     buyLot: {
-      七号自由港: 39,
+      七号自由港: 28,
     },
     type: "Normal",
   },
