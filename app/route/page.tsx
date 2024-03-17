@@ -11,7 +11,6 @@ import {
   getBestRoutesByNumberOfBuyingProductTypes,
   groupeExchangesByCity,
 } from "@/utils/route-page-utils";
-import { Button } from "@mui/base/Button";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Looks3Icon from "@mui/icons-material/Looks3";
@@ -21,6 +20,7 @@ import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import {
   Box,
+  Button,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -389,8 +389,12 @@ export default function RoutePage() {
                             } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
                           }}
                         >
-                          <Button className="w-full h-full" onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>
-                            <span className={`block align-bottom ${textClass}`}>
+                          <Button
+                            className="w-full h-full flex-col p-0"
+                            color="inherit"
+                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
+                          >
+                            <span className={`flex items-center ${textClass}`}>
                               {RankIcon}
                               {profit}
                             </span>

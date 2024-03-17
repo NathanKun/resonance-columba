@@ -1,5 +1,4 @@
 import { OutlinedInputProps, TextField } from "@mui/material";
-import numbro from "numbro";
 import { useEffect, useState } from "react";
 
 type VALUE_TYPE = number | undefined;
@@ -9,12 +8,11 @@ const toFormattedString = (value: VALUE_TYPE): string => {
     return "";
   }
 
-  let boxed = numbro(value);
-  if (isNaN(boxed.value())) {
+  if (isNaN(value)) {
     return "";
   }
 
-  return boxed.format();
+  return "" + value;
 };
 
 const toValue = (value: string): VALUE_TYPE => {
@@ -22,7 +20,7 @@ const toValue = (value: string): VALUE_TYPE => {
     return undefined;
   }
 
-  const unformatted = numbro.unformat(value);
+  const unformatted = Number(value);
   return unformatted;
 };
 
