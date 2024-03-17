@@ -30,8 +30,6 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const { bargain } = playerConfig;
   const { bargainFatigue, raiseFatigue } = bargain;
 
-  console.log("onegraphData", onegraphData);
-
   const buildDisplayData = (reco: OnegraphCityRecommendationDetail): DisplayData => {
     const hasExchanges = reco.exchanges && reco.exchanges.length > 0;
     const goDisplayData: DisplayData = {
