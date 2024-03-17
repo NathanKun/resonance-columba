@@ -1,5 +1,5 @@
-import PricesTable from "./components/prices-table/prices-table";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <PricesTable />;
+  redirect("/route");
 }

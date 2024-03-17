@@ -52,7 +52,7 @@ export default function HeaderAppBar() {
               <LogoSvgIcon />
             </Typography>
 
-            <MuiLink href="/" variant="h6" underline="none" component={Link} noWrap className="mr-4 text-black">
+            <MuiLink href="/route" variant="h6" underline="none" component={Link} noWrap className="mr-4 text-black">
               科伦巴商会
             </MuiLink>
 
@@ -62,7 +62,7 @@ export default function HeaderAppBar() {
 
             {/* Desktop Nav Menu */}
             <Box className="grow-0 hidden min-[852px]:flex text-black">
-              <Link href="/" className="ml-2">
+              <Link href="/prices" className="ml-2">
                 <Button variant="text" className="text-black px-0" startIcon={<TableViewIcon />}>
                   数据
                 </Button>
@@ -121,7 +121,7 @@ export default function HeaderAppBar() {
                 className="block"
               >
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/" className="mx-auto">
+                  <Link href="/prices" className="mx-auto">
                     <Button variant="text" className="text-black" startIcon={<TableViewIcon />}>
                       数据
                     </Button>
