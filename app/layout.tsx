@@ -1,7 +1,6 @@
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
 // import { GoogleAnalytics } from "@next/third-parties/google";
-import { CssBaseline } from "@mui/material";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { Noto_Sans_SC } from "next/font/google";
@@ -29,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" id="root">
       <StyledEngineProvider injectFirst>
-        <CssBaseline />
         <body className={`${inter.variable} min-h-screen m-0 bg-black`}>
           <PriceProvider>
             <Header />
