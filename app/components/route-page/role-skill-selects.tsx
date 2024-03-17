@@ -2,8 +2,18 @@ import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
 import { ResonanceSkill } from "@/interfaces/role-skill";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { Avatar, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { Box } from "@mui/system";
+import {
+  Avatar,
+  Box,
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import Image from "next/image";
 
 interface RoleSkillSelectsProps {
