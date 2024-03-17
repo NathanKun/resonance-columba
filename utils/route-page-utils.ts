@@ -59,7 +59,7 @@ export const calculateExchanges = (
           return [];
         }
 
-        // apply role resonance skill to buy lot
+        // get role resonance skill buy more percent
         let resonanceSkillBuyMorePercent = 0;
         for (const roleName in playerConfig.roles) {
           // player's role's data
@@ -86,10 +86,14 @@ export const calculateExchanges = (
           resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
         }
 
-        buyLot *= 1 + resonanceSkillBuyMorePercent / 100;
+        // get prestige buy more percent
+        const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
-        // apply prestige to buy lot
-        buyLot = Math.round(buyLot * (1 + buyPrestige.extraBuy));
+        // sum all buy more percent
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+
+        // apply buy more percent to buy lot
+        buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
 
         // calculate current buy price
         // skip any product that has missing data
