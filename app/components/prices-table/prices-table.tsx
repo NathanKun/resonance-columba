@@ -539,7 +539,7 @@ export default function PricesTable() {
     muiTableHeadRowProps: {
       sx: {
         "&:nth-of-type(2)": {
-          top: "35px",
+          top: "31px",
         },
       },
     },

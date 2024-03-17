@@ -32,7 +32,7 @@ export default function QQBtn(props: { wrapperClassName?: string; buttonClassNam
   return (
     <span className={wrapperClassName}>
       {displayText && (
-        <Button variant="text" className={`${buttonClassName} text-black`} onClick={handleClick} startIcon={<QQIcon />}>
+        <Button variant="text" className={buttonClassName} onClick={handleClick} startIcon={<QQIcon />}>
           QQ群
         </Button>
       )}

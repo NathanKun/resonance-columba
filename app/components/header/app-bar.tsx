@@ -35,7 +35,7 @@ export default function HeaderAppBar() {
     palette: {
       mode: "light",
       primary: {
-        main: orange[300],
+        main: grey[900],
       },
       secondary: {
         main: grey[300],
@@ -45,14 +45,14 @@ export default function HeaderAppBar() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: orange[300] }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ minHeight: "52px !important", maxHeight: "52px !important" }}>
             <Typography fontSize="3em" lineHeight="0" className="fill-black mr-2">
               <LogoSvgIcon />
             </Typography>
 
-            <MuiLink href="/route" variant="h6" underline="none" component={Link} noWrap className="mr-4 text-black">
+            <MuiLink href="/route" variant="h6" underline="none" component={Link} noWrap className="mr-4 ">
               科伦巴商会
             </MuiLink>
 
@@ -61,24 +61,24 @@ export default function HeaderAppBar() {
             <Box className="grow" />
 
             {/* Desktop Nav Menu */}
-            <Box className="grow-0 hidden min-[852px]:flex text-black">
+            <Box className="grow-0 hidden min-[852px]:flex ">
               <Link href="/prices" className="ml-2">
-                <Button variant="text" className="text-black px-0" startIcon={<TableViewIcon />}>
+                <Button variant="text" className=" px-0" startIcon={<TableViewIcon />}>
                   数据
                 </Button>
               </Link>
               <Link href="/route" className="ml-2">
-                <Button variant="text" className="text-black px-0" startIcon={<RouteOutlinedIcon />}>
+                <Button variant="text" className=" px-0" startIcon={<RouteOutlinedIcon />}>
                   路线
                 </Button>
               </Link>
               <Link href="/discussion" className="ml-2">
-                <Button variant="text" className="text-black px-0" startIcon={<ChatBubbleOutlineRoundedIcon />}>
+                <Button variant="text" className=" px-0" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                   讨论
                 </Button>
               </Link>
               <Link href="/about" className="ml-2">
-                <Button variant="text" className="text-black px-0" startIcon={<InfoOutlinedIcon />}>
+                <Button variant="text" className=" px-0" startIcon={<InfoOutlinedIcon />}>
                   关于
                 </Button>
               </Link>
@@ -86,7 +86,7 @@ export default function HeaderAppBar() {
               <QQBtn wrapperClassName="mx-2" buttonClassName="px-0" displayText={true} />
 
               <Link href="https://soli-reso.com/" className="ml-2" target="_blank">
-                <Button variant="outlined" className="text-black" color="error">
+                <Button variant="outlined" sx={{ color: "black" }} color="error">
                   雷索纳斯官网
                 </Button>
               </Link>
@@ -122,28 +122,28 @@ export default function HeaderAppBar() {
               >
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="/prices" className="mx-auto">
-                    <Button variant="text" className="text-black" startIcon={<TableViewIcon />}>
+                    <Button variant="text" className="" startIcon={<TableViewIcon />}>
                       数据
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="/route" className="mx-auto">
-                    <Button variant="text" className="text-black" startIcon={<RouteOutlinedIcon />}>
+                    <Button variant="text" className="" startIcon={<RouteOutlinedIcon />}>
                       路线
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="/discussion" className="mx-auto">
-                    <Button variant="text" className="text-black" startIcon={<ChatBubbleOutlineRoundedIcon />}>
+                    <Button variant="text" className="" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                       讨论
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="/about" className="mx-auto">
-                    <Button variant="text" className="text-black" startIcon={<InfoOutlinedIcon />}>
+                    <Button variant="text" className="" startIcon={<InfoOutlinedIcon />}>
                       关于
                     </Button>
                   </Link>
@@ -153,7 +153,7 @@ export default function HeaderAppBar() {
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="https://soli-reso.com/" className="mx-auto" target="_blank">
-                    <Button variant="outlined" className="text-black" color="error">
+                    <Button variant="outlined" className="" color="error">
                       雷索纳斯官网
                     </Button>
                   </Link>
