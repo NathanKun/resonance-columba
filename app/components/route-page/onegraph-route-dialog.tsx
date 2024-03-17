@@ -44,7 +44,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
         : reco.noRestockRoute.products.join(", "),
       fillCargoProduct: reco.exchanges?.find((e) => e.isForFillCargo)?.product ?? undefined,
       accumulatedLot: hasExchanges ? reco.exchanges?.at(-1)?.restockAccumulatedLot ?? 0 : reco.noRestockRoute.totalLot,
-      restockCount: hasExchanges ? reco.exchanges?.at(-1)?.restockCount ?? 0 : 1,
+      restockCount: hasExchanges ? reco.exchanges?.at(-1)?.restockCount ?? 0 : 0,
     };
 
     return goDisplayData;
