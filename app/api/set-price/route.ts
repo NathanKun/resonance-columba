@@ -1,6 +1,7 @@
 import { columbaCol } from "@/firebase/app";
-import { GetPricesProducts } from "@/interfaces/get-prices";
+import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices";
 import { SetPriceFirestoreRequest, SetPriceHistoryItem, SetPriceRequest } from "@/interfaces/set-price";
+import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import rateLimit from "../../../utils/rate-limit";
@@ -71,7 +72,10 @@ export async function POST(request: Request) {
 
     // return updated data
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(newFirebaseData);
-    return Response.json({ data: responseData });
+
+    const lbResponseData: LbGetPricesProducts = lowBandwidthResponse(responseData);
+
+    return Response.json({ data: lbResponseData });
   } catch (e) {
     console.error(e);
     return Response.json({ error: "failed to load data" }, { status: 500 });

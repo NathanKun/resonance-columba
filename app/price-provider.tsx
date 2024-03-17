@@ -7,6 +7,7 @@ import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
+import { revertLowBandwidthData } from "@/utils/price-api-compressor";
 import { sendGTMEvent } from "@next/third-parties/google";
 export interface PriceContextProps {
   prices: GetPricesProducts;
@@ -50,8 +51,10 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
     console.info(new Date(), "fetching data " + useV2 ? "v2" : "v1");
     fetch(fetchPricesUrl)
       .then((res) => res.json())
+      .then((res) => res.data)
+      .then((res) => revertLowBandwidthData(res))
       .then((res) => {
-        setData(res.data);
+        setData(res);
         setLastFetch(Date.now());
       });
   }, []);
@@ -91,8 +94,10 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         }
         throw new Error("set-price failed");
       })
-      .then((responseJson) => {
-        setData(responseJson.data);
+      .then((res) => res.data)
+      .then((res) => revertLowBandwidthData(res))
+      .then((res) => {
+        setData(res);
         setLastFetch(Date.now());
       })
       .catch((error) => {

@@ -1,5 +1,5 @@
 import { CityName } from "@/data/Cities";
-import { Trend } from "./trend";
+import { LbTrend, Trend } from "./trend";
 
 export interface GetPricesProductCityPrice {
   trend: Trend;
@@ -43,5 +43,24 @@ export interface FirestoreProducts {
 }
 
 export interface GetPricesResponse {
-  data: GetPricesProducts;
+  data: LbGetPricesProducts;
+}
+
+export interface LbGetPricesProductCityPrice {
+  t: LbTrend; // 1 for up, 0 for down
+  v: number;
+  ti: number;
+  p?: number;
+}
+
+export interface LbGetPricesProductPrice {
+  [city: CityName]: LbGetPricesProductCityPrice;
+}
+
+export interface LbGetPricesProduct {
+  [type: string]: LbGetPricesProductPrice; // type: b or s
+}
+
+export interface LbGetPricesProducts {
+  [pdtName: string]: LbGetPricesProduct;
 }

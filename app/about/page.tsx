@@ -14,9 +14,6 @@ export default function AboutPage() {
           项目的目标是代替传统的共享Excel文件，为雷索纳斯的玩家提供一个商品价格共享平台，以便玩家们可以更好的规划跑商。
         </p>
         <p className="text-gray-600 dark:text-gray-300">
-          项目目前仅实现了大部分共享Excel的功能，之后会逐步增加更多的功能。
-        </p>
-        <p className="text-gray-600 dark:text-gray-300">
           感谢
           <Link href="https://space.bilibili.com/37824929" className="text-blue-500 dark:text-blue-400">
             黑子不是黑Black
