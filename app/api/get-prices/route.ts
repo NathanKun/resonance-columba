@@ -1,5 +1,6 @@
 import { columbaCol } from "@/firebase/app";
-import { GetPricesProducts } from "@/interfaces/get-prices";
+import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices";
+import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 
 export const revalidate = 60;
@@ -15,7 +16,9 @@ export async function GET(request: Request) {
 
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
 
-    return Response.json({ data: responseData });
+    const lbResponseData: LbGetPricesProducts = lowBandwidthResponse(responseData);
+
+    return Response.json({ data: lbResponseData });
   } catch (e) {
     console.error(e);
     return Response.json({ error: "failed to load data" }); // todo: status code and interface
