@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" id="root">
       <StyledEngineProvider injectFirst>
-        <body className={`${inter.variable} min-h-screen m-0 bg-black`}>
+        <body className={`${inter.variable} min-h-screen m-0`}>
           <PriceProvider>
             <Header />
             <main className="relative flex flex-col items-center justify-center">
