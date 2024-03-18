@@ -223,7 +223,14 @@ export default function RoutePage() {
           <Box>
             <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
               <Typography sx={{ textWrap: "nowrap" }}>希望最多进货次数</Typography>
-              <IconButton onClick={() => setMaxRestock(onegraphMaxRestock - 1)} size="small">
+              <IconButton
+                onClick={() => {
+                  if (onegraphMaxRestock > 0) {
+                    setMaxRestock(onegraphMaxRestock - 1);
+                  }
+                }}
+                size="small"
+              >
                 <ArrowLeftIcon />
               </IconButton>
               <Slider
@@ -235,7 +242,14 @@ export default function RoutePage() {
                 max={30}
                 size="small"
               />
-              <IconButton onClick={() => setMaxRestock(onegraphMaxRestock + 1)} size="small">
+              <IconButton
+                onClick={() => {
+                  if (onegraphMaxRestock < 30) {
+                    setMaxRestock(onegraphMaxRestock + 1);
+                  }
+                }}
+                size="small"
+              >
                 <ArrowRightIcon />
               </IconButton>
               <Typography>{onegraphMaxRestock}</Typography>
