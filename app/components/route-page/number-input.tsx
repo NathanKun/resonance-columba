@@ -47,6 +47,7 @@ type Props = {
   value: VALUE_TYPE;
   min: number;
   max: number;
+  step?: number;
   defaultValue: number;
   type: "integer" | "float";
   decimalPlaces?: number;
@@ -56,7 +57,7 @@ type Props = {
 };
 
 export default function NumberInput(props: Props) {
-  const { type, value, label, min, max, defaultValue, InputProps, setValue } = { ...props };
+  const { type, value, label, min, max, step, defaultValue, InputProps, setValue } = { ...props };
   const decimalPlaces = props.decimalPlaces ?? 1;
 
   const [focused, setFocused] = useState(false);
@@ -123,7 +124,7 @@ export default function NumberInput(props: Props) {
 
   return (
     <TextField
-      type="tel"
+      type="number"
       size="small"
       variant="outlined"
       label={label}
@@ -132,6 +133,7 @@ export default function NumberInput(props: Props) {
       onBlur={onBlur}
       onChange={onChange}
       InputProps={InputProps}
+      inputProps={{ step }}
     />
   );
 }

@@ -14,6 +14,7 @@ export default function BargainInputs(props: {
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
         min={0}
         max={20}
+        step={0.1}
         defaultValue={0}
         type="float"
         decimalPlaces={1}
@@ -33,6 +34,7 @@ export default function BargainInputs(props: {
         label="砍价"
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
         min={0}
+        step={0.1}
         max={20}
         defaultValue={0}
         type="float"
