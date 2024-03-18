@@ -19,4 +19,10 @@ export interface PlayerConfig {
       resonance: number;
     };
   };
+
+  onegraph: {
+    maxRestock: number;
+    goAndReturn: boolean;
+    showFatigue: boolean;
+  };
 }

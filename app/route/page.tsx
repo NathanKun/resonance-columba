@@ -104,6 +104,10 @@ export default function RoutePage() {
     }
   };
 
+  const oneOnegraphPlayerConfigChange = (field: string, value: any) => {
+    onPlayerConfigChange("onegraph", { ...playerConfig.onegraph, [field]: value });
+  };
+
   /* calculation */
   // all possible single product exchange routes
   const singleProductExchangesAllTargetCities = useMemo(
@@ -135,7 +139,14 @@ export default function RoutePage() {
   }, [cityGroupedExchangesAllTargetCities, selectedCities.sourceCities, selectedCities.targetCities]);
 
   /* onegraph route recommendation */
-  const [onegraphGoAndReturn, setOnegraphGoAndReturn] = useState(false);
+  const {
+    goAndReturn: onegraphGoAndReturn,
+    maxRestock: onegraphMaxRestock,
+    showFatigue: onegraphShowFatigue,
+  } = playerConfig.onegraph;
+  const setOnegraphGoAndReturn = (value: boolean) => oneOnegraphPlayerConfigChange("goAndReturn", value);
+  const setMaxRestock = (value: number) => oneOnegraphPlayerConfigChange("maxRestock", value);
+  const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
@@ -144,8 +155,6 @@ export default function RoutePage() {
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
   };
-  const [onegraphMaxRestock, setMaxRestock] = useState(5);
-  const [onegraphShowFatigue, setOnegraphShowFatigue] = useState(false);
   const onegraphRecommendations = useMemo<OnegraphRecommendations>(
     () => calculateOneGraphRecommendations(cityGroupedExchangesAllTargetCities, playerConfig, onegraphMaxRestock),
     [cityGroupedExchangesAllTargetCities, onegraphMaxRestock, playerConfig]
