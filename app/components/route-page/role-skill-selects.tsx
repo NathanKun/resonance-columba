@@ -36,7 +36,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
     if (pdtSkill) {
       Object.entries(pdtSkill).map(([pdt, percent]) => {
         texts.push(
-          <span key={`roleskilltext-pdt-${pdt}`} className="mx-auto block text-center pt-1">
+          <span key={`roleskilltext-pdt-${pdt}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
             {pdt}+{percent}%
           </span>
         );
@@ -47,7 +47,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
     if (citySkill) {
       Object.entries(citySkill).map(([city, percent]) => {
         texts.push(
-          <span key={`roleskilltext-city-${city}`} className="mx-auto block text-center pt-1">
+          <span key={`roleskilltext-city-${city}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
             {city}特产+{percent}%
           </span>
         );

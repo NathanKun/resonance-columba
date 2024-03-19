@@ -20,6 +20,11 @@ export default function usePlayerConfig() {
       七号自由港: 8,
     },
     roles: {},
+    onegraph: {
+      maxRestock: 5,
+      goAndReturn: false,
+      showFatigue: false,
+    },
   };
 
   const [playerConfig, setPlayerConfig] = useState<PlayerConfig>(initial);
@@ -30,7 +35,14 @@ export default function usePlayerConfig() {
     }
     try {
       const str = localStorage.getItem(localStorageKey);
-      return str ? JSON.parse(str) : initial;
+      const config = str ? JSON.parse(str) : initial;
+
+      // add missing fields after version update
+      if (config.onegraph === undefined) {
+        config.onegraph = initial.onegraph;
+      }
+
+      return config;
     } catch (e) {
       console.error(e);
       return initial;
