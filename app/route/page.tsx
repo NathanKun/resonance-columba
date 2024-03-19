@@ -208,7 +208,7 @@ export default function RoutePage() {
 
         {/* 一图流 */}
         <div role="tabpanel" hidden={tabIndex !== 0}>
-          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
               <Typography>
                 <Typography component="strong" fontSize={18}>
@@ -433,7 +433,7 @@ export default function RoutePage() {
 
         {/* 个性化设置 */}
         <div role="tabpanel" hidden={tabIndex !== 1}>
-          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-4xl mx-auto my-4 w-full">
+          <div className="bg-white dark:bg-gray-800 p-6 max-sm:px-0 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-4xl mx-auto my-4 w-full box-border">
             <Box
               className="m-4"
               sx={{
@@ -502,7 +502,7 @@ export default function RoutePage() {
               </Box>
 
               <Typography>乘员共振</Typography>
-              <Box className="m-4">
+              <Box className="m-4 max-sm:mx-0">
                 <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
               </Box>
             </Box>
@@ -511,7 +511,7 @@ export default function RoutePage() {
 
         {/* 最优线路详细信息 */}
         <div role="tabpanel" hidden={tabIndex !== 2}>
-          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex justify-between items-center mb-4">
               <Typography component="h3">
                 选择一个起始城市查看从这个城市出发的最优线路，或选择 任意 查看整体最优线路。
@@ -554,7 +554,7 @@ export default function RoutePage() {
                 exchangesCombination.length > 0 && (
                   <Box key={`recomendation-${index}`} className="m-4">
                     <Typography>购买{detailedRecommendations.length - index}种商品</Typography>
-                    <Box className="m-4">
+                    <Box className="m-4 max-sm:mx-0">
                       <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                           <TableHead>
@@ -604,7 +604,7 @@ export default function RoutePage() {
 
         {/* 详细模拟 */}
         <div role="tabpanel" hidden={tabIndex !== 3}>
-          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex justify-between items-center mb-4">
               <Typography component="h3">选择一个或多个起始城市以及终点城市，查看所有线路以及最优交易组合。</Typography>
             </div>
@@ -646,7 +646,7 @@ export default function RoutePage() {
                   return (
                     <div
                       key={`table-${fromCity}-${toCity}`}
-                      className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full"
+                      className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full box-border"
                     >
                       <Typography className="my-4">
                         {fromCity}
@@ -705,7 +705,7 @@ export default function RoutePage() {
 
         {/* 计算说明 */}
         <div role="tabpanel" hidden={tabIndex !== 4}>
-          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full">
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
               <Typography>买价为砍价税后价格。</Typography>
               <Typography>卖价为抬价后价格。</Typography>

@@ -8,8 +8,9 @@ import { env } from "process";
 import Header from "./components/header/header";
 import "./globals.css";
 import PriceProvider from "./price-provider";
+import type { Metadata, Viewport } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "科伦巴商会",
   description: "雷索纳斯 科伦巴商会 数据分享站",
 
@@ -17,6 +18,17 @@ export const metadata = {
   alternates: {
     canonical: "/",
   },
+};
+
+// Prevent automatic scale when focusing input (these will not affect the PC)
+export const viewport: Viewport = {
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  width: "device-width",
+  // I think it's better to prevent scaling on mobile because there's nothing worth scaling on the website.
+  // However, this is not work for iOS. It can only be solved by js, so forget it.
+  userScalable: false,
 };
 
 const inter = Noto_Sans_SC({
