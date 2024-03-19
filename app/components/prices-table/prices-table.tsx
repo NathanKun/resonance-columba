@@ -59,7 +59,7 @@ export default function PricesTable() {
 
       for (const sourceCity of buyableCities) {
         if (!selectedCities.sourceCities.includes(sourceCity)) {
-          return;
+          continue;
         }
 
         const productName = product.name;

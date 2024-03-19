@@ -198,7 +198,7 @@ export const ROLE_RESONANCE_SKILLS: {
     },
   },
   艾略特: {
-    3: {
+    4: {
       buyMore: {
         product: {
           游戏机: 20,
