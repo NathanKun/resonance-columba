@@ -60,7 +60,7 @@ Firebase项目已配置了使用位于香港的服务器。
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SilyASilyF"><img src="https://avatars.githubusercontent.com/u/18006559?v=4?s=100" width="100px;" alt="SilyASilyF"/><br /><sub><b>SilyASilyF</b></sub></a><br /><a href="#data-SilyASilyF" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/RudeusGreyrat666"><img src="https://avatars.githubusercontent.com/u/148561865?v=4?s=100" width="100px;" alt="RudeusGreyrat666"/><br /><sub><b>RudeusGreyrat666</b></sub></a><br /><a href="#data-RudeusGreyrat666" title="Data">🔣</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://moe.best"><img src="https://avatars.githubusercontent.com/u/24877906?v=4?s=100" width="100px;" alt="神代綺凛"/><br /><sub><b>神代綺凛</b></sub></a><br /><a href="#bug-Tsuk1ko" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://moe.best"><img src="https://avatars.githubusercontent.com/u/24877906?v=4?s=100" width="100px;" alt="神代綺凛"/><br /><sub><b>神代綺凛</b></sub></a><br /><a href="#bug-Tsuk1ko" title="Bug reports">🐛</a> <a href="#code-Tsuk1ko" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/arises"><img src="https://avatars.githubusercontent.com/u/19305811?v=4?s=100" width="100px;" alt="arises"/><br /><sub><b>arises</b></sub></a><br /><a href="#bug-arises" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
