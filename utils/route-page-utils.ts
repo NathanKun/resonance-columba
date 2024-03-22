@@ -514,7 +514,6 @@ export const calculateOneGraphBuyCombinations = (
     return {};
   }
 
-  const startTimestamp = Date.now();
   const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue } = bargain;
 
   const pricesData: OnegraphPriceData = {};
@@ -535,6 +534,10 @@ export const calculateOneGraphBuyCombinations = (
 
       // calculate buy price and buy lot
       let pdtPrices: OnegraphPriceDataItem[] = availableProducts.flatMap((product) => {
+        if (product.type === "Craft") {
+          return [];
+        }
+
         const name = product.name;
         const priceData = prices[name];
 
@@ -677,8 +680,6 @@ export const calculateOneGraphBuyCombinations = (
       }
     }
   }
-
-  console.log("One graph buy combinations calculation time", Date.now() - startTimestamp);
 
   return buyCombinations;
 };

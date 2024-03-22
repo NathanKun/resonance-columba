@@ -3,18 +3,11 @@
 import { CITIES, CityName } from "@/data/Cities";
 import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
-import {
-  CityGroupedExchanges,
-  OneGraphRouteDialogData,
-  OneGraphRouteDialogDataV2,
-  OnegraphRecommendations,
-  OnegraphRecommendationsV2,
-} from "@/interfaces/route-page";
+import { CityGroupedExchanges, OneGraphRouteDialogDataV2, OnegraphRecommendationsV2 } from "@/interfaces/route-page";
 import {
   calculateAccumulatedValues,
   calculateExchanges,
   calculateOneGraphBuyCombinations,
-  calculateOneGraphRecommendations,
   getBestRoutesByNumberOfBuyingProductTypes,
   getOneGraphRecommendation,
   groupeExchangesByCity,
@@ -57,7 +50,6 @@ import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
-import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
 import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
 import { PriceContext } from "../price-provider";
@@ -156,34 +148,8 @@ export default function RoutePage() {
   const setOnegraphGoAndReturn = (value: boolean) => oneOnegraphPlayerConfigChange("goAndReturn", value);
   const setMaxRestock = (value: number) => oneOnegraphPlayerConfigChange("maxRestock", value);
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
+  const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
-  const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
-  const [onegraphRouteDialogDataV2, setOnegraphRouteDialogDataV2] = useState<OneGraphRouteDialogDataV2>();
-  const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
-    const onegraphData = onegraphRecommendations[fromCity][toCity];
-    setOnegraphRouteDialogData({ fromCity, toCity, onegraphData, playerConfig, goAndReturn: onegraphGoAndReturn });
-    setOnegraphRouteDialogOpen(true);
-    trackOnegraphDialogBtnClick(fromCity, toCity);
-  };
-  const onegraphRecommendations = useMemo<OnegraphRecommendations>(
-    () => calculateOneGraphRecommendations(cityGroupedExchangesAllTargetCities, playerConfig, onegraphMaxRestock),
-    [cityGroupedExchangesAllTargetCities, onegraphMaxRestock, playerConfig]
-  );
-  const topProfits = useMemo(() => {
-    const profits = [];
-    for (const fromCity in onegraphRecommendations) {
-      for (const toCity in onegraphRecommendations[fromCity]) {
-        const reco = onegraphRecommendations[fromCity][toCity];
-        const profit = onegraphGoAndReturn ? reco.totalProfit : reco.goReco.profit;
-        if (profit > 0) {
-          profits.push(profit);
-        }
-      }
-    }
-    return [...new Set(profits)].sort((a, b) => b - a).slice(0, 3);
-  }, [onegraphRecommendations, onegraphGoAndReturn]);
-
-  /* onegraph route recommendation V2 */
   const onegraphBuyCombinations = useMemo(
     () =>
       calculateOneGraphBuyCombinations(
@@ -223,11 +189,11 @@ export default function RoutePage() {
       }
     }
 
-    console.log(onegraphBuyCombinations, results);
+    console.debug(onegraphBuyCombinations, results);
 
     return results;
   }, [onegraphMaxRestock, onegraphBuyCombinations]);
-  const topProfitsV2: { go: number[]; goAndReturn: number[] } = useMemo(() => {
+  const topProfits: { go: number[]; goAndReturn: number[] } = useMemo(() => {
     let goProfits = [];
     let goAndReturnProfits = [];
     for (const fromCity in onegraphRecommendationsV2) {
@@ -239,18 +205,16 @@ export default function RoutePage() {
     }
     goProfits = [...new Set(goProfits)].sort((a, b) => b - a).slice(0, 3);
     goAndReturnProfits = [...new Set(goAndReturnProfits)].sort((a, b) => b - a).slice(0, 3);
-    console.log({ go: goProfits, goAndReturn: goAndReturnProfits });
     return { go: goProfits, goAndReturn: goAndReturnProfits };
   }, [onegraphRecommendationsV2]);
-  const [onegraphRouteDialogV2Open, setOnegraphRouteDialogV2Open] = useState(false);
-  const showOneGraphRouteDialogV2 = (fromCity: CityName, toCity: CityName) => {
-    setOnegraphRouteDialogDataV2({
+  const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
+    setOnegraphRouteDialogData({
       stats: onegraphRecommendationsV2[fromCity][toCity],
       playerConfig,
       fromCity,
       toCity,
     });
-    setOnegraphRouteDialogV2Open(true);
+    setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
   };
 
@@ -312,7 +276,7 @@ export default function RoutePage() {
 
           <Box>
             <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
-              <Typography sx={{ textWrap: "nowrap" }}>希望最多进货次数</Typography>
+              <Typography sx={{ textWrap: "nowrap" }}>总进货次数</Typography>
               <IconButton
                 onClick={() => {
                   if (onegraphMaxRestock > 0) {
@@ -325,7 +289,7 @@ export default function RoutePage() {
               </IconButton>
               <Slider
                 className="w-20 sm:w-60"
-                aria-label="希望最多进货次数"
+                aria-label="总进货次数"
                 value={onegraphMaxRestock}
                 onChange={(_e, newVal) => setMaxRestock(newVal as number)}
                 min={0}
@@ -423,133 +387,6 @@ export default function RoutePage() {
                 <TableRow>
                   <TableCell colSpan={2}></TableCell>
                   {CITIES.map((city) => (
-                    <TableCell key={city} align="center">
-                      {city}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {CITIES.map((fromCity, index) => (
-                  <TableRow key={`onegraph-row-${fromCity}`}>
-                    {/** spaning 起点 cell */}
-                    {index === 0 && (
-                      <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
-                        起点
-                      </TableCell>
-                    )}
-
-                    {/** city name */}
-                    <TableCell className="onegraph-cell-fromcity-cityname">{fromCity}</TableCell>
-
-                    {/** profit cells */}
-                    {CITIES.map((toCity) => {
-                      const key = `onegraph-row-${fromCity}-cell-${toCity}`;
-                      const EmptyCell = () => (
-                        <TableCell key={key} align="center">
-                          -
-                        </TableCell>
-                      );
-                      if (fromCity === toCity) {
-                        return EmptyCell();
-                      }
-
-                      const reco = onegraphRecommendations[fromCity]?.[toCity];
-                      const goProfit = reco?.goReco?.profit ?? 0;
-                      const goFatigue = reco?.goReco?.fatigue ?? 0;
-                      let profit = goProfit;
-                      let fatigue = goFatigue;
-                      let profitPerFatigue = reco?.goReco?.profitPerFatigue;
-
-                      if (onegraphGoAndReturn) {
-                        profit = reco?.totalProfit ?? 0;
-                        fatigue = reco?.totalFatigue ?? 0;
-                        profitPerFatigue = reco?.totalProfitPerFatigue ?? 0;
-                      }
-
-                      const percentageToMax = Math.round((profit / topProfits[0] ?? 1) * 100);
-                      let RankIcon, textClass;
-                      if (profit === topProfits[0]) {
-                        RankIcon = <LooksOneIcon className="text-base" />;
-                        textClass = "font-black";
-                      } else if (profit === topProfits[1]) {
-                        RankIcon = <LooksTwoIcon className="text-base" />;
-                        textClass = "font-bold";
-                      } else if (profit === topProfits[2]) {
-                        RankIcon = <Looks3Icon className="text-base" />;
-                        textClass = "font-medium";
-                      } else {
-                        RankIcon = <></>;
-                        textClass = "";
-                      }
-
-                      return (
-                        <TableCell
-                          key={key}
-                          align="center"
-                          sx={{
-                            background: `linear-gradient(90deg, ${
-                              prefersDarkMode ? "darkred" : "lightcoral"
-                            } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
-                          }}
-                        >
-                          <Button
-                            className="w-full h-full flex-col p-0"
-                            color="inherit"
-                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
-                          >
-                            <span className={`flex items-center ${textClass}`}>
-                              {RankIcon}
-                              {profit}
-                            </span>
-
-                            {onegraphShowFatigue && <span className="block">{profitPerFatigue}</span>}
-                          </Button>
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* one graph v2 */}
-          <TableContainer
-            component={Paper}
-            className="w-full bg-white dark:bg-gray-800 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4"
-          >
-            <Table
-              sx={{
-                width: "auto",
-                margin: "4rem auto",
-                "& th, & td": {
-                  border: "1px solid gray",
-                  padding: "0.25rem",
-                  color: prefersDarkMode ? "white" : "black",
-                },
-                "& td": {
-                  width: "6rem",
-                },
-                "& .onegraph-cell-fromcity-source": {
-                  width: "2rem",
-                },
-                "& .onegraph-cell-fromcity-cityname": {
-                  width: "7rem",
-                },
-              }}
-            >
-              <TableHead>
-                {/** header 1 - spanning 终点 cell */}
-                <TableRow>
-                  <TableCell align="center" colSpan={CITIES.length + 2}>
-                    终点
-                  </TableCell>
-                </TableRow>
-                {/** header 2 - city cells */}
-                <TableRow>
-                  <TableCell colSpan={2}></TableCell>
-                  {CITIES.map((city) => (
                     <TableCell key={`onegraphv2-${city}`} align="center">
                       {city}
                     </TableCell>
@@ -594,17 +431,17 @@ export default function RoutePage() {
                         : reco.simpleGo.fatigue;
                       const profitPerFatigue = Math.round(profit / fatigue);
 
-                      const topProfits = onegraphGoAndReturn ? topProfitsV2.goAndReturn : topProfitsV2.go;
-                      const maxProfitOfAll = topProfits[0];
+                      const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
+                      const maxProfitOfAll = topProfitsLocal[0];
                       const percentageToMax = Math.round((profit / maxProfitOfAll) * 100);
                       let RankIcon, textClass;
-                      if (profit === topProfits[0]) {
+                      if (profit === topProfitsLocal[0]) {
                         RankIcon = <LooksOneIcon className="text-base" />;
                         textClass = "font-black";
-                      } else if (profit === topProfits[1]) {
+                      } else if (profit === topProfitsLocal[1]) {
                         RankIcon = <LooksTwoIcon className="text-base" />;
                         textClass = "font-bold";
-                      } else if (profit === topProfits[2]) {
+                      } else if (profit === topProfitsLocal[2]) {
                         RankIcon = <Looks3Icon className="text-base" />;
                         textClass = "font-medium";
                       } else {
@@ -625,7 +462,7 @@ export default function RoutePage() {
                           <Button
                             className="w-full h-full block p-0"
                             color="inherit"
-                            onClick={() => showOneGraphRouteDialogV2(fromCity, toCity)}
+                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
                           >
                             <span className={`flex justify-center items-center ${textClass}`}>
                               {RankIcon}
@@ -643,16 +480,10 @@ export default function RoutePage() {
             </Table>
           </TableContainer>
 
-          <OneGraphRouteDialog
+          <OneGraphRouteDialogV2
             open={onegraphRouteDialogOpen}
             setOpen={setOnegraphRouteDialogOpen}
             data={onegraphRouteDialogData}
-          />
-
-          <OneGraphRouteDialogV2
-            open={onegraphRouteDialogV2Open}
-            setOpen={setOnegraphRouteDialogV2Open}
-            data={onegraphRouteDialogDataV2}
           />
         </div>
 
