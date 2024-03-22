@@ -150,6 +150,7 @@ export default function RoutePage() {
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
+  const [onegraphBarginDisabled, setOnegraphBarginDisabled] = useState(false);
   const onegraphBuyCombinations = useMemo(
     () =>
       calculateOneGraphBuyCombinations(
@@ -157,9 +158,17 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.bargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        onegraphBarginDisabled
       ),
-    [prices, playerConfig.maxLot, playerConfig.bargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.bargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      onegraphBarginDisabled,
+    ]
   );
   const onegraphRecommendationsV2 = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
@@ -334,6 +343,19 @@ export default function RoutePage() {
                   />
                 }
                 label={<Typography>显示单位疲劳利润</Typography>}
+              />
+
+              <FormControlLabel
+                className="w-30"
+                control={
+                  <Switch
+                    checked={onegraphBarginDisabled}
+                    onChange={(e) => {
+                      setOnegraphBarginDisabled(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>不议价</Typography>}
               />
             </Stack>
             <Stack

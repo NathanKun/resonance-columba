@@ -338,7 +338,8 @@ export const calculateOneGraphBuyCombinations = (
   maxLot: number,
   bargain: PlayerConfigBargain,
   prestige: PlayerConfigPrestige,
-  roles: PlayerConfigRoles
+  roles: PlayerConfigRoles,
+  barginDisabled: boolean
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -394,7 +395,7 @@ export const calculateOneGraphBuyCombinations = (
         }
 
         // apply bargain to buy price
-        const bargain = bargainPercent ?? 0;
+        const bargain = barginDisabled ? 0 : bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
 
         // apply prestiged tax to buy price
@@ -445,7 +446,7 @@ export const calculateOneGraphBuyCombinations = (
           }
 
           // apply raise to sell price
-          const raise = raisePercent ?? 0;
+          const raise = barginDisabled ? 0 : raisePercent ?? 0;
           sellPrice = Math.round(sellPrice * (1 + raise / 100));
 
           // calculate profit
