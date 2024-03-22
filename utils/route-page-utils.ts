@@ -4,14 +4,18 @@ import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { GetPricesProducts } from "@/interfaces/get-prices";
-import { PlayerConfig } from "@/interfaces/player-config";
+import { PlayerConfig, PlayerConfigBargain, PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
+import { Product } from "@/interfaces/product";
 import {
   Buy,
   CityGroupedExchanges,
   CityProductProfitAccumulatedExchange,
   Exchange,
-  NoRestockRoutes,
-  OnegraphRecommendations,
+  OnegraphBuyCombination as OnegraphBuy,
+  OnegraphBuyCombinationStats,
+  OnegraphBuyCombinations,
+  OnegraphPriceData,
+  OnegraphPriceDataItem,
 } from "@/interfaces/route-page";
 
 const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
@@ -60,31 +64,7 @@ export const calculateExchanges = (
         }
 
         // get role resonance skill buy more percent
-        let resonanceSkillBuyMorePercent = 0;
-        for (const roleName in playerConfig.roles) {
-          // player's role's data
-          const playerRole = playerConfig.roles[roleName];
-          const level = playerRole.resonance;
-          if (level === 0) {
-            continue;
-          }
-
-          // get resonance skill for this role and level
-          const rollResonances = ROLE_RESONANCE_SKILLS[roleName];
-          const skill = rollResonances?.[level];
-          if (!skill) {
-            console.warn(`Resonance skill not found for ${roleName} level ${level}`);
-            continue;
-          }
-
-          // get buy more percent for this product and city
-          const buyMore = skill.buyMore;
-          const currentProductBuyMorePercent = buyMore?.product?.[product.name] ?? 0;
-          resonanceSkillBuyMorePercent += currentProductBuyMorePercent;
-
-          const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
-          resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
-        }
+        const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(playerConfig.roles, product, fromCity);
 
         // get prestige buy more percent
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
@@ -353,164 +333,284 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
   return combinations.sort((a, b) => b.profitOfCombination - a.profitOfCombination);
 };
 
-export const getNoRestockRoutes = (
-  cityGroupedExchanges: CityGroupedExchanges,
-  playerConfig: PlayerConfig
-): NoRestockRoutes => {
-  const maxLot = playerConfig.maxLot;
-  const results: NoRestockRoutes = {};
-  for (const fromCity in cityGroupedExchanges) {
-    for (const toCity in cityGroupedExchanges[fromCity]) {
+export const calculateOneGraphBuyCombinations = (
+  prices: GetPricesProducts,
+  maxLot: number,
+  bargain: PlayerConfigBargain,
+  prestige: PlayerConfigPrestige,
+  roles: PlayerConfigRoles
+): OnegraphBuyCombinations => {
+  // skip if Server side rendering
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  // skip if no price data
+  if (!prices || Object.keys(prices).length === 0) {
+    return {};
+  }
+
+  const start = performance.now();
+
+  const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue } = bargain;
+
+  const pricesData: OnegraphPriceData = {};
+  for (const fromCity of CITIES) {
+    const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
+    const buyPrestige = PRESTIGES.find((p) => p.level === prestige[fromCityMaster]);
+    if (!buyPrestige) {
+      console.warn(`Prestige configurtation not found for ${fromCityMaster} level ${prestige[fromCityMaster]}`);
+      continue;
+    }
+
+    const availableProducts = getProductsOfCity(fromCity);
+
+    for (const toCity of CITIES) {
       if (fromCity === toCity) {
         continue;
       }
 
-      let profit = 0;
-      let totalLot = 0;
-      let products = [];
-
-      const allExchanges = cityGroupedExchanges[fromCity][toCity];
-      const profitableExchanges = allExchanges.filter((exchange) => !exchange.loss);
-      for (const exchange of profitableExchanges) {
-        let shouldBuyLot = maxLot > exchange.buyLot + totalLot ? exchange.buyLot : maxLot - totalLot;
-        let pdtProfit = shouldBuyLot * exchange.singleProfit;
-        profit += pdtProfit;
-        totalLot += shouldBuyLot;
-        products.push(exchange.product);
-
-        if (totalLot >= maxLot) {
-          break;
+      // calculate buy price and buy lot
+      let pdtPrices: OnegraphPriceDataItem[] = availableProducts.flatMap((product) => {
+        if (product.type === "Craft") {
+          return [];
         }
+
+        const name = product.name;
+        const priceData = prices[name];
+
+        // guard
+        let buyPrice = priceData?.["buy"]?.[fromCity]?.price ?? 0;
+
+        if (buyPrice === 0) {
+          console.warn(`No buy price data for ${name} in ${fromCity}`);
+          return [];
+        }
+
+        let buyLot = product.buyLot?.[fromCity] ?? 0;
+        if (buyLot === 0) {
+          console.warn(`Buy lot not found for ${name} in ${fromCity}`);
+          return [];
+        }
+
+        // apply bargain to buy price
+        const bargain = bargainPercent ?? 0;
+        buyPrice = buyPrice * (1 - bargain / 100);
+
+        // apply prestiged tax to buy price
+        const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+        buyPrice = Math.round(buyPrice * (1 + tax));
+
+        // get role resonance skill buy more percent
+        const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(roles, product, fromCity);
+
+        // get prestige buy more percent
+        const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
+
+        // sum all buy more percent
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+
+        // apply buy more percent to buy lot
+        buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
+
+        return [
+          {
+            name,
+            product,
+            priceData,
+            buyPrice,
+            buyLot,
+            sellPrice: -1,
+            singleProfit: -1,
+          },
+        ];
+      }, []);
+
+      const toCityMaster = CITY_BELONGS_TO[toCity] ?? toCity;
+      const sellPrestige = PRESTIGES.find((p) => p.level === prestige[toCityMaster]);
+      if (!sellPrestige) {
+        console.warn(`Prestige configurtation not found for ${toCityMaster} level ${prestige[toCityMaster]}`);
+        continue;
       }
 
-      // fatigue calculation
-      const routeFatigue = getRouteFatigue(fromCity, toCity);
-      let fatigue = 0;
-      if (routeFatigue) {
-        const bargainFatigue = playerConfig.bargain.bargainFatigue ?? 0;
-        const raiseFatigue = playerConfig.bargain.raiseFatigue ?? 0;
-        fatigue = routeFatigue + bargainFatigue + raiseFatigue;
-      }
+      // calculate sell price and songle profit
+      pdtPrices = pdtPrices
+        .flatMap((it) => {
+          const { priceData, buyPrice } = it;
+          let sellPrice = priceData?.["sell"]?.[toCity]?.price ?? 0;
 
-      const cityResult = { fromCity, toCity, profit, products, fatigue, totalLot };
-      results[fromCity] = results[fromCity] ?? {};
-      results[fromCity][toCity] = cityResult;
+          if (sellPrice === 0) {
+            console.warn(`No sell price data for ${it.name} in ${toCity}`);
+            return [];
+          }
+
+          // apply raise to sell price
+          const raise = raisePercent ?? 0;
+          sellPrice = Math.round(sellPrice * (1 + raise / 100));
+
+          // calculate profit
+          let singleProfit = sellPrice - buyPrice;
+
+          // skip if loss
+          if (singleProfit <= 0) {
+            return [];
+          }
+
+          // apply prestiged tax to profit
+          const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+          singleProfit = Math.round(singleProfit * (1 - tax));
+
+          return [
+            {
+              ...it,
+              sellPrice,
+              singleProfit,
+            },
+          ];
+        }, [])
+        // sort by single profit
+        .sort((a, b) => b.singleProfit - a.singleProfit);
+
+      pricesData[fromCity] = pricesData[fromCity] ?? {};
+      pricesData[fromCity][toCity] = pdtPrices;
+    }
+  }
+
+  // calculate all restock possibilities, from 0-50, go and return
+  const buyCombinations: OnegraphBuyCombinations = {};
+  for (const fromCity in pricesData) {
+    for (const toCity in pricesData[fromCity]) {
+      const priceData: OnegraphPriceDataItem[] = pricesData[fromCity][toCity]; // sorted
+
+      for (let restock = 0; restock <= 50; restock++) {
+        // start buying from the most profitable product, until maxLot is reached
+        let usedLot = 0;
+        let productIndex = 0;
+        const buyCombination: OnegraphBuy[] = [];
+        while (usedLot < maxLot && productIndex < priceData.length) {
+          const pdt = priceData[productIndex];
+          const avaiableLot = pdt.buyLot * (restock + 1);
+          const buyLot = Math.min(maxLot - usedLot, avaiableLot);
+          usedLot += buyLot;
+          buyCombination.push({
+            buyLot,
+            name: pdt.name,
+            profit: pdt.singleProfit * buyLot,
+          });
+          productIndex++;
+        }
+
+        buyCombinations[fromCity] = buyCombinations[fromCity] ?? {};
+        buyCombinations[fromCity][toCity] = buyCombinations[fromCity][toCity] ?? {};
+
+        const totalProfit = buyCombination.reduce((acc, it) => acc + it.profit, 0);
+        const fatigue = (getRouteFatigue(fromCity, toCity) ?? 0) + bargainFatigue + raiseFatigue;
+
+        // if current profit equals the profit of the last restock, then it is wasting restock
+        let lastNotWastingRestock = restock;
+        const wastingRestock = restock > 0 && totalProfit === buyCombinations[fromCity][toCity][restock - 1]?.profit;
+        if (wastingRestock) {
+          // find the last not wasting restock
+          const lastCombination = buyCombinations[fromCity][toCity][restock - 1];
+          if (lastCombination.lastNotWastingRestock === restock - 1) {
+            // this means the last restock is not wasting
+            lastNotWastingRestock = restock - 1; // so for the current restock count, restock - 1 is the last not wasting restock
+          } else {
+            // if the last restock is wasting, then the last not wasting restock is the same as the last one
+            lastNotWastingRestock = lastCombination.lastNotWastingRestock;
+          }
+        }
+
+        buyCombinations[fromCity][toCity][restock] = {
+          combinations: buyCombination,
+          profit: totalProfit,
+          restock,
+          fatigue,
+          profitPerFatigue: Math.round(totalProfit / fatigue),
+          profitPerRestock: restock === 0 ? totalProfit : Math.round(totalProfit / restock),
+          usedLot,
+          lastNotWastingRestock,
+        };
+      }
+    }
+  }
+
+  console.debug("calculateOneGraphBuyCombinations", performance.now() - start);
+
+  return buyCombinations;
+};
+
+export const getOneGraphRecommendation = (
+  restock: number,
+  goAndReturn: boolean,
+  fromCity: CityName,
+  toCity: CityName,
+  buyCombinations: OnegraphBuyCombinations
+): OnegraphBuyCombinationStats[] => {
+  // if simple go, the return the one with the request restock
+  if (!goAndReturn) {
+    const reco = buyCombinations[fromCity]?.[toCity]?.[restock];
+    if (!reco) {
+      return [];
+    }
+    return [reco];
+  }
+
+  // if go and return, then find the best combination of go and return
+  // given restock number is the total restock number for both go and return
+  let results: OnegraphBuyCombinationStats[] = [];
+  let maxProfit = 0;
+  for (let goRestock = 0; goRestock <= restock; goRestock++) {
+    const returnRestock = restock - goRestock;
+    const goStats = buyCombinations[fromCity]?.[toCity]?.[goRestock];
+    if (!goStats) {
+      continue;
+    }
+    const returnStats = buyCombinations[toCity]?.[fromCity]?.[returnRestock];
+    if (!returnStats) {
+      continue;
+    }
+    const totalProfit = goStats?.profit + returnStats?.profit;
+
+    if (totalProfit > maxProfit) {
+      maxProfit = totalProfit;
+      results = [
+        { ...goStats, restock: goRestock },
+        { ...returnStats, restock: returnRestock },
+      ];
     }
   }
 
   return results;
 };
 
-export const calculateOneGraphRecommendations = (
-  cityGroupedExchangesAllTargetCities: CityGroupedExchanges,
-  playerConfig: PlayerConfig,
-  onegraphMaxRestock: number
-) => {
-  const results: OnegraphRecommendations = {};
-  const onegraphNoRestockRoutes: NoRestockRoutes = getNoRestockRoutes(
-    cityGroupedExchangesAllTargetCities,
-    playerConfig
-  );
-
-  const findOneGraphExchanges = (
-    fromCity: CityName,
-    toCity: CityName
-  ): CityProductProfitAccumulatedExchange[] | undefined => {
-    const exchanges = cityGroupedExchangesAllTargetCities[fromCity][toCity];
-
-    // find the most profitable exchanges which are just under maxRestock,
-    // the combination from the first to the choosenExchangeIndex
-    // is the best combination for maxRestock wanted
-
-    // if no exchanges, skip
-    if (exchanges.length === 0) {
-      return undefined;
+const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Product, fromCity: CityName) => {
+  // get role resonance skill buy more percent
+  let resonanceSkillBuyMorePercent = 0;
+  for (const roleName in roles) {
+    // player's role's data
+    const playerRole = roles[roleName];
+    const level = playerRole.resonance;
+    if (level === 0) {
+      continue;
     }
 
-    let choosenExchangeIndex = null;
-    for (let i = exchanges.length - 1; i >= 0; i--) {
-      if (exchanges[i].loss) {
-        continue;
-      }
-      if (exchanges[i].restockCount <= onegraphMaxRestock) {
-        choosenExchangeIndex = i;
-      } else {
-        break;
-      }
+    // get resonance skill for this role and level
+    const rollResonances = ROLE_RESONANCE_SKILLS[roleName];
+    const skill = rollResonances?.[level];
+    if (!skill) {
+      console.warn(`Resonance skill not found for ${roleName} level ${level}`);
+      continue;
     }
 
-    // if no exchanges are under maxRestock, skip
-    if (choosenExchangeIndex === null) {
-      return undefined;
-    }
+    // get buy more percent for this product and city
+    const buyMore = skill.buyMore;
+    const currentProductBuyMorePercent = buyMore?.product?.[product.name] ?? 0;
+    resonanceSkillBuyMorePercent += currentProductBuyMorePercent;
 
-    const recomendationExchanges = exchanges.slice(0, choosenExchangeIndex + 1);
-    const lastExchange = recomendationExchanges.at(-1)!; // there must be at least one exchange at this point
-
-    // find if there is a next profitable exchange which can be used to fill the cargo,
-    // assuming using the next product can fill the remaining cargo, otherwise there will still be some cargo left,
-    // ideally should do a loop here to make sure all cargo is filled, but maybe next time :)
-    const nextExchange = exchanges[choosenExchangeIndex + 1];
-    if (nextExchange && !nextExchange.loss) {
-      const usedLot = lastExchange.restockAccumulatedLot;
-      const remainingLot = playerConfig.maxLot - usedLot;
-      const filledLot = Math.min(remainingLot, nextExchange.buyLot * (lastExchange.restockCount + 1));
-      const fillStockProfit = nextExchange.singleProfit * filledLot;
-      const restockAccumulatedProfit = lastExchange.restockAccumulatedProfit + fillStockProfit;
-      recomendationExchanges.push({
-        ...nextExchange,
-        accumulatedProfit: fillStockProfit, // profit generated by filling the cargo
-        accumulatedLot: filledLot, // lot used to fill the cargo
-        restockCount: lastExchange.restockCount, // restock count is the same as the last exchange
-        restockAccumulatedProfit: restockAccumulatedProfit, // profit generated by exchanges plus filling the cargo
-        restockAccumulatedLot: usedLot + filledLot, // lot used by exchanges plus filling the cargo
-        isForFillCargo: true,
-      });
-    }
-
-    return recomendationExchanges;
-  };
-
-  for (const fromCity in cityGroupedExchangesAllTargetCities) {
-    for (const toCity in cityGroupedExchangesAllTargetCities[fromCity]) {
-      if (!results[fromCity]) {
-        results[fromCity] = {};
-      }
-
-      const goNoRestockRoute = onegraphNoRestockRoutes[fromCity]?.[toCity];
-      const goExchanges = findOneGraphExchanges(fromCity, toCity);
-      const goProfit = goExchanges?.at(-1)?.restockAccumulatedProfit ?? goNoRestockRoute?.profit;
-      const goFatigue = goExchanges?.at(-1)?.fatigue ?? goNoRestockRoute?.fatigue;
-
-      const returnNoRestockRoute = onegraphNoRestockRoutes[toCity]?.[fromCity];
-      const returnExchanges = findOneGraphExchanges(toCity, fromCity);
-      const returnProfit = returnExchanges?.at(-1)?.restockAccumulatedProfit ?? returnNoRestockRoute?.profit;
-      const returnFatigue = returnExchanges?.at(-1)?.fatigue ?? returnNoRestockRoute?.fatigue;
-
-      const totalProfit = (goProfit ?? 0) + (returnProfit ?? 0);
-      const totalFatigue = goFatigue + returnFatigue;
-
-      results[fromCity][toCity] = {
-        goReco: {
-          exchanges: goExchanges,
-          noRestockRoute: goNoRestockRoute,
-          profit: goProfit,
-          fatigue: goFatigue,
-          profitPerFatigue: goFatigue > 0 ? Math.round(goProfit / goFatigue) : 0,
-        },
-        returnReco: {
-          exchanges: returnExchanges,
-          noRestockRoute: returnNoRestockRoute,
-          profit: returnProfit,
-          fatigue: returnFatigue,
-          profitPerFatigue: returnFatigue > 0 ? Math.round(returnProfit / returnFatigue) : 0,
-        },
-        totalProfit,
-        totalFatigue,
-        totalProfitPerFatigue: totalFatigue > 0 ? Math.round(totalProfit / totalFatigue) : 0,
-      };
-    }
+    const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
+    resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
   }
 
-  return results;
+  return resonanceSkillBuyMorePercent;
 };
