@@ -350,6 +350,8 @@ export const calculateOneGraphBuyCombinations = (
     return {};
   }
 
+  const start = performance.now();
+
   const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue } = bargain;
 
   const pricesData: OnegraphPriceData = {};
@@ -474,13 +476,13 @@ export const calculateOneGraphBuyCombinations = (
     }
   }
 
-  // calculate all restock possibilities, from 0-30, go and return
+  // calculate all restock possibilities, from 0-50, go and return
   const buyCombinations: OnegraphBuyCombinations = {};
   for (const fromCity in pricesData) {
     for (const toCity in pricesData[fromCity]) {
       const priceData: OnegraphPriceDataItem[] = pricesData[fromCity][toCity]; // sorted
 
-      for (let restock = 0; restock <= 30; restock++) {
+      for (let restock = 0; restock <= 50; restock++) {
         // start buying from the most profitable product, until maxLot is reached
         let usedLot = 0;
         let productIndex = 0;
@@ -504,6 +506,21 @@ export const calculateOneGraphBuyCombinations = (
         const totalProfit = buyCombination.reduce((acc, it) => acc + it.profit, 0);
         const fatigue = (getRouteFatigue(fromCity, toCity) ?? 0) + bargainFatigue + raiseFatigue;
 
+        // if current profit equals the profit of the last restock, then it is wasting restock
+        let lastNotWastingRestock = restock;
+        const wastingRestock = restock > 0 && totalProfit === buyCombinations[fromCity][toCity][restock - 1]?.profit;
+        if (wastingRestock) {
+          // find the last not wasting restock
+          const lastCombination = buyCombinations[fromCity][toCity][restock - 1];
+          if (lastCombination.lastNotWastingRestock === restock - 1) {
+            // this means the last restock is not wasting
+            lastNotWastingRestock = restock - 1; // so for the current restock count, restock - 1 is the last not wasting restock
+          } else {
+            // if the last restock is wasting, then the last not wasting restock is the same as the last one
+            lastNotWastingRestock = lastCombination.lastNotWastingRestock;
+          }
+        }
+
         buyCombinations[fromCity][toCity][restock] = {
           combinations: buyCombination,
           profit: totalProfit,
@@ -512,10 +529,13 @@ export const calculateOneGraphBuyCombinations = (
           profitPerFatigue: Math.round(totalProfit / fatigue),
           profitPerRestock: restock === 0 ? totalProfit : Math.round(totalProfit / restock),
           usedLot,
+          lastNotWastingRestock,
         };
       }
     }
   }
+
+  console.debug("calculateOneGraphBuyCombinations", performance.now() - start);
 
   return buyCombinations;
 };

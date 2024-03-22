@@ -17,6 +17,8 @@ interface DisplayData {
   usedLot: number;
   restockCount: number;
   profitPerRestock: number;
+  isWastingRestock: boolean;
+  lastNotWastingRestock: number;
 }
 
 export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props) {
@@ -27,7 +29,6 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
 
   const { stats, playerConfig, fromCity, toCity } = data;
   const { simpleGo: simpleGoData, goAndReturn: goAndReturnData } = stats;
-  const { combinations, fatigue, profit, profitPerFatigue, profitPerRestock, restock, usedLot } = simpleGoData;
   const { bargain } = playerConfig;
   const { bargainFatigue, raiseFatigue } = bargain;
   const goAndReturn = playerConfig.onegraph.goAndReturn;
@@ -41,6 +42,8 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
       buyProducts: stats.combinations.map((c) => c.name).join(", "),
       usedLot: stats.usedLot,
       restockCount: stats.restock,
+      isWastingRestock: stats.lastNotWastingRestock !== stats.restock,
+      lastNotWastingRestock: stats.lastNotWastingRestock,
     } as DisplayData;
   };
 
@@ -52,7 +55,7 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
     }
     const totalProfit = goDisplayData.profit + returnDisplayData!.profit;
     const totalFatigue = goDisplayData.fatigue + returnDisplayData!.fatigue;
-    const profitPerFatigue = totalProfit / totalFatigue;
+    const profitPerFatigue = Math.round(totalProfit / totalFatigue);
     return {
       profit: totalProfit,
       fatigue: totalFatigue,
@@ -75,6 +78,11 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
           <Box className="m-8">
             <DialogContentText>利润：{goDisplayData.profit}</DialogContentText>
             <DialogContentText>进货书需求：{goDisplayData.restockCount}</DialogContentText>
+            {goDisplayData.isWastingRestock && (
+              <DialogContentText className="text-red-500">
+                进货过多！会浪费进货书。使用超过{goDisplayData.lastNotWastingRestock}本进货书后不会再产生收益。
+              </DialogContentText>
+            )}
             <DialogContentText>需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
             <DialogContentText>所需舱位：{goDisplayData.usedLot}</DialogContentText>
             <DialogContentText>
@@ -88,6 +96,12 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
               <Box className="m-8">
                 <DialogContentText>回程利润：{returnDisplayData.profit}</DialogContentText>
                 <DialogContentText>回程进货书需求：{returnDisplayData.restockCount}</DialogContentText>
+                {returnDisplayData.isWastingRestock && (
+                  <DialogContentText className="text-red-500">
+                    进货过多！会浪费进货书。最多使用超过{returnDisplayData.lastNotWastingRestock}
+                    本进货书后不会再产生收益。
+                  </DialogContentText>
+                )}
                 <DialogContentText>需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
                 <DialogContentText>所需舱位：{returnDisplayData.usedLot}</DialogContentText>
                 <DialogContentText>

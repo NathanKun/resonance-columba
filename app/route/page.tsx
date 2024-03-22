@@ -293,7 +293,7 @@ export default function RoutePage() {
                 value={onegraphMaxRestock}
                 onChange={(_e, newVal) => setMaxRestock(newVal as number)}
                 min={0}
-                max={30}
+                max={50}
                 size="small"
               />
               <IconButton

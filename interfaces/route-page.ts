@@ -134,6 +134,7 @@ export interface OnegraphBuyCombinationStats {
   profitPerFatigue: number;
   profitPerRestock: number;
   usedLot: number;
+  lastNotWastingRestock: number; // if not wasting, this equals to restock, otherwise it is the last restock count that is not wasting
 }
 
 export interface OnegraphBuyCombinations {
