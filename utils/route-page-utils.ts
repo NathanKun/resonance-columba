@@ -505,7 +505,10 @@ export const calculateOneGraphBuyCombinations = (
         buyCombinations[fromCity][toCity] = buyCombinations[fromCity][toCity] ?? {};
 
         const totalProfit = buyCombination.reduce((acc, it) => acc + it.profit, 0);
-        const fatigue = (getRouteFatigue(fromCity, toCity) ?? 0) + bargainFatigue + raiseFatigue;
+        let fatigue = getRouteFatigue(fromCity, toCity) ?? 0;
+        if (!barginDisabled) {
+          fatigue += bargainFatigue + raiseFatigue;
+        }
 
         // if current profit equals the profit of the last restock, then it is wasting restock
         let lastNotWastingRestock = restock;
