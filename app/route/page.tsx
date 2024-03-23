@@ -176,21 +176,15 @@ export default function RoutePage() {
       results[fromCity] = {};
       for (const toCity in onegraphBuyCombinations[fromCity]) {
         if (fromCity === toCity) continue;
+        let reco = getOneGraphRecommendation(onegraphMaxRestock, false, fromCity, toCity, onegraphBuyCombinations);
+        if (!reco || reco.length === 0) continue;
+        const simpleGo = reco[0];
 
-        const simpleGo = getOneGraphRecommendation(
-          onegraphMaxRestock,
-          false,
-          fromCity,
-          toCity,
-          onegraphBuyCombinations
-        )[0];
-        const goAndReturn = getOneGraphRecommendation(
-          onegraphMaxRestock,
-          true,
-          fromCity,
-          toCity,
-          onegraphBuyCombinations
-        );
+        reco = getOneGraphRecommendation(onegraphMaxRestock, true, fromCity, toCity, onegraphBuyCombinations);
+
+        if (!reco || reco.length !== 2) continue;
+        const goAndReturn = reco;
+
         results[fromCity][toCity] = {
           simpleGo,
           goAndReturn,
@@ -208,6 +202,7 @@ export default function RoutePage() {
     for (const fromCity in onegraphRecommendationsV2) {
       for (const toCity in onegraphRecommendationsV2[fromCity]) {
         const reco = onegraphRecommendationsV2[fromCity][toCity];
+        if (!reco || !reco.simpleGo || reco.goAndReturn?.length !== 2) continue;
         goProfits.push(reco.simpleGo.profit);
         goAndReturnProfits.push(reco.goAndReturn[0].profit + reco.goAndReturn[1].profit);
       }
