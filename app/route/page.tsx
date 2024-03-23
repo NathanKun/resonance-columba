@@ -834,7 +834,6 @@ export default function RoutePage() {
               <Typography>买价为砍价税后价格。</Typography>
               <Typography>卖价为抬价后价格。</Typography>
               <Typography>利润为税后利润。</Typography>
-              <Typography>单票舱位未算入可能存在的角色生活技能的20%加成。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
             </div>
           </div>
