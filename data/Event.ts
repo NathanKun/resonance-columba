@@ -20,7 +20,7 @@ export const EVENTS: GameEvent[] = [
     },
     taxVariation: {
       product: {
-        红茶: -5,
+        红茶: -0.05,
       },
     },
   },
