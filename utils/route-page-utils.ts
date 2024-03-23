@@ -1,4 +1,5 @@
 import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
+import { EVENTS } from "@/data/Event";
 import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
@@ -69,8 +70,11 @@ export const calculateExchanges = (
         // get prestige buy more percent
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
+        // get game event buy more percent
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
 
         // apply buy more percent to buy lot
         buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
@@ -408,8 +412,11 @@ export const calculateOneGraphBuyCombinations = (
         // get prestige buy more percent
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
+        // get game event buy more percent
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
 
         // apply buy more percent to buy lot
         buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
@@ -618,4 +625,16 @@ const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Prod
   }
 
   return resonanceSkillBuyMorePercent;
+};
+
+const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
+  let eventBuyMorePercent = 0;
+  for (const event of EVENTS) {
+    const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
+    eventBuyMorePercent += currentProductBuyMorePercent;
+
+    const currentCityBuyMorePercent = product.type === "Special" ? event.buyMore?.city?.[fromCity] ?? 0 : 0;
+    eventBuyMorePercent += currentCityBuyMorePercent;
+  }
+  return eventBuyMorePercent;
 };

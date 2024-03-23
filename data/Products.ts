@@ -62,7 +62,7 @@ const pdts: Product[] = [
       修格里城: 688,
     },
     buyLot: {
-      修格里城: 29,
+      修格里城: 30,
     },
     type: "Special",
   },
