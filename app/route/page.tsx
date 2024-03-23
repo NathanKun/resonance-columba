@@ -225,7 +225,7 @@ export default function RoutePage() {
       }
     }
 
-    console.debug(onegraphBuyCombinationsGo, results);
+    console.debug(onegraphBuyCombinationsGo, onegraphBuyCombinationsRt, results);
 
     return results;
   }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
