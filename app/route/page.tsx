@@ -315,39 +315,41 @@ export default function RoutePage() {
           </div>
 
           <Box>
-            <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
+            <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
               <Typography sx={{ textWrap: "nowrap" }}>总进货次数</Typography>
-              <IconButton
-                onClick={() => {
-                  if (onegraphMaxRestock > 0) {
-                    setMaxRestock(onegraphMaxRestock - 1);
-                  }
-                }}
-                size="small"
-              >
-                <ArrowLeftIcon />
-              </IconButton>
-              <Slider
-                className="w-20 sm:w-60"
-                aria-label="总进货次数"
-                value={onegraphMaxRestock}
-                onChange={(_e, newVal) => setMaxRestock(newVal as number)}
-                min={0}
-                max={50}
-                size="small"
-              />
-              <IconButton
-                onClick={() => {
-                  if (onegraphMaxRestock < 30) {
-                    setMaxRestock(onegraphMaxRestock + 1);
-                  }
-                }}
-                size="small"
-              >
-                <ArrowRightIcon />
-              </IconButton>
+              <Box className="flex justify-center">
+                <IconButton
+                  onClick={() => {
+                    if (onegraphMaxRestock > 0) {
+                      setMaxRestock(onegraphMaxRestock - 1);
+                    }
+                  }}
+                  size="small"
+                >
+                  <ArrowLeftIcon />
+                </IconButton>
+                <Slider
+                  className="w-32 sm:w-60"
+                  aria-label="总进货次数"
+                  value={onegraphMaxRestock}
+                  onChange={(_e, newVal) => setMaxRestock(newVal as number)}
+                  min={0}
+                  max={50}
+                  size="small"
+                />
+                <IconButton
+                  onClick={() => {
+                    if (onegraphMaxRestock < 30) {
+                      setMaxRestock(onegraphMaxRestock + 1);
+                    }
+                  }}
+                  size="small"
+                >
+                  <ArrowRightIcon />
+                </IconButton>
+              </Box>
               <Typography>{onegraphMaxRestock}</Typography>
-            </Stack>
+            </Box>
 
             <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
               <FormControlLabel
@@ -377,11 +379,9 @@ export default function RoutePage() {
               />
             </Stack>
 
-            <Stack
-              spacing={2}
-              direction="row"
+            <Box
               alignItems="center"
-              className="mb-2 justify-center"
+              className="mb-2 flex justify-center flex-wrap"
               sx={{
                 "& .MuiFormControl-root": {
                   width: "7rem",
@@ -389,10 +389,10 @@ export default function RoutePage() {
                 },
               }}
             >
-              <Typography>去程</Typography>
+              <Typography className="p-4">去程</Typography>
               <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
               <FormControlLabel
-                className="w-30"
+                className="w-30 pl-4"
                 control={
                   <Switch
                     checked={onegraphGoBarginDisabled}
@@ -403,13 +403,11 @@ export default function RoutePage() {
                 }
                 label={<Typography>不议价</Typography>}
               />
-            </Stack>
+            </Box>
 
-            <Stack
-              spacing={2}
-              direction="row"
+            <Box
               alignItems="center"
-              className="mb-2 justify-center"
+              className="mb-2 flex justify-center flex-wrap"
               sx={{
                 "& .MuiFormControl-root": {
                   width: "7rem",
@@ -417,10 +415,10 @@ export default function RoutePage() {
                 },
               }}
             >
-              <Typography>回程</Typography>
+              <Typography className="p-4">回程</Typography>
               <BargainInputs barginConfig={playerConfig.returnBargain} onBargainChange={onReturnBargainChange} />
               <FormControlLabel
-                className="w-30"
+                className="w-30 pl-4"
                 control={
                   <Switch
                     checked={onegraphRtBarginDisabled}
@@ -431,7 +429,7 @@ export default function RoutePage() {
                 }
                 label={<Typography>不议价</Typography>}
               />
-            </Stack>
+            </Box>
           </Box>
 
           <TableContainer
