@@ -12,6 +12,7 @@ type GameEvent = ResonanceSkill & {
 };
 
 export const EVENTS: GameEvent[] = [
+  // 红茶战争 2024/03/21 - 2024/04/11
   {
     buyMore: {
       product: {
