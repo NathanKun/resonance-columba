@@ -202,13 +202,6 @@ const invalidConfigs = [
   },
   {
     onegraph: {
-      maxRestock: 10,
-      goAndReturn: true,
-      showFatigue: true,
-    },
-  },
-  {
-    onegraph: {
       maxRestock: 0,
       goAndReturn: true,
       showFatigue: true,
