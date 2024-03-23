@@ -110,8 +110,15 @@ export const calculateExchanges = (
         const bargain = playerConfig.bargain.bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
 
-        // apply prestiged tax to buy price
-        const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+        // get prestiged tax to buy price
+        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+
+        // get game event tax variation
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+
+        // sum all tax variation
+        tax += eventTaxVariation;
+
         buyPrice = Math.round(buyPrice * (1 + tax));
 
         return [
@@ -402,8 +409,15 @@ export const calculateOneGraphBuyCombinations = (
         const bargain = barginDisabled ? 0 : bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
 
-        // apply prestiged tax to buy price
-        const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+        // get prestiged tax to buy price
+        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+
+        // get game event tax variation
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+
+        // sum all tax variation
+        tax += eventTaxVariation;
+
         buyPrice = Math.round(buyPrice * (1 + tax));
 
         // get role resonance skill buy more percent
@@ -637,4 +651,16 @@ const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
     eventBuyMorePercent += currentCityBuyMorePercent;
   }
   return eventBuyMorePercent;
+};
+
+const getGameEventTaxVariation = (product: Product, fromCity: CityName) => {
+  let eventTaxVariation = 0;
+  for (const event of EVENTS) {
+    const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;
+    eventTaxVariation += currentProductTaxVariation;
+
+    const currentCityTaxVariation = product.type === "Special" ? event.taxVariation?.city?.[fromCity] ?? 0 : 0;
+    eventTaxVariation += currentCityTaxVariation;
+  }
+  return eventTaxVariation;
 };
