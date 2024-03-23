@@ -29,8 +29,12 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
 
   const { stats, playerConfig, fromCity, toCity } = data;
   const { simpleGo: simpleGoData, goAndReturn: goAndReturnData } = stats;
-  const { bargain } = playerConfig;
-  const { bargainFatigue, raiseFatigue } = bargain;
+  const { bargain, returnBargain } = playerConfig;
+  const { bargainFatigue: bargainFatigueGo, raiseFatigue: raiseFatigueGo } = bargain;
+  const { bargainFatigue: bargainFatigueRt, raiseFatigue: raiseFatigueRt } = returnBargain;
+  const bargainFatigueTotalGo = (bargainFatigueGo ?? 0) + (raiseFatigueGo ?? 0);
+  const bargainFatigueTotalRt = (bargainFatigueRt ?? 0) + (raiseFatigueRt ?? 0);
+  const bargainFatigueTotal = bargainFatigueTotalGo + bargainFatigueTotalRt;
   const goAndReturn = playerConfig.onegraph.goAndReturn;
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats): DisplayData => {
@@ -87,7 +91,7 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
             <DialogContentText>所需舱位：{goDisplayData.usedLot}</DialogContentText>
             <DialogContentText>
               疲劳：{goDisplayData.fatigue}
-              {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+              {bargainFatigueTotalGo > 0 ? ` (议价占${bargainFatigueTotalGo})` : ""}
             </DialogContentText>
             <DialogContentText>利润/疲劳：{goDisplayData.profitPerFatigue}</DialogContentText>
           </Box>
@@ -106,7 +110,7 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
                 <DialogContentText>所需舱位：{returnDisplayData.usedLot}</DialogContentText>
                 <DialogContentText>
                   回程疲劳：{returnDisplayData.fatigue}
-                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${bargainFatigue + raiseFatigue})` : ""}
+                  {bargainFatigueTotalRt > 0 ? ` (议价占${bargainFatigueTotalRt})` : ""}
                 </DialogContentText>
                 <DialogContentText>回程利润/疲劳：{returnDisplayData.profitPerFatigue}</DialogContentText>
               </Box>
@@ -115,7 +119,7 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
                 <DialogContentText>总进货书需求：{totalDisplayData!.restockCount}</DialogContentText>
                 <DialogContentText>
                   总疲劳：{totalDisplayData!.fatigue}
-                  {bargainFatigue || raiseFatigue ? ` (抬价砍价占${(bargainFatigue + raiseFatigue) * 2})` : ""}
+                  {bargainFatigueTotal > 0 ? ` (议价占${bargainFatigueTotal})` : ""}
                 </DialogContentText>
                 <DialogContentText>
                   总利润/总疲劳：

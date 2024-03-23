@@ -1,12 +1,12 @@
-import { PlayerConfig } from "@/interfaces/player-config";
+import { PlayerConfigBargain } from "@/interfaces/player-config";
 import InputAdornment from "@mui/material/InputAdornment";
 import NumberInput from "./number-input";
 
 export default function BargainInputs(props: {
-  playerConfig: PlayerConfig;
+  barginConfig: PlayerConfigBargain;
   onBargainChange: (field: string, value: number) => void;
 }) {
-  const { playerConfig, onBargainChange } = props;
+  const { barginConfig, onBargainChange } = props;
   return (
     <>
       <NumberInput
@@ -18,7 +18,7 @@ export default function BargainInputs(props: {
         defaultValue={0}
         type="float"
         decimalPlaces={1}
-        value={playerConfig.bargain.raisePercent}
+        value={barginConfig.raisePercent}
         setValue={(newValue) => onBargainChange("raisePercent", newValue)}
       />
       <NumberInput
@@ -27,7 +27,7 @@ export default function BargainInputs(props: {
         max={100}
         defaultValue={0}
         type="integer"
-        value={playerConfig.bargain.raiseFatigue}
+        value={barginConfig.raiseFatigue}
         setValue={(newValue) => onBargainChange("raiseFatigue", newValue)}
       />
       <NumberInput
@@ -39,7 +39,7 @@ export default function BargainInputs(props: {
         defaultValue={0}
         type="float"
         decimalPlaces={1}
-        value={playerConfig.bargain.bargainPercent}
+        value={barginConfig.bargainPercent}
         setValue={(newValue) => onBargainChange("bargainPercent", newValue)}
       />
       <NumberInput
@@ -48,7 +48,7 @@ export default function BargainInputs(props: {
         max={100}
         defaultValue={0}
         type="integer"
-        value={playerConfig.bargain.bargainFatigue}
+        value={barginConfig.bargainFatigue}
         setValue={(newValue) => onBargainChange("bargainFatigue", newValue)}
       />
     </>

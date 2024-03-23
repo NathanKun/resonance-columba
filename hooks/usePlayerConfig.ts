@@ -13,6 +13,12 @@ export default function usePlayerConfig() {
       bargainFatigue: 0,
       raiseFatigue: 0,
     },
+    returnBargain: {
+      bargainPercent: 0,
+      raisePercent: 0,
+      bargainFatigue: 0,
+      raiseFatigue: 0,
+    },
     prestige: {
       修格里城: 8,
       曼德矿场: 8,
@@ -40,6 +46,9 @@ export default function usePlayerConfig() {
       // add missing fields after version update
       if (config.onegraph === undefined) {
         config.onegraph = initial.onegraph;
+      }
+      if (config.returnBargain === undefined) {
+        config.returnBargain = initial.returnBargain;
       }
 
       return config;
