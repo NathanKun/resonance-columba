@@ -156,7 +156,8 @@ export default function RoutePage() {
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
-  const [onegraphBarginDisabled, setOnegraphBarginDisabled] = useState(false);
+  const [onegraphGoBarginDisabled, setOnegraphGoBarginDisabled] = useState(false);
+  const [onegraphRtBarginDisabled, setOnegraphRtBarginDisabled] = useState(false);
   // no brain brute force aller-retour calculation :)
   const onegraphBuyCombinationsGo = useMemo(
     () =>
@@ -166,7 +167,7 @@ export default function RoutePage() {
         playerConfig.bargain,
         playerConfig.prestige,
         playerConfig.roles,
-        onegraphBarginDisabled
+        onegraphGoBarginDisabled
       ),
     [
       prices,
@@ -174,7 +175,7 @@ export default function RoutePage() {
       playerConfig.bargain,
       playerConfig.prestige,
       playerConfig.roles,
-      onegraphBarginDisabled,
+      onegraphGoBarginDisabled,
     ]
   );
   const onegraphBuyCombinationsRt = useMemo(
@@ -185,7 +186,7 @@ export default function RoutePage() {
         playerConfig.returnBargain,
         playerConfig.prestige,
         playerConfig.roles,
-        onegraphBarginDisabled
+        onegraphRtBarginDisabled
       ),
     [
       prices,
@@ -193,7 +194,7 @@ export default function RoutePage() {
       playerConfig.returnBargain,
       playerConfig.prestige,
       playerConfig.roles,
-      onegraphBarginDisabled,
+      onegraphRtBarginDisabled,
     ]
   );
   const onegraphRecommendations = useMemo(() => {
@@ -250,6 +251,8 @@ export default function RoutePage() {
       playerConfig,
       fromCity,
       toCity,
+      goBargainDisabled: onegraphGoBarginDisabled,
+      rtBargainDisabled: onegraphRtBarginDisabled,
     });
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
@@ -372,14 +375,29 @@ export default function RoutePage() {
                 }
                 label={<Typography>显示单位疲劳利润</Typography>}
               />
+            </Stack>
 
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="center"
+              className="mb-2 justify-center"
+              sx={{
+                "& .MuiFormControl-root": {
+                  width: "7rem",
+                  margin: "0.5rem",
+                },
+              }}
+            >
+              <Typography>去程</Typography>
+              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
               <FormControlLabel
                 className="w-30"
                 control={
                   <Switch
-                    checked={onegraphBarginDisabled}
+                    checked={onegraphGoBarginDisabled}
                     onChange={(e) => {
-                      setOnegraphBarginDisabled(e.target.checked);
+                      setOnegraphGoBarginDisabled(e.target.checked);
                     }}
                   />
                 }
@@ -399,24 +417,20 @@ export default function RoutePage() {
                 },
               }}
             >
-              <Typography>去程议价</Typography>
-              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
-            </Stack>
-
-            <Stack
-              spacing={2}
-              direction="row"
-              alignItems="center"
-              className="mb-2 justify-center"
-              sx={{
-                "& .MuiFormControl-root": {
-                  width: "7rem",
-                  margin: "0.5rem",
-                },
-              }}
-            >
-              <Typography>回程议价</Typography>
+              <Typography>回程</Typography>
               <BargainInputs barginConfig={playerConfig.returnBargain} onBargainChange={onReturnBargainChange} />
+              <FormControlLabel
+                className="w-30"
+                control={
+                  <Switch
+                    checked={onegraphRtBarginDisabled}
+                    onChange={(e) => {
+                      setOnegraphRtBarginDisabled(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>不议价</Typography>}
+              />
             </Stack>
           </Box>
 
