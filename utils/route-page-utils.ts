@@ -549,11 +549,12 @@ export const getOneGraphRecommendation = (
   goAndReturn: boolean,
   fromCity: CityName,
   toCity: CityName,
-  buyCombinations: OnegraphBuyCombinations
+  buyCombinationsGo: OnegraphBuyCombinations,
+  buyCombinationsRt?: OnegraphBuyCombinations
 ): OnegraphBuyCombinationStats[] => {
   // if simple go, the return the one with the request restock
   if (!goAndReturn) {
-    const reco = buyCombinations[fromCity]?.[toCity]?.[restock];
+    const reco = buyCombinationsGo[fromCity]?.[toCity]?.[restock];
     if (!reco) {
       return [];
     }
@@ -566,11 +567,11 @@ export const getOneGraphRecommendation = (
   let maxProfit = 0;
   for (let goRestock = 0; goRestock <= restock; goRestock++) {
     const returnRestock = restock - goRestock;
-    const goStats = buyCombinations[fromCity]?.[toCity]?.[goRestock];
+    const goStats = buyCombinationsGo[fromCity]?.[toCity]?.[goRestock];
     if (!goStats) {
       continue;
     }
-    const returnStats = buyCombinations[toCity]?.[fromCity]?.[returnRestock];
+    const returnStats = buyCombinationsRt![toCity]?.[fromCity]?.[returnRestock];
     if (!returnStats) {
       continue;
     }

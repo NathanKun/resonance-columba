@@ -93,9 +93,15 @@ export default function RoutePage() {
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
   };
 
-  const onBargainChange = (field: string, value: number) => {
+  const onGoBargainChange = (field: string, value: number) => {
     if (!isNaN(value)) {
       onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: value });
+    }
+  };
+
+  const onReturnBargainChange = (field: string, value: number) => {
+    if (!isNaN(value)) {
+      onPlayerConfigChange("returnBargain", { ...playerConfig.returnBargain, [field]: value });
     }
   };
 
@@ -151,7 +157,8 @@ export default function RoutePage() {
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   const [onegraphBarginDisabled, setOnegraphBarginDisabled] = useState(false);
-  const onegraphBuyCombinations = useMemo(
+  // no brain brute force aller-retour calculation :)
+  const onegraphBuyCombinationsGo = useMemo(
     () =>
       calculateOneGraphBuyCombinations(
         prices,
@@ -170,17 +177,43 @@ export default function RoutePage() {
       onegraphBarginDisabled,
     ]
   );
-  const onegraphRecommendationsV2 = useMemo(() => {
+  const onegraphBuyCombinationsRt = useMemo(
+    () =>
+      calculateOneGraphBuyCombinations(
+        prices,
+        playerConfig.maxLot,
+        playerConfig.returnBargain,
+        playerConfig.prestige,
+        playerConfig.roles,
+        onegraphBarginDisabled
+      ),
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.returnBargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      onegraphBarginDisabled,
+    ]
+  );
+  const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
-    for (const fromCity in onegraphBuyCombinations) {
+    for (const fromCity of CITIES) {
       results[fromCity] = {};
-      for (const toCity in onegraphBuyCombinations[fromCity]) {
+      for (const toCity of CITIES) {
         if (fromCity === toCity) continue;
-        let reco = getOneGraphRecommendation(onegraphMaxRestock, false, fromCity, toCity, onegraphBuyCombinations);
+        let reco = getOneGraphRecommendation(onegraphMaxRestock, false, fromCity, toCity, onegraphBuyCombinationsGo);
         if (!reco || reco.length === 0) continue;
         const simpleGo = reco[0];
 
-        reco = getOneGraphRecommendation(onegraphMaxRestock, true, fromCity, toCity, onegraphBuyCombinations);
+        reco = getOneGraphRecommendation(
+          onegraphMaxRestock,
+          true,
+          fromCity,
+          toCity,
+          onegraphBuyCombinationsGo,
+          onegraphBuyCombinationsRt
+        );
 
         if (!reco || reco.length !== 2) continue;
         const goAndReturn = reco;
@@ -192,16 +225,16 @@ export default function RoutePage() {
       }
     }
 
-    console.debug(onegraphBuyCombinations, results);
+    console.debug(onegraphBuyCombinationsGo, results);
 
     return results;
-  }, [onegraphMaxRestock, onegraphBuyCombinations]);
+  }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
   const topProfits: { go: number[]; goAndReturn: number[] } = useMemo(() => {
     let goProfits = [];
     let goAndReturnProfits = [];
-    for (const fromCity in onegraphRecommendationsV2) {
-      for (const toCity in onegraphRecommendationsV2[fromCity]) {
-        const reco = onegraphRecommendationsV2[fromCity][toCity];
+    for (const fromCity in onegraphRecommendations) {
+      for (const toCity in onegraphRecommendations[fromCity]) {
+        const reco = onegraphRecommendations[fromCity][toCity];
         if (!reco || !reco.simpleGo || reco.goAndReturn?.length !== 2) continue;
         goProfits.push(reco.simpleGo.profit);
         goAndReturnProfits.push(reco.goAndReturn[0].profit + reco.goAndReturn[1].profit);
@@ -210,10 +243,10 @@ export default function RoutePage() {
     goProfits = [...new Set(goProfits)].sort((a, b) => b - a).slice(0, 3);
     goAndReturnProfits = [...new Set(goAndReturnProfits)].sort((a, b) => b - a).slice(0, 3);
     return { go: goProfits, goAndReturn: goAndReturnProfits };
-  }, [onegraphRecommendationsV2]);
+  }, [onegraphRecommendations]);
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
     setOnegraphRouteDialogData({
-      stats: onegraphRecommendationsV2[fromCity][toCity],
+      stats: onegraphRecommendations[fromCity][toCity],
       playerConfig,
       fromCity,
       toCity,
@@ -353,6 +386,7 @@ export default function RoutePage() {
                 label={<Typography>不议价</Typography>}
               />
             </Stack>
+
             <Stack
               spacing={2}
               direction="row"
@@ -365,7 +399,24 @@ export default function RoutePage() {
                 },
               }}
             >
-              <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
+              <Typography>去程议价</Typography>
+              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
+            </Stack>
+
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="center"
+              className="mb-2 justify-center"
+              sx={{
+                "& .MuiFormControl-root": {
+                  width: "7rem",
+                  margin: "0.5rem",
+                },
+              }}
+            >
+              <Typography>回程议价</Typography>
+              <BargainInputs barginConfig={playerConfig.returnBargain} onBargainChange={onReturnBargainChange} />
             </Stack>
           </Box>
 
@@ -435,7 +486,7 @@ export default function RoutePage() {
                         return EmptyCell();
                       }
 
-                      const reco = onegraphRecommendationsV2[fromCity]?.[toCity];
+                      const reco = onegraphRecommendations[fromCity]?.[toCity];
                       if (!reco) {
                         return EmptyCell();
                       }
@@ -444,7 +495,7 @@ export default function RoutePage() {
                         ? reco.goAndReturn.reduce((acc, cur) => acc + cur.profit, 0)
                         : reco.simpleGo.profit;
                       const fatigue = onegraphGoAndReturn
-                        ? reco.goAndReturn.reduce((acc, cur) => acc + cur.fatigue, 0)
+                        ? reco.goAndReturn[0].fatigue + reco.goAndReturn[1].fatigue
                         : reco.simpleGo.fatigue;
                       const profitPerFatigue = Math.round(profit / fatigue);
 
@@ -569,9 +620,9 @@ export default function RoutePage() {
                 />
               </Box>
 
-              <Typography>抬价 砍价</Typography>
+              <Typography>议价</Typography>
               <Box className="m-4">
-                <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
+                <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
               </Box>
 
               <Typography>乘员共振</Typography>
