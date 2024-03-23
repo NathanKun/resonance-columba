@@ -5,56 +5,29 @@ const isServer = typeof window === "undefined";
 
 export default function usePlayerConfig() {
   const localStorageKey = "playerConfig";
-  const initial: PlayerConfig = {
-    maxLot: 500,
-    bargain: {
-      bargainPercent: 0,
-      raisePercent: 0,
-      bargainFatigue: 0,
-      raiseFatigue: 0,
-    },
-    returnBargain: {
-      bargainPercent: 0,
-      raisePercent: 0,
-      bargainFatigue: 0,
-      raiseFatigue: 0,
-    },
-    prestige: {
-      修格里城: 8,
-      曼德矿场: 8,
-      澄明数据中心: 8,
-      七号自由港: 8,
-    },
-    roles: {},
-    onegraph: {
-      maxRestock: 5,
-      goAndReturn: false,
-      showFatigue: false,
-    },
-  };
 
-  const [playerConfig, setPlayerConfig] = useState<PlayerConfig>(initial);
+  const [playerConfig, setPlayerConfig] = useState<PlayerConfig>(INITIAL_PLAYER_CONFIG);
 
   const initialize = () => {
     if (isServer) {
-      return initial;
+      return INITIAL_PLAYER_CONFIG;
     }
     try {
       const str = localStorage.getItem(localStorageKey);
-      const config = str ? JSON.parse(str) : initial;
+      const config = str ? JSON.parse(str) : INITIAL_PLAYER_CONFIG;
 
       // add missing fields after version update
       if (config.onegraph === undefined) {
-        config.onegraph = initial.onegraph;
+        config.onegraph = INITIAL_PLAYER_CONFIG.onegraph;
       }
       if (config.returnBargain === undefined) {
-        config.returnBargain = initial.returnBargain;
+        config.returnBargain = INITIAL_PLAYER_CONFIG.returnBargain;
       }
 
       return config;
     } catch (e) {
       console.error(e);
-      return initial;
+      return INITIAL_PLAYER_CONFIG;
     }
   };
 
@@ -98,3 +71,31 @@ export default function usePlayerConfig() {
 
   return { playerConfig, setPlayerConfig: internalSetPlayerConfig, setRoleResonance };
 }
+
+export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
+  maxLot: 500,
+  bargain: {
+    bargainPercent: 0,
+    raisePercent: 0,
+    bargainFatigue: 0,
+    raiseFatigue: 0,
+  },
+  returnBargain: {
+    bargainPercent: 0,
+    raisePercent: 0,
+    bargainFatigue: 0,
+    raiseFatigue: 0,
+  },
+  prestige: {
+    修格里城: 8,
+    曼德矿场: 8,
+    澄明数据中心: 8,
+    七号自由港: 8,
+  },
+  roles: {},
+  onegraph: {
+    maxRestock: 5,
+    goAndReturn: false,
+    showFatigue: false,
+  },
+};
