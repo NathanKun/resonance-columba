@@ -764,7 +764,7 @@ export default function RoutePage() {
             </div>
           </div>
 
-          <Box className="m-4">
+          <Box className="m-4 flex justify-center items-center">
             <Typography>线路</Typography>
             <Box className="m-4">
               <MultipleSelect
