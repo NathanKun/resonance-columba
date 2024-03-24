@@ -1,4 +1,4 @@
-import { columbaCol } from "@/firebase/app";
+import { playerConfigsCol } from "@/firebase/app";
 import { isValidPlayerConfig } from "@/utils/player-config-utils";
 import rateLimit from "../../../utils/rate-limit";
 
@@ -41,23 +41,19 @@ export async function POST(request: Request) {
         return Response.json({ error: "invalid config" }, { status: 400 });
       }
 
-      const playerConfigsDocRef = columbaCol.doc("playerConfigs");
-      await playerConfigsDocRef.update({
-        [config.nanoid]: config,
-      });
+      const docRef = playerConfigsCol.doc(config.nanoid);
+      await docRef.set(config);
       return Response.json({ data: true });
     }
     // get
     else {
-      const playerConfigsDocRef = columbaCol.doc("playerConfigs");
+      const playerConfigsDocRef = playerConfigsCol.doc(id);
       const doc = await playerConfigsDocRef.get();
-      const data = doc.data();
-      if (data) {
-        if (data[id]) {
-          return Response.json({ data: data[id] });
-        }
+      if (!doc.exists) {
+        return Response.json({ data: null }, { status: 404 });
       }
-      return Response.json({ data: null }, { status: 404 });
+      const data = doc.data();
+      return Response.json({ data });
     }
   } catch (e) {
     console.error(e);
