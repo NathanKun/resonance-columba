@@ -16,7 +16,7 @@ export const isValidPlayerConfig = (config: any) => {
 
   if (
     Object.keys(config).filter(
-      (key) => !["maxLot", "bargain", "returnBargain", "prestige", "roles", "onegraph"].includes(key)
+      (key) => !["maxLot", "bargain", "returnBargain", "prestige", "roles", "onegraph", "nanoid"].includes(key)
     ).length > 0
   ) {
     return false;
@@ -85,6 +85,16 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (typeof onegraph.showFatigue !== "boolean") {
+      return false;
+    }
+  }
+
+  if (config.nanoid) {
+    if (typeof config.nanoid !== "string") {
+      return false;
+    }
+
+    if (config.nanoid.length !== 21) {
       return false;
     }
   }

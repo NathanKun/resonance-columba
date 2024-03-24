@@ -1,5 +1,6 @@
 import { INITIAL_PLAYER_CONFIG } from "@/hooks/usePlayerConfig";
 import { isValidPlayerConfig } from "@/utils/player-config-utils";
+import { nanoid } from "nanoid";
 import { expect, test } from "vitest";
 
 test("isValidPlayerConfig", () => {
@@ -210,5 +211,17 @@ const invalidConfigs = [
   },
   {
     data: "hello",
+  },
+  {
+    nanoid: nanoid() + "a",
+  },
+  {
+    nanoid: nanoid().substring(0, 20),
+  },
+  {
+    nanoid: 233,
+  },
+  {
+    nanoid: {},
   },
 ];
