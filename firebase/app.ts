@@ -18,3 +18,4 @@ if (!getApps().length) {
 
 const db = getFirestore();
 export const columbaCol = db.collection(env.FIREBASE_COLLECTION_NAME!);
+export const playerConfigsCol = db.collection("playerConfigs");
