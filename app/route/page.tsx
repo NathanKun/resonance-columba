@@ -855,8 +855,8 @@ export default function RoutePage() {
         <div role="tabpanel" hidden={tabIndex !== 4}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
-              <Typography>买价为砍价税后价格。</Typography>
-              <Typography>卖价为抬价后价格。</Typography>
+              <Typography>买价为砍价后税前价格。</Typography>
+              <Typography>卖价为抬价后税前价格。</Typography>
               <Typography>利润为税后利润。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
             </div>
