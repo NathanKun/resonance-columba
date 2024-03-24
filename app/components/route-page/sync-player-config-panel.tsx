@@ -1,10 +1,10 @@
 import { INITIAL_PLAYER_CONFIG } from "@/hooks/usePlayerConfig";
 import { PlayerConfig } from "@/interfaces/player-config";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-
 interface SyncPlayerConfigPanelProps {
   playerConfig: PlayerConfig;
   setPlayerConfig: (config: PlayerConfig) => void;
@@ -26,6 +26,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
     text: "",
   });
   const { open } = snackBarState;
+  const [loading, setLoading] = useState(false);
 
   const openSnackBar = (text: string) => {
     setSnackBarState({ open: true, text });
@@ -51,7 +52,11 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
     // if id is valid, pass it to downloadPlayerConfig
     if (validateId()) {
       setIdError(false);
+
+      setLoading(true);
       const success = await downloadPlayerConfig(id);
+      setLoading(false);
+
       if (success) {
         openSnackBar("下载成功");
       } else {
@@ -71,8 +76,10 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
       setIdError(false);
     }
 
-    // if no nanoid, uploadPlayerConfig will generate one, otherwise it will use the existing one
+    setLoading(true);
     const success = await uploadPlayerConfig(playerConfig);
+    setLoading(false);
+
     if (success) {
       openSnackBar("上传成功");
     } else {
@@ -96,7 +103,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
   }, [playerConfig.nanoid]);
 
   return (
-    <Box className="flex justify-start flex-wrap">
+    <Box className="flex justify-start flex-wrap items-center">
       <TextField
         className="w-56"
         label="ID"
@@ -106,22 +113,28 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         error={idError}
         // disabled={playerConfig.nanoid !== undefined}
       />
-      <Button className="m-4" disabled={!!id && idError} onClick={handleUpload}>
+      <Button className="m-4" disabled={(!!id && idError) || loading} onClick={handleUpload}>
         上传
       </Button>
-      <Button className="m-4" disabled={idError} onClick={handleDownload}>
+      <Button className="m-4" disabled={idError || loading} onClick={handleDownload}>
         下载
       </Button>
-      <Button className="m-4" disabled={idError} onClick={handleCopy}>
+      <Button className="m-4" disabled={idError || loading} onClick={handleCopy}>
         复制ID
       </Button>
+
+      {loading && <CircularProgress />}
+
       <Box className="grow"></Box>
+
       <Button className="m-4" onClick={handleClear} color="error">
         清空本地配置
       </Button>
+
       <Typography className="basis-full">
         第一次上传时将ID留空，直接点击上传按钮，系统会自动生成ID。之后将ID填入到需要同步的设备，点击下载即可。
       </Typography>
+
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
