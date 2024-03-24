@@ -107,7 +107,13 @@ export default function usePlayerConfig() {
 
       const data = await res.json();
       if (data.data) {
-        internalSetPlayerConfig(data.data);
+        // merge it with initial config to avoid missing fields
+        const mergedConfig = {
+          ...INITIAL_PLAYER_CONFIG,
+          ...data.data,
+        };
+
+        internalSetPlayerConfig(mergedConfig);
         return true;
       } else {
         return false;
