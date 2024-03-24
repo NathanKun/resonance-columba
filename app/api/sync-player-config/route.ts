@@ -1,5 +1,6 @@
 import { playerConfigsCol } from "@/firebase/app";
 import { isValidPlayerConfig } from "@/utils/player-config-utils";
+import { FieldValue } from "firebase-admin/firestore";
 import rateLimit from "../../../utils/rate-limit";
 
 const limiter = rateLimit({
@@ -10,7 +11,7 @@ const limiter = rateLimit({
 export async function POST(request: Request) {
   // rate limit
   try {
-    await limiter.check(300, "CACHE_TOKEN");
+    await limiter.check(300, "CACHE_TOKEN"); // 300 requests per minute
   } catch {
     return Response.json({ error: "rate limit exceeded" }, { status: 429 });
   }
@@ -41,18 +42,34 @@ export async function POST(request: Request) {
         return Response.json({ error: "invalid config" }, { status: 400 });
       }
 
+      // add lastUpdated
+      config.lastUpdated = FieldValue.serverTimestamp();
+
       const docRef = playerConfigsCol.doc(config.nanoid);
-      await docRef.set(config);
+
+      await docRef.set(config, { merge: true });
       return Response.json({ data: true });
     }
     // get
     else {
-      const playerConfigsDocRef = playerConfigsCol.doc(id);
-      const doc = await playerConfigsDocRef.get();
+      const docRef = playerConfigsCol.doc(id);
+      const doc = await docRef.get();
       if (!doc.exists) {
         return Response.json({ data: null }, { status: 404 });
       }
-      const data = doc.data();
+
+      const data = doc.data()!;
+
+      // remove timestamps
+      delete data.lastUpdated;
+      delete data.lastAccessed;
+
+      // set lastAccessed
+      await docRef.update({
+        lastAccessed: FieldValue.serverTimestamp(),
+      });
+
+      // return
       return Response.json({ data });
     }
   } catch (e) {
