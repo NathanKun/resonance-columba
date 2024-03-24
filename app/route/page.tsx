@@ -14,6 +14,7 @@ import {
 } from "@/utils/route-page-utils";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Looks3Icon from "@mui/icons-material/Looks3";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoIcon from "@mui/icons-material/LooksTwo";
@@ -36,6 +37,9 @@ import {
   createTheme,
   useMediaQuery,
 } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
@@ -52,6 +56,7 @@ import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
+import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-panel";
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
@@ -87,7 +92,8 @@ export default function RoutePage() {
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
 
   /* player config */
-  const { playerConfig, setPlayerConfig, setRoleResonance } = usePlayerConfig();
+  const { playerConfig, setPlayerConfig, setRoleResonance, downloadPlayerConfig, uploadPlayerConfig } =
+    usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
@@ -569,80 +575,91 @@ export default function RoutePage() {
 
         {/* 个性化设置 */}
         <div role="tabpanel" hidden={tabIndex !== 1}>
-          <div className="bg-white dark:bg-gray-800 p-6 max-sm:px-0 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-4xl mx-auto my-4 w-full box-border">
-            <Box
-              className="m-4"
-              sx={{
-                "& .MuiFormControl-root": {
-                  width: "10rem",
-                  margin: "0.5rem",
-                },
-              }}
-            >
-              <Typography>无垠号</Typography>
-              <Box className="m-4">
-                <NumberInput
-                  label="货舱大小"
-                  min={100}
-                  max={3000}
-                  defaultValue={500}
-                  type="integer"
-                  value={playerConfig.maxLot}
-                  setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
-                />
-              </Box>
-
-              <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
-              <Box className="m-4">
-                <NumberInput
-                  label="修格里城"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["修格里城"]}
-                  setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
-                />
-                <NumberInput
-                  label="曼德矿场"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["曼德矿场"]}
-                  setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
-                />
-                <NumberInput
-                  label="澄明数据中心"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["澄明数据中心"]}
-                  setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
-                />
-                <NumberInput
-                  label="七号自由港"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["七号自由港"]}
-                  setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
-                />
-              </Box>
-
-              <Typography>议价</Typography>
-              <Box className="m-4">
-                <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
-              </Box>
-
-              <Typography>乘员共振</Typography>
-              <Box className="m-4 max-sm:mx-0">
-                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
-              </Box>
+          <Paper
+            className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full"
+            sx={{
+              "& .MuiFormControl-root": {
+                width: "10rem",
+                margin: "0.5rem",
+              },
+            }}
+          >
+            <Typography>无垠号</Typography>
+            <Box className="m-4">
+              <NumberInput
+                label="货舱大小"
+                min={100}
+                max={3000}
+                defaultValue={500}
+                type="integer"
+                value={playerConfig.maxLot}
+                setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
+              />
             </Box>
-          </div>
+
+            <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
+            <Box className="m-4">
+              <NumberInput
+                label="修格里城"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["修格里城"]}
+                setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
+              />
+              <NumberInput
+                label="曼德矿场"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["曼德矿场"]}
+                setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
+              />
+              <NumberInput
+                label="澄明数据中心"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["澄明数据中心"]}
+                setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
+              />
+              <NumberInput
+                label="七号自由港"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["七号自由港"]}
+                setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
+              />
+            </Box>
+
+            <Typography>议价</Typography>
+            <Box className="m-4">
+              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
+            </Box>
+
+            <Typography>乘员共振</Typography>
+            <Accordion className="my-4">
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
+              <AccordionDetails>
+                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
+              </AccordionDetails>
+            </Accordion>
+
+            <Typography>数据同步</Typography>
+            <Box className="m-4 max-sm:mx-0">
+              <SyncPlayerConfigPanel
+                playerConfig={playerConfig}
+                setPlayerConfig={setPlayerConfig}
+                downloadPlayerConfig={downloadPlayerConfig}
+                uploadPlayerConfig={uploadPlayerConfig}
+              />
+            </Box>
+          </Paper>
         </div>
 
         {/* 最优线路详细信息 */}
@@ -752,7 +769,7 @@ export default function RoutePage() {
             </div>
           </div>
 
-          <Box className="m-4">
+          <Box className="m-4 flex justify-center items-center">
             <Typography>线路</Typography>
             <Box className="m-4">
               <MultipleSelect
@@ -843,8 +860,8 @@ export default function RoutePage() {
         <div role="tabpanel" hidden={tabIndex !== 4}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
-              <Typography>买价为砍价税后价格。</Typography>
-              <Typography>卖价为抬价后价格。</Typography>
+              <Typography>买价为砍价后税前价格。</Typography>
+              <Typography>卖价为抬价后税前价格。</Typography>
               <Typography>利润为税后利润。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
             </div>
