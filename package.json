@@ -8,7 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
   "dependencies": {
     "@giscus/react": "^3.0.0",
@@ -28,6 +29,7 @@
     "firebase-admin": "^12.0.0",
     "lru-cache": "^10.2.0",
     "material-react-table": "^2.12.1",
+    "nanoid": "^5.0.6",
     "next": "14.1.4",
     "postcss": "8.4.38",
     "react": "18.2.0",
@@ -37,7 +39,11 @@
     "typescript": "5.4.3"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.2.2",
     "@types/ms": "^0.7.34",
-    "turbo": "^1.13.0"
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^24.0.0",
+    "turbo": "^1.13.0",
+    "vitest": "^1.4.0"
   }
 }

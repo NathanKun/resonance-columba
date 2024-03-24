@@ -52,6 +52,7 @@ import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
+import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-panel";
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
@@ -87,7 +88,8 @@ export default function RoutePage() {
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
 
   /* player config */
-  const { playerConfig, setPlayerConfig, setRoleResonance } = usePlayerConfig();
+  const { playerConfig, setPlayerConfig, setRoleResonance, downloadPlayerConfig, uploadPlayerConfig } =
+    usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
@@ -640,6 +642,16 @@ export default function RoutePage() {
               <Typography>乘员共振</Typography>
               <Box className="m-4 max-sm:mx-0">
                 <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
+              </Box>
+
+              <Typography>数据同步</Typography>
+              <Box className="m-4 max-sm:mx-0">
+                <SyncPlayerConfigPanel
+                  playerConfig={playerConfig}
+                  setPlayerConfig={setPlayerConfig}
+                  downloadPlayerConfig={downloadPlayerConfig}
+                  uploadPlayerConfig={uploadPlayerConfig}
+                />
               </Box>
             </Box>
           </div>

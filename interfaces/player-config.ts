@@ -7,6 +7,7 @@ export interface PlayerConfig {
   prestige: PlayerConfigPrestige;
   roles: PlayerConfigRoles;
   onegraph: PlayerConfigOnegraph;
+  nanoid?: string;
 }
 
 export interface PlayerConfigBargain {
