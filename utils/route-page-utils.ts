@@ -119,7 +119,7 @@ export const calculateExchanges = (
         // sum all tax variation
         tax += eventTaxVariation;
 
-        buyPrice = Math.round(buyPrice * (1 + tax));
+        // don't apply tax to buy price yet, tax should be deducted from profit later
 
         return [
           {
@@ -127,6 +127,7 @@ export const calculateExchanges = (
             buyPrice,
             buyLot,
             fromCity,
+            buyTaxRate: tax,
           } as Buy,
         ];
       });
@@ -179,12 +180,20 @@ export const calculateExchanges = (
         // calculate profit
         let singleProfit = sellPrice - buy.buyPrice;
 
-        // apply prestiged tax to profit
-        const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-        singleProfit = Math.round(singleProfit * (1 - tax));
+        // get prestiged tax to profit
+        const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+
+        // deduct sell tax, it applies to (sell price - buy price before buy tax)
+        singleProfit -= singleProfit * sellTaxRate;
+
+        // deduct buy tax from profit
+        singleProfit -= buy.buyPrice * buy.buyTaxRate;
 
         // lot profit
         const lotProfit = Math.round(singleProfit * buy.buyLot);
+
+        // round after all calculation
+        singleProfit = Math.round(singleProfit);
 
         return [
           {
@@ -418,7 +427,7 @@ export const calculateOneGraphBuyCombinations = (
         // sum all tax variation
         tax += eventTaxVariation;
 
-        buyPrice = Math.round(buyPrice * (1 + tax));
+        // don't apply tax to buy price yet, tax should be deducted from profit later
 
         // get role resonance skill buy more percent
         const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(roles, product, fromCity);
@@ -444,6 +453,7 @@ export const calculateOneGraphBuyCombinations = (
             buyLot,
             sellPrice: -1,
             singleProfit: -1,
+            buyTaxRate: tax,
           },
         ];
       }, []);
@@ -473,14 +483,22 @@ export const calculateOneGraphBuyCombinations = (
           // calculate profit
           let singleProfit = sellPrice - buyPrice;
 
+          // get prestiged tax
+          const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+
+          // deduct sell tax, it applies to (sell price - buy price before buy tax)
+          singleProfit -= singleProfit * sellTaxRate;
+
+          // deduct buy tax from profit
+          singleProfit -= buyPrice * it.buyTaxRate;
+
+          // round
+          singleProfit = Math.round(singleProfit);
+
           // skip if loss
           if (singleProfit <= 0) {
             return [];
           }
-
-          // apply prestiged tax to profit
-          const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-          singleProfit = Math.round(singleProfit * (1 - tax));
 
           return [
             {

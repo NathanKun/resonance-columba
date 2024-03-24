@@ -7,6 +7,7 @@ export interface Buy {
   product: string;
   buyPrice: number;
   buyLot: number;
+  buyTaxRate: number;
 }
 
 export interface Exchange extends Buy {
@@ -67,6 +68,7 @@ export interface OnegraphPriceDataItem {
   priceData: any;
   buyPrice: number;
   buyLot: number;
+  buyTaxRate: number;
   sellPrice: number;
   singleProfit: number;
 }
