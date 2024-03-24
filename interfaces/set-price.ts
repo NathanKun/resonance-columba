@@ -5,6 +5,7 @@ import { Trend } from "./trend";
 export type ExchangeType = "buy" | "sell";
 
 export interface SetPriceItem {
+  price?: number;
   variation?: number;
   trend?: Trend;
   time: FieldValue;

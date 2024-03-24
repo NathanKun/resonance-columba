@@ -7,6 +7,7 @@ export interface Buy {
   product: string;
   buyPrice: number;
   buyLot: number;
+  buyTaxRate: number;
 }
 
 export interface Exchange extends Buy {
@@ -40,42 +41,6 @@ export interface CityGroupedExchanges {
   };
 }
 
-export interface OnegraphRecommendations {
-  [fromCity: string]: {
-    [toCity: string]: OnegraphCityRecommendation;
-  };
-}
-
-export interface OnegraphCityRecommendation {
-  goReco: OnegraphCityRecommendationDetail;
-  returnReco?: OnegraphCityRecommendationDetail;
-  totalProfit: number;
-  totalFatigue: number;
-  totalProfitPerFatigue: number;
-}
-
-export interface OnegraphCityRecommendationDetail {
-  exchanges?: CityProductProfitAccumulatedExchange[];
-  noRestockRoute: NoRestockRoute;
-  profit: number;
-  fatigue: number;
-  profitPerFatigue: number;
-}
-
-export interface OneGraphRouteDialogProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  data?: OneGraphRouteDialogData;
-}
-
-export interface OneGraphRouteDialogData {
-  fromCity: string;
-  toCity: string;
-  onegraphData: OnegraphCityRecommendation;
-  playerConfig: PlayerConfig;
-  goAndReturn: boolean;
-}
-
 export interface OneGraphRouteDialogV2Props {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -87,21 +52,8 @@ export interface OneGraphRouteDialogDataV2 {
   playerConfig: PlayerConfig;
   fromCity: CityName;
   toCity: CityName;
-}
-
-export interface NoRestockRoute {
-  fromCity: CityName;
-  toCity: CityName;
-  profit: number;
-  products: string[];
-  fatigue: number;
-  totalLot: number;
-}
-
-export interface NoRestockRoutes {
-  [fromCity: string]: {
-    [toCity: string]: NoRestockRoute;
-  };
+  goBargainDisabled: boolean;
+  rtBargainDisabled: boolean;
 }
 
 export interface OnegraphPriceData {
@@ -116,6 +68,7 @@ export interface OnegraphPriceDataItem {
   priceData: any;
   buyPrice: number;
   buyLot: number;
+  buyTaxRate: number;
   sellPrice: number;
   singleProfit: number;
 }

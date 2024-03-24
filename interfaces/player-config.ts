@@ -3,9 +3,11 @@ import { CityName } from "@/data/Cities";
 export interface PlayerConfig {
   maxLot: number;
   bargain: PlayerConfigBargain;
+  returnBargain: PlayerConfigBargain;
   prestige: PlayerConfigPrestige;
   roles: PlayerConfigRoles;
   onegraph: PlayerConfigOnegraph;
+  nanoid?: string;
 }
 
 export interface PlayerConfigBargain {

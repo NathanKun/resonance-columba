@@ -14,6 +14,7 @@ import {
 } from "@/utils/route-page-utils";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Looks3Icon from "@mui/icons-material/Looks3";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoIcon from "@mui/icons-material/LooksTwo";
@@ -36,6 +37,9 @@ import {
   createTheme,
   useMediaQuery,
 } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
@@ -52,6 +56,7 @@ import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
+import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-panel";
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
@@ -87,15 +92,22 @@ export default function RoutePage() {
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
 
   /* player config */
-  const { playerConfig, setPlayerConfig, setRoleResonance } = usePlayerConfig();
+  const { playerConfig, setPlayerConfig, setRoleResonance, downloadPlayerConfig, uploadPlayerConfig } =
+    usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
   };
 
-  const onBargainChange = (field: string, value: number) => {
+  const onGoBargainChange = (field: string, value: number) => {
     if (!isNaN(value)) {
       onPlayerConfigChange("bargain", { ...playerConfig.bargain, [field]: value });
+    }
+  };
+
+  const onReturnBargainChange = (field: string, value: number) => {
+    if (!isNaN(value)) {
+      onPlayerConfigChange("returnBargain", { ...playerConfig.returnBargain, [field]: value });
     }
   };
 
@@ -150,38 +162,69 @@ export default function RoutePage() {
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
-  const onegraphBuyCombinations = useMemo(
+  const [onegraphGoBarginDisabled, setOnegraphGoBarginDisabled] = useState(false);
+  const [onegraphRtBarginDisabled, setOnegraphRtBarginDisabled] = useState(false);
+  // no brain brute force aller-retour calculation :)
+  const onegraphBuyCombinationsGo = useMemo(
     () =>
       calculateOneGraphBuyCombinations(
         prices,
         playerConfig.maxLot,
         playerConfig.bargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        onegraphGoBarginDisabled
       ),
-    [prices, playerConfig.maxLot, playerConfig.bargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.bargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      onegraphGoBarginDisabled,
+    ]
   );
-  const onegraphRecommendationsV2 = useMemo(() => {
+  const onegraphBuyCombinationsRt = useMemo(
+    () =>
+      calculateOneGraphBuyCombinations(
+        prices,
+        playerConfig.maxLot,
+        playerConfig.returnBargain,
+        playerConfig.prestige,
+        playerConfig.roles,
+        onegraphRtBarginDisabled
+      ),
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.returnBargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      onegraphRtBarginDisabled,
+    ]
+  );
+  const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
-    for (const fromCity in onegraphBuyCombinations) {
+    for (const fromCity of CITIES) {
       results[fromCity] = {};
-      for (const toCity in onegraphBuyCombinations[fromCity]) {
+      for (const toCity of CITIES) {
         if (fromCity === toCity) continue;
+        let reco = getOneGraphRecommendation(onegraphMaxRestock, false, fromCity, toCity, onegraphBuyCombinationsGo);
+        if (!reco || reco.length === 0) continue;
+        const simpleGo = reco[0];
 
-        const simpleGo = getOneGraphRecommendation(
-          onegraphMaxRestock,
-          false,
-          fromCity,
-          toCity,
-          onegraphBuyCombinations
-        )[0];
-        const goAndReturn = getOneGraphRecommendation(
+        reco = getOneGraphRecommendation(
           onegraphMaxRestock,
           true,
           fromCity,
           toCity,
-          onegraphBuyCombinations
+          onegraphBuyCombinationsGo,
+          onegraphBuyCombinationsRt
         );
+
+        if (!reco || reco.length !== 2) continue;
+        const goAndReturn = reco;
+
         results[fromCity][toCity] = {
           simpleGo,
           goAndReturn,
@@ -189,16 +232,17 @@ export default function RoutePage() {
       }
     }
 
-    console.debug(onegraphBuyCombinations, results);
+    console.debug(onegraphBuyCombinationsGo, onegraphBuyCombinationsRt, results);
 
     return results;
-  }, [onegraphMaxRestock, onegraphBuyCombinations]);
+  }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
   const topProfits: { go: number[]; goAndReturn: number[] } = useMemo(() => {
     let goProfits = [];
     let goAndReturnProfits = [];
-    for (const fromCity in onegraphRecommendationsV2) {
-      for (const toCity in onegraphRecommendationsV2[fromCity]) {
-        const reco = onegraphRecommendationsV2[fromCity][toCity];
+    for (const fromCity in onegraphRecommendations) {
+      for (const toCity in onegraphRecommendations[fromCity]) {
+        const reco = onegraphRecommendations[fromCity][toCity];
+        if (!reco || !reco.simpleGo || reco.goAndReturn?.length !== 2) continue;
         goProfits.push(reco.simpleGo.profit);
         goAndReturnProfits.push(reco.goAndReturn[0].profit + reco.goAndReturn[1].profit);
       }
@@ -206,13 +250,15 @@ export default function RoutePage() {
     goProfits = [...new Set(goProfits)].sort((a, b) => b - a).slice(0, 3);
     goAndReturnProfits = [...new Set(goAndReturnProfits)].sort((a, b) => b - a).slice(0, 3);
     return { go: goProfits, goAndReturn: goAndReturnProfits };
-  }, [onegraphRecommendationsV2]);
+  }, [onegraphRecommendations]);
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
     setOnegraphRouteDialogData({
-      stats: onegraphRecommendationsV2[fromCity][toCity],
+      stats: onegraphRecommendations[fromCity][toCity],
       playerConfig,
       fromCity,
       toCity,
+      goBargainDisabled: onegraphGoBarginDisabled,
+      rtBargainDisabled: onegraphRtBarginDisabled,
     });
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
@@ -275,39 +321,41 @@ export default function RoutePage() {
           </div>
 
           <Box>
-            <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
+            <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
               <Typography sx={{ textWrap: "nowrap" }}>总进货次数</Typography>
-              <IconButton
-                onClick={() => {
-                  if (onegraphMaxRestock > 0) {
-                    setMaxRestock(onegraphMaxRestock - 1);
-                  }
-                }}
-                size="small"
-              >
-                <ArrowLeftIcon />
-              </IconButton>
-              <Slider
-                className="w-20 sm:w-60"
-                aria-label="总进货次数"
-                value={onegraphMaxRestock}
-                onChange={(_e, newVal) => setMaxRestock(newVal as number)}
-                min={0}
-                max={50}
-                size="small"
-              />
-              <IconButton
-                onClick={() => {
-                  if (onegraphMaxRestock < 30) {
-                    setMaxRestock(onegraphMaxRestock + 1);
-                  }
-                }}
-                size="small"
-              >
-                <ArrowRightIcon />
-              </IconButton>
+              <Box className="flex justify-center">
+                <IconButton
+                  onClick={() => {
+                    if (onegraphMaxRestock > 0) {
+                      setMaxRestock(onegraphMaxRestock - 1);
+                    }
+                  }}
+                  size="small"
+                >
+                  <ArrowLeftIcon />
+                </IconButton>
+                <Slider
+                  className="w-32 sm:w-60"
+                  aria-label="总进货次数"
+                  value={onegraphMaxRestock}
+                  onChange={(_e, newVal) => setMaxRestock(newVal as number)}
+                  min={0}
+                  max={50}
+                  size="small"
+                />
+                <IconButton
+                  onClick={() => {
+                    if (onegraphMaxRestock < 30) {
+                      setMaxRestock(onegraphMaxRestock + 1);
+                    }
+                  }}
+                  size="small"
+                >
+                  <ArrowRightIcon />
+                </IconButton>
+              </Box>
               <Typography>{onegraphMaxRestock}</Typography>
-            </Stack>
+            </Box>
 
             <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
               <FormControlLabel
@@ -336,11 +384,10 @@ export default function RoutePage() {
                 label={<Typography>显示单位疲劳利润</Typography>}
               />
             </Stack>
-            <Stack
-              spacing={2}
-              direction="row"
+
+            <Box
               alignItems="center"
-              className="mb-2 justify-center"
+              className="mb-2 flex justify-center flex-wrap"
               sx={{
                 "& .MuiFormControl-root": {
                   width: "7rem",
@@ -348,8 +395,47 @@ export default function RoutePage() {
                 },
               }}
             >
-              <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
-            </Stack>
+              <Typography className="p-4">去程</Typography>
+              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
+              <FormControlLabel
+                className="w-30 pl-4"
+                control={
+                  <Switch
+                    checked={onegraphGoBarginDisabled}
+                    onChange={(e) => {
+                      setOnegraphGoBarginDisabled(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>不议价</Typography>}
+              />
+            </Box>
+
+            <Box
+              alignItems="center"
+              className="mb-2 flex justify-center flex-wrap"
+              sx={{
+                "& .MuiFormControl-root": {
+                  width: "7rem",
+                  margin: "0.5rem",
+                },
+              }}
+            >
+              <Typography className="p-4">回程</Typography>
+              <BargainInputs barginConfig={playerConfig.returnBargain} onBargainChange={onReturnBargainChange} />
+              <FormControlLabel
+                className="w-30 pl-4"
+                control={
+                  <Switch
+                    checked={onegraphRtBarginDisabled}
+                    onChange={(e) => {
+                      setOnegraphRtBarginDisabled(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>不议价</Typography>}
+              />
+            </Box>
           </Box>
 
           <TableContainer
@@ -418,7 +504,7 @@ export default function RoutePage() {
                         return EmptyCell();
                       }
 
-                      const reco = onegraphRecommendationsV2[fromCity]?.[toCity];
+                      const reco = onegraphRecommendations[fromCity]?.[toCity];
                       if (!reco) {
                         return EmptyCell();
                       }
@@ -427,7 +513,7 @@ export default function RoutePage() {
                         ? reco.goAndReturn.reduce((acc, cur) => acc + cur.profit, 0)
                         : reco.simpleGo.profit;
                       const fatigue = onegraphGoAndReturn
-                        ? reco.goAndReturn.reduce((acc, cur) => acc + cur.fatigue, 0)
+                        ? reco.goAndReturn[0].fatigue + reco.goAndReturn[1].fatigue
                         : reco.simpleGo.fatigue;
                       const profitPerFatigue = Math.round(profit / fatigue);
 
@@ -489,80 +575,91 @@ export default function RoutePage() {
 
         {/* 个性化设置 */}
         <div role="tabpanel" hidden={tabIndex !== 1}>
-          <div className="bg-white dark:bg-gray-800 p-6 max-sm:px-0 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-4xl mx-auto my-4 w-full box-border">
-            <Box
-              className="m-4"
-              sx={{
-                "& .MuiFormControl-root": {
-                  width: "10rem",
-                  margin: "0.5rem",
-                },
-              }}
-            >
-              <Typography>无垠号</Typography>
-              <Box className="m-4">
-                <NumberInput
-                  label="货舱大小"
-                  min={100}
-                  max={3000}
-                  defaultValue={500}
-                  type="integer"
-                  value={playerConfig.maxLot}
-                  setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
-                />
-              </Box>
-
-              <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
-              <Box className="m-4">
-                <NumberInput
-                  label="修格里城"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["修格里城"]}
-                  setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
-                />
-                <NumberInput
-                  label="曼德矿场"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["曼德矿场"]}
-                  setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
-                />
-                <NumberInput
-                  label="澄明数据中心"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["澄明数据中心"]}
-                  setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
-                />
-                <NumberInput
-                  label="七号自由港"
-                  min={8}
-                  max={20}
-                  defaultValue={8}
-                  type="integer"
-                  value={playerConfig.prestige["七号自由港"]}
-                  setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
-                />
-              </Box>
-
-              <Typography>抬价 砍价</Typography>
-              <Box className="m-4">
-                <BargainInputs playerConfig={playerConfig} onBargainChange={onBargainChange} />
-              </Box>
-
-              <Typography>乘员共振</Typography>
-              <Box className="m-4 max-sm:mx-0">
-                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
-              </Box>
+          <Paper
+            className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full"
+            sx={{
+              "& .MuiFormControl-root": {
+                width: "10rem",
+                margin: "0.5rem",
+              },
+            }}
+          >
+            <Typography>无垠号</Typography>
+            <Box className="m-4">
+              <NumberInput
+                label="货舱大小"
+                min={100}
+                max={3000}
+                defaultValue={500}
+                type="integer"
+                value={playerConfig.maxLot}
+                setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
+              />
             </Box>
-          </div>
+
+            <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
+            <Box className="m-4">
+              <NumberInput
+                label="修格里城"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["修格里城"]}
+                setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
+              />
+              <NumberInput
+                label="曼德矿场"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["曼德矿场"]}
+                setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
+              />
+              <NumberInput
+                label="澄明数据中心"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["澄明数据中心"]}
+                setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
+              />
+              <NumberInput
+                label="七号自由港"
+                min={8}
+                max={20}
+                defaultValue={8}
+                type="integer"
+                value={playerConfig.prestige["七号自由港"]}
+                setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
+              />
+            </Box>
+
+            <Typography>议价</Typography>
+            <Box className="m-4">
+              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
+            </Box>
+
+            <Typography>乘员共振</Typography>
+            <Accordion className="my-4">
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
+              <AccordionDetails>
+                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
+              </AccordionDetails>
+            </Accordion>
+
+            <Typography>数据同步</Typography>
+            <Box className="m-4 max-sm:mx-0">
+              <SyncPlayerConfigPanel
+                playerConfig={playerConfig}
+                setPlayerConfig={setPlayerConfig}
+                downloadPlayerConfig={downloadPlayerConfig}
+                uploadPlayerConfig={uploadPlayerConfig}
+              />
+            </Box>
+          </Paper>
         </div>
 
         {/* 最优线路详细信息 */}
@@ -672,7 +769,7 @@ export default function RoutePage() {
             </div>
           </div>
 
-          <Box className="m-4">
+          <Box className="m-4 flex justify-center items-center">
             <Typography>线路</Typography>
             <Box className="m-4">
               <MultipleSelect
@@ -763,10 +860,9 @@ export default function RoutePage() {
         <div role="tabpanel" hidden={tabIndex !== 4}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
-              <Typography>买价为砍价税后价格。</Typography>
-              <Typography>卖价为抬价后价格。</Typography>
+              <Typography>买价为砍价后税前价格。</Typography>
+              <Typography>卖价为抬价后税前价格。</Typography>
               <Typography>利润为税后利润。</Typography>
-              <Typography>单票舱位未算入可能存在的角色生活技能的20%加成。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
             </div>
           </div>

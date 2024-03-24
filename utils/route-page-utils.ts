@@ -1,4 +1,5 @@
 import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
+import { EVENTS } from "@/data/Event";
 import { FATIGUES } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
@@ -69,8 +70,11 @@ export const calculateExchanges = (
         // get prestige buy more percent
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
+        // get game event buy more percent
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
 
         // apply buy more percent to buy lot
         buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
@@ -106,9 +110,16 @@ export const calculateExchanges = (
         const bargain = playerConfig.bargain.bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
 
-        // apply prestiged tax to buy price
-        const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
-        buyPrice = Math.round(buyPrice * (1 + tax));
+        // get prestiged tax to buy price
+        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+
+        // get game event tax variation
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+
+        // sum all tax variation
+        tax += eventTaxVariation;
+
+        // don't apply tax to buy price yet, tax should be deducted from profit later
 
         return [
           {
@@ -116,6 +127,7 @@ export const calculateExchanges = (
             buyPrice,
             buyLot,
             fromCity,
+            buyTaxRate: tax,
           } as Buy,
         ];
       });
@@ -168,12 +180,20 @@ export const calculateExchanges = (
         // calculate profit
         let singleProfit = sellPrice - buy.buyPrice;
 
-        // apply prestiged tax to profit
-        const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-        singleProfit = Math.round(singleProfit * (1 - tax));
+        // get prestiged tax to profit
+        const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+
+        // deduct sell tax, it applies to (sell price - buy price before buy tax)
+        singleProfit -= singleProfit * sellTaxRate;
+
+        // deduct buy tax from profit
+        singleProfit -= buy.buyPrice * buy.buyTaxRate;
 
         // lot profit
         const lotProfit = Math.round(singleProfit * buy.buyLot);
+
+        // round after all calculation
+        singleProfit = Math.round(singleProfit);
 
         return [
           {
@@ -338,7 +358,8 @@ export const calculateOneGraphBuyCombinations = (
   maxLot: number,
   bargain: PlayerConfigBargain,
   prestige: PlayerConfigPrestige,
-  roles: PlayerConfigRoles
+  roles: PlayerConfigRoles,
+  barginDisabled: boolean
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -394,12 +415,19 @@ export const calculateOneGraphBuyCombinations = (
         }
 
         // apply bargain to buy price
-        const bargain = bargainPercent ?? 0;
+        const bargain = barginDisabled ? 0 : bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
 
-        // apply prestiged tax to buy price
-        const tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
-        buyPrice = Math.round(buyPrice * (1 + tax));
+        // get prestiged tax to buy price
+        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+
+        // get game event tax variation
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+
+        // sum all tax variation
+        tax += eventTaxVariation;
+
+        // don't apply tax to buy price yet, tax should be deducted from profit later
 
         // get role resonance skill buy more percent
         const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(roles, product, fromCity);
@@ -407,8 +435,11 @@ export const calculateOneGraphBuyCombinations = (
         // get prestige buy more percent
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
+        // get game event buy more percent
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent;
+        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
 
         // apply buy more percent to buy lot
         buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
@@ -422,6 +453,7 @@ export const calculateOneGraphBuyCombinations = (
             buyLot,
             sellPrice: -1,
             singleProfit: -1,
+            buyTaxRate: tax,
           },
         ];
       }, []);
@@ -445,20 +477,28 @@ export const calculateOneGraphBuyCombinations = (
           }
 
           // apply raise to sell price
-          const raise = raisePercent ?? 0;
+          const raise = barginDisabled ? 0 : raisePercent ?? 0;
           sellPrice = Math.round(sellPrice * (1 + raise / 100));
 
           // calculate profit
           let singleProfit = sellPrice - buyPrice;
 
+          // get prestiged tax
+          const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+
+          // deduct sell tax, it applies to (sell price - buy price before buy tax)
+          singleProfit -= singleProfit * sellTaxRate;
+
+          // deduct buy tax from profit
+          singleProfit -= buyPrice * it.buyTaxRate;
+
+          // round
+          singleProfit = Math.round(singleProfit);
+
           // skip if loss
           if (singleProfit <= 0) {
             return [];
           }
-
-          // apply prestiged tax to profit
-          const tax = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
-          singleProfit = Math.round(singleProfit * (1 - tax));
 
           return [
             {
@@ -504,7 +544,10 @@ export const calculateOneGraphBuyCombinations = (
         buyCombinations[fromCity][toCity] = buyCombinations[fromCity][toCity] ?? {};
 
         const totalProfit = buyCombination.reduce((acc, it) => acc + it.profit, 0);
-        const fatigue = (getRouteFatigue(fromCity, toCity) ?? 0) + bargainFatigue + raiseFatigue;
+        let fatigue = getRouteFatigue(fromCity, toCity) ?? 0;
+        if (!barginDisabled) {
+          fatigue += bargainFatigue + raiseFatigue;
+        }
 
         // if current profit equals the profit of the last restock, then it is wasting restock
         let lastNotWastingRestock = restock;
@@ -545,11 +588,12 @@ export const getOneGraphRecommendation = (
   goAndReturn: boolean,
   fromCity: CityName,
   toCity: CityName,
-  buyCombinations: OnegraphBuyCombinations
+  buyCombinationsGo: OnegraphBuyCombinations,
+  buyCombinationsRt?: OnegraphBuyCombinations
 ): OnegraphBuyCombinationStats[] => {
   // if simple go, the return the one with the request restock
   if (!goAndReturn) {
-    const reco = buyCombinations[fromCity]?.[toCity]?.[restock];
+    const reco = buyCombinationsGo[fromCity]?.[toCity]?.[restock];
     if (!reco) {
       return [];
     }
@@ -562,11 +606,11 @@ export const getOneGraphRecommendation = (
   let maxProfit = 0;
   for (let goRestock = 0; goRestock <= restock; goRestock++) {
     const returnRestock = restock - goRestock;
-    const goStats = buyCombinations[fromCity]?.[toCity]?.[goRestock];
+    const goStats = buyCombinationsGo[fromCity]?.[toCity]?.[goRestock];
     if (!goStats) {
       continue;
     }
-    const returnStats = buyCombinations[toCity]?.[fromCity]?.[returnRestock];
+    const returnStats = buyCombinationsRt![toCity]?.[fromCity]?.[returnRestock];
     if (!returnStats) {
       continue;
     }
@@ -613,4 +657,28 @@ const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Prod
   }
 
   return resonanceSkillBuyMorePercent;
+};
+
+const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
+  let eventBuyMorePercent = 0;
+  for (const event of EVENTS) {
+    const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
+    eventBuyMorePercent += currentProductBuyMorePercent;
+
+    const currentCityBuyMorePercent = product.type === "Special" ? event.buyMore?.city?.[fromCity] ?? 0 : 0;
+    eventBuyMorePercent += currentCityBuyMorePercent;
+  }
+  return eventBuyMorePercent;
+};
+
+const getGameEventTaxVariation = (product: Product, fromCity: CityName) => {
+  let eventTaxVariation = 0;
+  for (const event of EVENTS) {
+    const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;
+    eventTaxVariation += currentProductTaxVariation;
+
+    const currentCityTaxVariation = product.type === "Special" ? event.taxVariation?.city?.[fromCity] ?? 0 : 0;
+    eventTaxVariation += currentCityTaxVariation;
+  }
+  return eventTaxVariation;
 };
