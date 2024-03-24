@@ -5,13 +5,15 @@ import rateLimit from "../../../utils/rate-limit";
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 60 seconds
-  uniqueTokenPerInterval: 500, // Max 500 users per second
+  uniqueTokenPerInterval: 100, // Max 500 users per interval
 });
 
 export async function POST(request: Request) {
   // rate limit
   try {
-    await limiter.check(300, "CACHE_TOKEN"); // 300 requests per minute
+    const ip = getIp(request);
+    await limiter.check(10, ip); // 10 requests per minute per ip
+    await limiter.check(100, "CACHE_TOKEN"); // 100 requests per minute
   } catch {
     return Response.json({ error: "rate limit exceeded" }, { status: 429 });
   }
@@ -77,3 +79,14 @@ export async function POST(request: Request) {
     return Response.json({ error: "failed to load data" }, { status: 500 });
   }
 }
+
+const getIp = (request: Request): string => {
+  let ipAddress = request.headers.get("x-real-ip");
+
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (!ipAddress && forwardedFor) {
+    ipAddress = forwardedFor?.split(",").at(0) ?? "Unknown";
+  }
+
+  return ipAddress!;
+};
