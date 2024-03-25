@@ -27,7 +27,7 @@ import VariationCell from "./variation-cell";
 import VariationInput from "./variation-input";
 
 export default function PricesTable() {
-  const { prices, isV2Prices, setPrice } = useContext(PriceContext);
+  const { prices, setPrice } = useContext(PriceContext);
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
     localStorageKey: "selectedCities",
   });
@@ -498,7 +498,7 @@ export default function PricesTable() {
     enableDensityToggle: false,
     enableStickyHeader: true,
     enableColumnFilters: false,
-    enableEditing: !isV2Prices,
+    enableEditing: true,
     editDisplayMode: "cell",
     positionToolbarAlertBanner: "none",
     renderTopToolbarCustomActions: renderCitySelects,

@@ -5,15 +5,13 @@ import { useHasFocus } from "@/hooks/useHasFocus";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 
 import { revertLowBandwidthData } from "@/utils/price-api-compressor";
 import { sendGTMEvent } from "@next/third-parties/google";
 export interface PriceContextProps {
   prices: GetPricesProducts;
-  isV2Prices: boolean;
   setPrice: (props: SetPriceProps) => void;
-  setUseV2Prices: (useV2: boolean) => void;
 }
 
 interface SetPriceProps {
@@ -26,24 +24,13 @@ interface SetPriceProps {
 
 export const PriceContext = createContext({
   prices: {},
-  isV2Prices: false,
   setPrice: () => {},
-  setUseV2Prices: () => {},
 } as PriceContextProps);
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
   const fetchInterval = 1000 * 60; // 1 minute
   const [data, setData] = useState<GetPricesProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
-  // const [useV2, setUseV2] = useState<boolean>(false);
-  const queryParameters = useMemo(() => {
-    if (typeof window === "undefined") {
-      return new URLSearchParams();
-    }
-    return new URLSearchParams(window.location.search);
-  }, []);
-  const useV2 = queryParameters.get("v2") === "true";
-  const setUseV2 = (param: any) => {}; // fake function
   const focus = useHasFocus();
 
   const fetchData = useCallback((useV2: boolean) => {
@@ -78,7 +65,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       return;
     }
 
-    fetch("/api/set-price", {
+    fetch(setPriceUrl, {
       method: "POST",
       body: JSON.stringify({
         product,
@@ -101,7 +88,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         setLastFetch(Date.now());
       })
       .catch((error) => {
-        fetchData(useV2);
+        fetchData();
         console.error("set-price failed", error);
       });
 
@@ -127,21 +114,21 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
 
     // has focus & last fetch was more than fetchInterval ago, fetch data
     if (focus && Date.now() - (lastFetch || 0) > fetchInterval) {
-      fetchData(useV2);
+      fetchData();
     }
 
     // set interval to fetch data
     const interval = setInterval(() => {
       // fetch data if last fetch was more than fetchInterval ago
       if (Date.now() - (lastFetch || 0) > fetchInterval) {
-        fetchData(useV2);
+        fetchData();
       }
     }, fetchInterval);
 
     return () => clearInterval(interval); // if focus changes or lastFetch changes, clear interval
-  }, [fetchInterval, lastFetch, focus, fetchData, useV2]);
+  }, [fetchInterval, lastFetch, focus, fetchData]);
 
-  const value = { prices: data, setPrice, isV2Prices: useV2, setUseV2Prices };
+  const value = { prices: data, setPrice };
 
   return <PriceContext.Provider value={value}>{children}</PriceContext.Provider>;
 }
