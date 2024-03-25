@@ -33,10 +33,9 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   const [lastFetch, setLastFetch] = useState<number | null>(0);
   const focus = useHasFocus();
 
-  const fetchData = useCallback((useV2: boolean) => {
-    const fetchPricesUrl = useV2 ? "/api/get-prices-v2" : "/api/get-prices";
-    console.info(new Date(), "fetching data " + useV2 ? "v2" : "v1");
-    fetch(fetchPricesUrl)
+  const fetchData = useCallback(() => {
+    console.info(new Date(), "fetching data");
+    fetch("/api/get-prices")
       .then((res) => res.json())
       .then((res) => res.data)
       .then((res) => revertLowBandwidthData(res))
@@ -65,7 +64,7 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       return;
     }
 
-    fetch(setPriceUrl, {
+    fetch("/api/set-price", {
       method: "POST",
       body: JSON.stringify({
         product,
@@ -93,16 +92,6 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
       });
 
     sendGTMEvent({ event: "set_price", category: "price", action: "set" });
-  };
-
-  const setUseV2Prices = (newUseV2: boolean) => {
-    setUseV2((oldUseV2: boolean) => {
-      // if state changed, fetch new data
-      if (oldUseV2 !== newUseV2) {
-        fetchData(newUseV2);
-      }
-      return newUseV2;
-    });
   };
 
   // when focus changes or lastFetch changes, do:
