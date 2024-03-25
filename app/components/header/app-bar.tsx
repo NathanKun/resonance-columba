@@ -56,8 +56,6 @@ export default function HeaderAppBar() {
               科伦巴商会
             </MuiLink>
 
-            {/* <V2PricesSwitch /> */}
-
             <Box className="grow" />
 
             {/* Desktop Nav Menu */}
