@@ -88,6 +88,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 300,
       澄明数据中心: 340,
       铁盟哨站: 354,
+      阿妮塔能源研究所: null,
     },
     type: "Normal",
     buyPrices: {
@@ -108,6 +109,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1096,
       澄明数据中心: 1167,
       铁盟哨站: 1208,
+      七号自由港: null,
     },
     type: "Normal",
     buyPrices: {
@@ -128,6 +130,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 200,
       阿妮塔能源研究所: 227,
       澄明数据中心: 191,
+      铁盟哨站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -148,6 +151,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 718,
       澄明数据中心: 610,
       铁盟哨站: 556,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -174,6 +178,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 427,
       澄明数据中心: 383,
       铁盟哨站: 368,
+      修格里城: null,
     },
     type: "Normal",
   },
@@ -188,6 +193,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 907,
       澄明数据中心: 907,
       铁盟哨站: 949,
+      阿妮塔战备工厂: null,
     },
     type: "Normal",
     buyPrices: {
@@ -214,6 +220,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 129,
       澄明数据中心: 113,
       铁盟哨站: 108,
+      修格里城: null,
     },
     type: "Normal",
   },
@@ -228,6 +235,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 93,
       澄明数据中心: 101,
       铁盟哨站: 104,
+      七号自由港: null,
     },
     type: "Normal",
     buyPrices: {
@@ -248,6 +256,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 808,
       澄明数据中心: 862,
       铁盟哨站: 894,
+      七号自由港: null,
     },
     type: "Normal",
     buyPrices: {
@@ -268,6 +277,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 750,
       澄明数据中心: 676,
       铁盟哨站: 639,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -288,6 +298,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 756,
       澄明数据中心: 756,
       铁盟哨站: 770,
+      阿妮塔战备工厂: null,
     },
     type: "Normal",
     buyPrices: {
@@ -308,6 +319,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 336,
       阿妮塔能源研究所: 368,
       铁盟哨站: 336,
+      澄明数据中心: null,
     },
     type: "Normal",
     buyPrices: {
@@ -334,6 +346,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 950,
       澄明数据中心: 899,
       铁盟哨站: 848,
+      修格里城: null,
     },
     type: "Normal",
   },
@@ -348,6 +361,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 221,
       澄明数据中心: 237,
       铁盟哨站: 254,
+      七号自由港: null,
     },
     type: "Normal",
     buyPrices: {
@@ -368,6 +382,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 572,
       澄明数据中心: 500,
       铁盟哨站: 464,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -388,6 +403,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 799,
       澄明数据中心: 906,
       铁盟哨站: 945,
+      阿妮塔能源研究所: null,
     },
     type: "Normal",
     buyPrices: {
@@ -408,6 +424,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 527,
       阿妮塔能源研究所: 558,
       铁盟哨站: 543,
+      澄明数据中心: null,
     },
     type: "Normal",
     buyPrices: {
@@ -428,6 +445,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 264,
       阿妮塔能源研究所: 279,
       铁盟哨站: 271,
+      澄明数据中心: null,
     },
     type: "Normal",
     buyPrices: {
@@ -448,6 +466,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 1915,
       阿妮塔能源研究所: 2018,
       澄明数据中心: 1813,
+      铁盟哨站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -468,6 +487,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 127,
       澄明数据中心: 133,
       铁盟哨站: 146,
+      七号自由港: null,
     },
     type: "Normal",
     buyPrices: {
@@ -488,6 +508,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 805,
       澄明数据中心: 672,
       铁盟哨站: 655,
+      淘金乐园: null,
     },
     type: "Normal",
     buyPrices: {
@@ -514,6 +535,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 864,
       澄明数据中心: 756,
       铁盟哨站: 742,
+      修格里城: null,
     },
     type: "Normal",
   },
@@ -528,6 +550,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 638,
       阿妮塔能源研究所: 690,
       澄明数据中心: 604,
+      铁盟哨站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -548,6 +571,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 820,
       澄明数据中心: 739,
       铁盟哨站: 698,
+      荒原站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -568,6 +592,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 39,
       澄明数据中心: 33,
       铁盟哨站: 30,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -588,6 +613,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 234,
       澄明数据中心: 203,
       铁盟哨站: 180,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -608,6 +634,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 465,
       澄明数据中心: 419,
       铁盟哨站: 396,
+      荒原站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -628,6 +655,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 347,
       澄明数据中心: 289,
       铁盟哨站: 273,
+      淘金乐园: null,
     },
     type: "Normal",
     buyPrices: {
@@ -648,6 +676,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 943,
       阿妮塔能源研究所: 1017,
       澄明数据中心: 885,
+      铁盟哨站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -668,6 +697,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2203,
       澄明数据中心: 1831,
       铁盟哨站: 1717,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -688,6 +718,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1436,
       澄明数据中心: 1220,
       铁盟哨站: 1112,
+      曼德矿场: null,
     },
     type: "Normal",
     buyPrices: {
@@ -707,6 +738,8 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 424,
       澄明数据中心: 371,
       铁盟哨站: 361,
+      曼德矿场: null,
+      淘金乐园: null,
     },
     type: "Normal",
     buyPrices: {
@@ -729,6 +762,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 87,
       澄明数据中心: 73,
       铁盟哨站: 63,
+      荒原站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -755,6 +789,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 90,
       澄明数据中心: 62,
       铁盟哨站: 52,
+      修格里城: null,
     },
     type: "Normal",
   },
@@ -769,6 +804,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1103,
       澄明数据中心: 1103,
       铁盟哨站: 1187,
+      阿妮塔战备工厂: null,
     },
     type: "Normal",
     buyPrices: {
@@ -789,6 +825,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 437,
       阿妮塔能源研究所: 478,
       铁盟哨站: 449,
+      澄明数据中心: null,
     },
     type: "Normal",
     buyPrices: {
@@ -809,6 +846,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 758,
       阿妮塔能源研究所: 799,
       澄明数据中心: 718,
+      铁盟哨站: null,
     },
     type: "Normal",
     buyPrices: {
@@ -829,6 +867,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 1659,
       澄明数据中心: 1859,
       铁盟哨站: 2012,
+      阿妮塔能源研究所: null,
     },
     type: "Special",
     buyPrices: {
@@ -849,6 +888,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 3710,
       澄明数据中心: 3710,
       铁盟哨站: 3920,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -869,6 +909,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 7439,
       澄明数据中心: 7715,
       铁盟哨站: 7990,
+      阿妮塔能源研究所: null,
     },
     type: "Special",
     buyPrices: {
@@ -889,6 +930,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 694,
       澄明数据中心: 782,
       铁盟哨站: 870,
+      七号自由港: null,
     },
     type: "Special",
     buyPrices: {
@@ -916,6 +958,8 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 2448,
       阿妮塔能源研究所: 2555,
       澄明数据中心: 2297,
+      修格里城: null,
+      铁盟哨站: null,
     },
     type: "Special",
   },
@@ -936,6 +980,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 3968,
       澄明数据中心: 3565,
       铁盟哨站: 3464,
+      修格里城: null,
     },
     type: "Special",
   },
@@ -950,6 +995,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 3246,
       阿妮塔能源研究所: 3587,
       澄明数据中心: 3132,
+      铁盟哨站: null,
     },
     type: "Special",
     buyPrices: {
@@ -970,6 +1016,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 4431,
       澄明数据中心: 4431,
       铁盟哨站: 4662,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -996,6 +1043,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1039,
       澄明数据中心: 791,
       铁盟哨站: 709,
+      修格里城: null,
     },
     type: "Special",
   },
@@ -1010,6 +1058,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2867,
       澄明数据中心: 2598,
       铁盟哨站: 2307,
+      荒原站: null,
     },
     type: "Special",
     buyPrices: {
@@ -1030,6 +1079,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 5157,
       澄明数据中心: 5279,
       铁盟哨站: 5401,
+      七号自由港: null,
     },
     type: "Special",
     buyPrices: {
@@ -1050,6 +1100,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 7595,
       澄明数据中心: 7385,
       铁盟哨站: 7770,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -1070,6 +1121,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 1244,
       澄明数据中心: 1394,
       铁盟哨站: 1509,
+      阿妮塔能源研究所: null,
     },
     type: "Special",
     buyPrices: {
@@ -1090,6 +1142,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 1589,
       阿妮塔能源研究所: 1795,
       澄明数据中心: 1480,
+      铁盟哨站: null,
     },
     type: "Special",
     buyPrices: {
@@ -1110,6 +1163,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2996,
       澄明数据中心: 3080,
       铁盟哨站: 3192,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -1130,6 +1184,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2112,
       澄明数据中心: 1865,
       铁盟哨站: 1700,
+      荒原站: null,
     },
     type: "Special",
     buyPrices: {
@@ -1150,6 +1205,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1522,
       澄明数据中心: 1316,
       铁盟哨站: 1178,
+      荒原站: null,
     },
     type: "Special",
     buyPrices: {
@@ -1170,6 +1226,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2385,
       澄明数据中心: 2039,
       铁盟哨站: 1953,
+      淘金乐园: null,
     },
     type: "Special",
     buyPrices: {
@@ -1190,6 +1247,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1461,
       澄明数据中心: 1109,
       铁盟哨站: 933,
+      曼德矿场: null,
     },
     type: "Special",
     buyPrices: {
@@ -1210,6 +1268,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1193,
       澄明数据中心: 923,
       铁盟哨站: 773,
+      荒原站: null,
     },
     type: "Special",
     buyPrices: {
@@ -1230,6 +1289,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2650,
       澄明数据中心: 2266,
       铁盟哨站: 2170,
+      淘金乐园: null,
     },
     type: "Special",
     buyPrices: {
@@ -1250,6 +1310,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1914,
       澄明数据中心: 1997,
       铁盟哨站: 2081,
+      七号自由港: null,
     },
     type: "Special",
     buyPrices: {
@@ -1270,6 +1331,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 3429,
       澄明数据中心: 3024,
       铁盟哨站: 2943,
+      淘金乐园: null,
     },
     type: "Special",
     buyPrices: {
@@ -1290,6 +1352,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2534,
       澄明数据中心: 2627,
       铁盟哨站: 2719,
+      七号自由港: null,
     },
     type: "Special",
     buyPrices: {
@@ -1310,6 +1373,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 4070,
       澄明数据中心: 4416,
       铁盟哨站: 4646,
+      阿妮塔能源研究所: null,
     },
     type: "Special",
     buyPrices: {
@@ -1330,6 +1394,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 2772,
       澄明数据中心: 2696,
       铁盟哨站: 2873,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -1350,6 +1415,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 1540,
       澄明数据中心: 1498,
       铁盟哨站: 1596,
+      阿妮塔战备工厂: null,
     },
     type: "Special",
     buyPrices: {
@@ -1370,6 +1436,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 4086,
       澄明数据中心: 3564,
       铁盟哨站: 3256,
+      曼德矿场: null,
     },
     type: "Special",
     buyPrices: {
@@ -1396,6 +1463,7 @@ const pdts: Product[] = [
       阿妮塔能源研究所: 614,
       澄明数据中心: 381,
       铁盟哨站: 316,
+      修格里城: null,
     },
     type: "Special",
   },
@@ -1410,6 +1478,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 1008,
       阿妮塔能源研究所: 1104,
       铁盟哨站: 1037,
+      澄明数据中心: null,
     },
     type: "Special",
     buyPrices: {
@@ -1430,6 +1499,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 2650,
       阿妮塔能源研究所: 2875,
       铁盟哨站: 2650,
+      澄明数据中心: null,
     },
     type: "Special",
     buyPrices: {
@@ -1450,6 +1520,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 3520,
       阿妮塔能源研究所: 3776,
       铁盟哨站: 3424,
+      澄明数据中心: null,
     },
     type: "Special",
     buyPrices: {
@@ -1470,6 +1541,7 @@ const pdts: Product[] = [
       阿妮塔战备工厂: 752,
       阿妮塔能源研究所: 881,
       铁盟哨站: 732,
+      澄明数据中心: null,
     },
     type: "Special",
     buyPrices: {
