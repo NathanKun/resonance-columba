@@ -60,11 +60,14 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
     const totalProfit = goDisplayData.profit + returnDisplayData!.profit;
     const totalFatigue = goDisplayData.fatigue + returnDisplayData!.fatigue;
     const profitPerFatigue = Math.round(totalProfit / totalFatigue);
+    const totalRestockCount = goDisplayData.restockCount + returnDisplayData!.restockCount;
+    const profitPerRestock = totalRestockCount > 0 ? Math.round(totalProfit / totalRestockCount) : 0;
     return {
       profit: totalProfit,
       fatigue: totalFatigue,
       profitPerFatigue: profitPerFatigue,
       restockCount: goDisplayData.restockCount + returnDisplayData!.restockCount,
+      profitPerRestock,
     };
   })();
 
@@ -94,6 +97,9 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
               {bargainFatigueTotalGo > 0 ? ` (议价占${bargainFatigueTotalGo})` : ""}
             </DialogContentText>
             <DialogContentText>利润/疲劳：{goDisplayData.profitPerFatigue}</DialogContentText>
+            {goDisplayData.restockCount > 0 && (
+              <DialogContentText>利润/进货书：{goDisplayData.profitPerRestock}</DialogContentText>
+            )}
           </Box>
           {goAndReturn && returnDisplayData && (
             <>
@@ -113,6 +119,9 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
                   {bargainFatigueTotalRt > 0 ? ` (议价占${bargainFatigueTotalRt})` : ""}
                 </DialogContentText>
                 <DialogContentText>回程利润/疲劳：{returnDisplayData.profitPerFatigue}</DialogContentText>
+                {returnDisplayData.restockCount > 0 && (
+                  <DialogContentText>回程利润/进货书：{returnDisplayData.profitPerRestock}</DialogContentText>
+                )}
               </Box>
               <Box className="m-8">
                 <DialogContentText>总利润：{totalDisplayData!.profit}</DialogContentText>
@@ -125,6 +134,12 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
                   总利润/总疲劳：
                   {totalDisplayData!.profitPerFatigue}
                 </DialogContentText>
+                {totalDisplayData!.profitPerRestock > 0 && (
+                  <DialogContentText>
+                    总利润/总进货书：
+                    {totalDisplayData!.profitPerRestock}
+                  </DialogContentText>
+                )}
               </Box>
             </>
           )}

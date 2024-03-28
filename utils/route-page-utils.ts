@@ -570,7 +570,7 @@ export const calculateOneGraphBuyCombinations = (
           restock,
           fatigue,
           profitPerFatigue: Math.round(totalProfit / fatigue),
-          profitPerRestock: restock === 0 ? totalProfit : Math.round(totalProfit / restock),
+          profitPerRestock: restock > 0 ? Math.round(totalProfit / restock) : 0,
           usedLot,
           lastNotWastingRestock,
         };
