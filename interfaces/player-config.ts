@@ -31,5 +31,6 @@ export interface PlayerConfigRoles {
 export interface PlayerConfigOnegraph {
   maxRestock: number;
   goAndReturn: boolean;
-  showFatigue: boolean;
+  showFatigue: boolean; // actually is showProfitPerFatigue
+  showProfitPerRestock: boolean;
 }
