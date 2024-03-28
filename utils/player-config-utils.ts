@@ -85,15 +85,15 @@ export const isValidPlayerConfig = (config: any) => {
       return false;
     }
 
-    if (typeof onegraph.goAndReturn !== "boolean") {
+    if (onegraph.goAndReturn !== undefined && typeof onegraph.goAndReturn !== "boolean") {
       return false;
     }
 
-    if (typeof onegraph.showFatigue !== "boolean") {
+    if (onegraph.showFatigue !== undefined && typeof onegraph.showFatigue !== "boolean") {
       return false;
     }
 
-    if (typeof onegraph.showProfitPerRestock !== "boolean") {
+    if (onegraph.showProfitPerRestock !== undefined && typeof onegraph.showProfitPerRestock !== "boolean") {
       return false;
     }
   }

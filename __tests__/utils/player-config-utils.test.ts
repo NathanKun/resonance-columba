@@ -269,9 +269,9 @@ const invalidConfigs = [
   },
   {
     onegraph: {
-      showFatigue: true,
+      maxRestock: 10,
       showProfitPerRestock: {
-        hello: "world",
+        data: "hello",
       },
     },
   },
