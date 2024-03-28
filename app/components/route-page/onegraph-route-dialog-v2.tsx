@@ -27,11 +27,11 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
     return null;
   }
 
-  const { stats, playerConfig, fromCity, toCity, goBargainDisabled, rtBargainDisabled } = data;
+  const { stats, playerConfig, fromCity, toCity } = data;
   const { simpleGo: simpleGoData, goAndReturn: goAndReturnData } = stats;
   const { bargain, returnBargain } = playerConfig;
-  const { bargainFatigue: bargainFatigueGo, raiseFatigue: raiseFatigueGo } = bargain;
-  const { bargainFatigue: bargainFatigueRt, raiseFatigue: raiseFatigueRt } = returnBargain;
+  const { bargainFatigue: bargainFatigueGo, raiseFatigue: raiseFatigueGo, disabled: goBargainDisabled } = bargain;
+  const { bargainFatigue: bargainFatigueRt, raiseFatigue: raiseFatigueRt, disabled: rtBargainDisabled } = returnBargain;
   const bargainFatigueTotalGo = goBargainDisabled ? 0 : (bargainFatigueGo ?? 0) + (raiseFatigueGo ?? 0);
   const bargainFatigueTotalRt = rtBargainDisabled ? 0 : (bargainFatigueRt ?? 0) + (raiseFatigueRt ?? 0);
   const bargainFatigueTotal = bargainFatigueTotalGo + bargainFatigueTotalRt;

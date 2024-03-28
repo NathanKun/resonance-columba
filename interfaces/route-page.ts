@@ -52,8 +52,6 @@ export interface OneGraphRouteDialogDataV2 {
   playerConfig: PlayerConfig;
   fromCity: CityName;
   toCity: CityName;
-  goBargainDisabled: boolean;
-  rtBargainDisabled: boolean;
 }
 
 export interface OnegraphPriceData {

@@ -1,5 +1,6 @@
 import { CITIES } from "@/data/Cities";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
+import { PlayerConfig } from "@/interfaces/player-config";
 
 export const isValidPlayerConfig = (config: any) => {
   if (!config) {
@@ -103,17 +104,68 @@ export const isValidPlayerConfig = (config: any) => {
 };
 
 const isBargainConfig = (bargain: any) => {
+  const numKeys = ["bargainPercent", "raisePercent", "bargainFatigue", "raiseFatigue"];
+  if (Object.keys(bargain).filter((key) => ![...numKeys, "disabled"].includes(key)).length > 0) {
+    return false;
+  }
+
   if (
-    Object.keys(bargain).filter(
-      (key) => !["bargainPercent", "raisePercent", "bargainFatigue", "raiseFatigue"].includes(key)
-    ).length > 0
+    Object.keys(bargain)
+      .filter((key) => numKeys.includes(key))
+      .filter((key) => isNaN(bargain[key]) || bargain[key] < 0 || bargain[key] > 100).length > 0
   ) {
     return false;
   }
 
-  if (Object.keys(bargain).filter((key) => isNaN(bargain[key]) || bargain[key] < 0 || bargain[key] > 100).length > 0) {
+  if (typeof bargain.disabled !== "boolean") {
     return false;
   }
 
   return true;
+};
+
+export const mergePlayerConfigs = (newConfig: any): PlayerConfig => {
+  if (!newConfig) {
+    return INITIAL_PLAYER_CONFIG;
+  }
+
+  return {
+    ...INITIAL_PLAYER_CONFIG,
+    ...newConfig.data,
+    bargain: { ...INITIAL_PLAYER_CONFIG.bargain, ...newConfig.bargain },
+    returnBargain: { ...INITIAL_PLAYER_CONFIG.returnBargain, ...newConfig.returnBargain },
+    prestige: { ...INITIAL_PLAYER_CONFIG.prestige, ...newConfig.prestige },
+    roles: { ...INITIAL_PLAYER_CONFIG.roles, ...newConfig.roles },
+    onegraph: { ...INITIAL_PLAYER_CONFIG.onegraph, ...newConfig.onegraph },
+  };
+};
+
+export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
+  maxLot: 500,
+  bargain: {
+    bargainPercent: 0,
+    raisePercent: 0,
+    bargainFatigue: 0,
+    raiseFatigue: 0,
+    disabled: false,
+  },
+  returnBargain: {
+    bargainPercent: 0,
+    raisePercent: 0,
+    bargainFatigue: 0,
+    raiseFatigue: 0,
+    disabled: false,
+  },
+  prestige: {
+    修格里城: 8,
+    曼德矿场: 8,
+    澄明数据中心: 8,
+    七号自由港: 8,
+  },
+  roles: {},
+  onegraph: {
+    maxRestock: 5,
+    goAndReturn: false,
+    showFatigue: false,
+  },
 };
