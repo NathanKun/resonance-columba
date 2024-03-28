@@ -1,5 +1,5 @@
-import { INITIAL_PLAYER_CONFIG } from "@/hooks/usePlayerConfig";
 import { PlayerConfig } from "@/interfaces/player-config";
+import { INITIAL_PLAYER_CONFIG } from "@/utils/player-config-utils";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";

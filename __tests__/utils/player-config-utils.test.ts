@@ -1,5 +1,4 @@
-import { INITIAL_PLAYER_CONFIG } from "@/hooks/usePlayerConfig";
-import { isValidPlayerConfig } from "@/utils/player-config-utils";
+import { INITIAL_PLAYER_CONFIG, isValidPlayerConfig, mergePlayerConfigs } from "@/utils/player-config-utils";
 import { nanoid } from "nanoid";
 import { expect, test } from "vitest";
 
@@ -10,20 +9,61 @@ test("isValidPlayerConfig", () => {
   expect(isValidPlayerConfig({ hello: "world" })).toBe(false);
 
   expect(isValidPlayerConfig(INITIAL_PLAYER_CONFIG)).toBe(true);
-  expect(isValidPlayerConfig(config1)).toBe(true);
+  expect(isValidPlayerConfig(validConfig1)).toBe(true);
 
   for (const config of invalidConfigs) {
     expect(isValidPlayerConfig(config)).toBe(false);
   }
 });
 
-const config1 = {
+test("mergePlayerConfigs", () => {
+  expect(mergePlayerConfigs(null)).toEqual(INITIAL_PLAYER_CONFIG);
+  expect(mergePlayerConfigs(undefined)).toEqual(INITIAL_PLAYER_CONFIG);
+  expect(mergePlayerConfigs({})).toEqual(INITIAL_PLAYER_CONFIG);
+  expect(mergePlayerConfigs(INITIAL_PLAYER_CONFIG)).toEqual(INITIAL_PLAYER_CONFIG);
+
+  expect(mergePlayerConfigs(validConfig1)).toEqual(validConfig1);
+
+  // test valid after merge
+  for (const key of Object.keys(validConfig1)) {
+    const copy: any = { ...validConfig1 };
+    delete copy[key];
+    const merged: any = mergePlayerConfigs(copy);
+    expect(isValidPlayerConfig(merged)).toBe(true);
+
+    if (typeof merged[key] === "object") {
+      for (const subKey of Object.keys(merged[key])) {
+        const copy2: any = { ...validConfig1 };
+        copy2[key] = { ...copy2[key] };
+        delete copy2[key][subKey];
+        const merged2: any = mergePlayerConfigs(copy2);
+        expect(isValidPlayerConfig(merged2)).toBe(true);
+      }
+    }
+  }
+
+  // test data merged correctly
+  let merged = mergePlayerConfigs({ roles: { 叶珏: { resonance: 6 } } });
+  expect(merged.roles.叶珏.resonance).toBe(6);
+
+  merged = mergePlayerConfigs({ maxLot: 1000 });
+  expect(merged.maxLot).toBe(1000);
+
+  merged = mergePlayerConfigs({ bargain: { raisePercent: 20 } });
+  expect(merged.bargain.raisePercent).toBe(20);
+
+  merged = mergePlayerConfigs({ nanoid: "--2O4IjyEqACb9ZA3LFYS" });
+  expect(merged.nanoid).toBe("--2O4IjyEqACb9ZA3LFYS");
+});
+
+const validConfig1 = {
   maxLot: 500,
   bargain: {
     bargainPercent: 10,
     raisePercent: 10,
     bargainFatigue: 1,
     raiseFatigue: 3,
+    disabled: false,
   },
   prestige: {
     修格里城: 13,
@@ -55,6 +95,7 @@ const config1 = {
     raisePercent: 20,
     bargainFatigue: 97,
     raiseFatigue: 95,
+    disabled: true,
   },
 };
 
@@ -100,6 +141,24 @@ const invalidConfigs = [
   {
     bargain: {
       bargainPercent: 101,
+    },
+  },
+  {
+    bargain: {
+      bargainPercent: 10,
+      disabled: 101,
+    },
+  },
+  {
+    bargain: {
+      disabled: {
+        data: "hello",
+      },
+    },
+  },
+  {
+    returnBargain: {
+      disabled: "123",
     },
   },
   {

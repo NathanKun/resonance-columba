@@ -1,4 +1,5 @@
 import { PlayerConfig } from "@/interfaces/player-config";
+import { INITIAL_PLAYER_CONFIG, mergePlayerConfigs } from "@/utils/player-config-utils";
 import { SetStateAction, useEffect, useState } from "react";
 const isServer = typeof window === "undefined";
 
@@ -14,16 +15,7 @@ export default function usePlayerConfig() {
     try {
       const str = localStorage.getItem(localStorageKey);
       const config = str ? JSON.parse(str) : INITIAL_PLAYER_CONFIG;
-
-      // add missing fields after version update
-      if (config.onegraph === undefined) {
-        config.onegraph = INITIAL_PLAYER_CONFIG.onegraph;
-      }
-      if (config.returnBargain === undefined) {
-        config.returnBargain = INITIAL_PLAYER_CONFIG.returnBargain;
-      }
-
-      return config;
+      return mergePlayerConfigs(config);
     } catch (e) {
       console.error(e);
       return INITIAL_PLAYER_CONFIG;
@@ -107,13 +99,9 @@ export default function usePlayerConfig() {
 
       const data = await res.json();
       if (data.data) {
-        // merge it with initial config to avoid missing fields
-        // TODO: may need a deep merge in the future
-        const mergedConfig = {
-          ...INITIAL_PLAYER_CONFIG,
-          ...data.data,
-        };
-
+        // deep merge it with initial config to avoid missing fields,
+        // merge all sub-objects to avoid missing fields in sub-objects
+        const mergedConfig = mergePlayerConfigs(data.data);
         internalSetPlayerConfig(mergedConfig);
         return true;
       } else {
@@ -141,31 +129,3 @@ export default function usePlayerConfig() {
     downloadPlayerConfig,
   };
 }
-
-export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
-  maxLot: 500,
-  bargain: {
-    bargainPercent: 0,
-    raisePercent: 0,
-    bargainFatigue: 0,
-    raiseFatigue: 0,
-  },
-  returnBargain: {
-    bargainPercent: 0,
-    raisePercent: 0,
-    bargainFatigue: 0,
-    raiseFatigue: 0,
-  },
-  prestige: {
-    修格里城: 8,
-    曼德矿场: 8,
-    澄明数据中心: 8,
-    七号自由港: 8,
-  },
-  roles: {},
-  onegraph: {
-    maxRestock: 5,
-    goAndReturn: false,
-    showFatigue: false,
-  },
-};

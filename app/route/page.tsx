@@ -111,6 +111,10 @@ export default function RoutePage() {
     }
   };
 
+  const setBargainDisabled = (value: boolean, isGo: boolean) => {
+    onPlayerConfigChange(isGo ? "bargain" : "returnBargain", { ...playerConfig.bargain, disabled: value });
+  };
+
   const onPrestigeChange = (city: CityName, value: number) => {
     if (!isNaN(value)) {
       onPlayerConfigChange("prestige", { ...playerConfig.prestige, [city]: value });
@@ -162,8 +166,6 @@ export default function RoutePage() {
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
-  const [onegraphGoBarginDisabled, setOnegraphGoBarginDisabled] = useState(false);
-  const [onegraphRtBarginDisabled, setOnegraphRtBarginDisabled] = useState(false);
   // no brain brute force aller-retour calculation :)
   const onegraphBuyCombinationsGo = useMemo(
     () =>
@@ -172,17 +174,9 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.bargain,
         playerConfig.prestige,
-        playerConfig.roles,
-        onegraphGoBarginDisabled
+        playerConfig.roles
       ),
-    [
-      prices,
-      playerConfig.maxLot,
-      playerConfig.bargain,
-      playerConfig.prestige,
-      playerConfig.roles,
-      onegraphGoBarginDisabled,
-    ]
+    [prices, playerConfig.maxLot, playerConfig.bargain, playerConfig.prestige, playerConfig.roles]
   );
   const onegraphBuyCombinationsRt = useMemo(
     () =>
@@ -191,17 +185,9 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.returnBargain,
         playerConfig.prestige,
-        playerConfig.roles,
-        onegraphRtBarginDisabled
+        playerConfig.roles
       ),
-    [
-      prices,
-      playerConfig.maxLot,
-      playerConfig.returnBargain,
-      playerConfig.prestige,
-      playerConfig.roles,
-      onegraphRtBarginDisabled,
-    ]
+    [prices, playerConfig.maxLot, playerConfig.returnBargain, playerConfig.prestige, playerConfig.roles]
   );
   const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
@@ -257,8 +243,6 @@ export default function RoutePage() {
       playerConfig,
       fromCity,
       toCity,
-      goBargainDisabled: onegraphGoBarginDisabled,
-      rtBargainDisabled: onegraphRtBarginDisabled,
     });
     setOnegraphRouteDialogOpen(true);
     trackOnegraphDialogBtnClick(fromCity, toCity);
@@ -401,9 +385,9 @@ export default function RoutePage() {
                 className="w-30 pl-4"
                 control={
                   <Switch
-                    checked={onegraphGoBarginDisabled}
+                    checked={playerConfig.bargain.disabled}
                     onChange={(e) => {
-                      setOnegraphGoBarginDisabled(e.target.checked);
+                      setBargainDisabled(e.target.checked, true);
                     }}
                   />
                 }
@@ -427,9 +411,9 @@ export default function RoutePage() {
                 className="w-30 pl-4"
                 control={
                   <Switch
-                    checked={onegraphRtBarginDisabled}
+                    checked={playerConfig.returnBargain.disabled}
                     onChange={(e) => {
-                      setOnegraphRtBarginDisabled(e.target.checked);
+                      setBargainDisabled(e.target.checked, false);
                     }}
                   />
                 }

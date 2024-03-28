@@ -109,6 +109,7 @@ export const calculateExchanges = (
         // apply bargain to buy price
         const bargain = playerConfig.bargain.bargainPercent ?? 0;
         buyPrice = buyPrice * (1 - bargain / 100);
+        buyPrice = Math.round(buyPrice);
 
         // get prestiged tax to buy price
         let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
@@ -358,8 +359,7 @@ export const calculateOneGraphBuyCombinations = (
   maxLot: number,
   bargain: PlayerConfigBargain,
   prestige: PlayerConfigPrestige,
-  roles: PlayerConfigRoles,
-  barginDisabled: boolean
+  roles: PlayerConfigRoles
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -373,7 +373,7 @@ export const calculateOneGraphBuyCombinations = (
 
   const start = performance.now();
 
-  const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue } = bargain;
+  const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue, disabled: barginDisabled } = bargain;
 
   const pricesData: OnegraphPriceData = {};
   for (const fromCity of CITIES) {
