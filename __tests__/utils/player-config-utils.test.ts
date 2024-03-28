@@ -24,6 +24,7 @@ test("mergePlayerConfigs", () => {
 
   expect(mergePlayerConfigs(validConfig1)).toEqual(validConfig1);
 
+  // test valid after merge
   for (const key of Object.keys(validConfig1)) {
     const copy: any = { ...validConfig1 };
     delete copy[key];
@@ -40,6 +41,19 @@ test("mergePlayerConfigs", () => {
       }
     }
   }
+
+  // test data merged correctly
+  let merged = mergePlayerConfigs({ roles: { 叶珏: { resonance: 6 } } });
+  expect(merged.roles.叶珏.resonance).toBe(6);
+
+  merged = mergePlayerConfigs({ maxLot: 1000 });
+  expect(merged.maxLot).toBe(1000);
+
+  merged = mergePlayerConfigs({ bargain: { raisePercent: 20 } });
+  expect(merged.bargain.raisePercent).toBe(20);
+
+  merged = mergePlayerConfigs({ nanoid: "--2O4IjyEqACb9ZA3LFYS" });
+  expect(merged.nanoid).toBe("--2O4IjyEqACb9ZA3LFYS");
 });
 
 const validConfig1 = {
