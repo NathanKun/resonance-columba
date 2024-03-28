@@ -131,7 +131,7 @@ export const mergePlayerConfigs = (newConfig: any): PlayerConfig => {
 
   return {
     ...INITIAL_PLAYER_CONFIG,
-    ...newConfig.data,
+    ...newConfig,
     bargain: { ...INITIAL_PLAYER_CONFIG.bargain, ...newConfig.bargain },
     returnBargain: { ...INITIAL_PLAYER_CONFIG.returnBargain, ...newConfig.returnBargain },
     prestige: { ...INITIAL_PLAYER_CONFIG.prestige, ...newConfig.prestige },
