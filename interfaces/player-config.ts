@@ -15,6 +15,7 @@ export interface PlayerConfigBargain {
   raisePercent: number;
   bargainFatigue: number;
   raiseFatigue: number;
+  disabled: boolean;
 }
 
 export interface PlayerConfigPrestige {
