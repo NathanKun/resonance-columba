@@ -160,10 +160,13 @@ export default function RoutePage() {
     goAndReturn: onegraphGoAndReturn,
     maxRestock: onegraphMaxRestock,
     showFatigue: onegraphShowFatigue,
+    showProfitPerRestock: onegraphShowProfitPerRestock,
   } = playerConfig.onegraph;
   const setOnegraphGoAndReturn = (value: boolean) => oneOnegraphPlayerConfigChange("goAndReturn", value);
   const setMaxRestock = (value: number) => oneOnegraphPlayerConfigChange("maxRestock", value);
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
+  const setOnegraphShowProfitPerRestock = (value: boolean) =>
+    oneOnegraphPlayerConfigChange("showProfitPerRestock", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   // no brain brute force aller-retour calculation :)
@@ -367,6 +370,19 @@ export default function RoutePage() {
                 }
                 label={<Typography>显示单位疲劳利润</Typography>}
               />
+
+              <FormControlLabel
+                className="w-30"
+                control={
+                  <Switch
+                    checked={onegraphShowProfitPerRestock}
+                    onChange={(e) => {
+                      setOnegraphShowProfitPerRestock(e.target.checked);
+                    }}
+                  />
+                }
+                label={<Typography>显示单位进货书利润</Typography>}
+              />
             </Stack>
 
             <Box
@@ -500,6 +516,10 @@ export default function RoutePage() {
                         ? reco.goAndReturn[0].fatigue + reco.goAndReturn[1].fatigue
                         : reco.simpleGo.fatigue;
                       const profitPerFatigue = Math.round(profit / fatigue);
+                      const restockCount = onegraphGoAndReturn
+                        ? reco.goAndReturn[0].restock + reco.goAndReturn[1].restock
+                        : reco.simpleGo.restock;
+                      const profitPerRestock = restockCount > 0 ? Math.round(profit / restockCount) : 0;
 
                       const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
                       const maxProfitOfAll = topProfitsLocal[0];
@@ -540,6 +560,10 @@ export default function RoutePage() {
                             </span>
 
                             {onegraphShowFatigue && <span className="flex justify-center">{profitPerFatigue}</span>}
+
+                            {onegraphShowProfitPerRestock && (
+                              <span className="flex justify-center">{profitPerRestock}</span>
+                            )}
                           </Button>
                         </TableCell>
                       );
