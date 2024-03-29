@@ -564,13 +564,18 @@ export const calculateOneGraphBuyCombinations = (
           }
         }
 
+        // calculate the profit per restock
+        // (currentProfit - zeroRestockProfit) / restock
+        const zeroRestockProfit = buyCombinations[fromCity][toCity][0]?.profit ?? 0;
+        const profitPerRestock = restock > 0 ? Math.round((totalProfit - zeroRestockProfit) / restock) : 0;
+
         buyCombinations[fromCity][toCity][restock] = {
           combinations: buyCombination,
           profit: totalProfit,
           restock,
           fatigue,
           profitPerFatigue: Math.round(totalProfit / fatigue),
-          profitPerRestock: restock > 0 ? Math.round(totalProfit / restock) : 0,
+          profitPerRestock,
           usedLot,
           lastNotWastingRestock,
         };

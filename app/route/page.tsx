@@ -3,7 +3,12 @@
 import { CITIES, CityName } from "@/data/Cities";
 import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
-import { CityGroupedExchanges, OneGraphRouteDialogDataV2, OnegraphRecommendationsV2 } from "@/interfaces/route-page";
+import {
+  CityGroupedExchanges,
+  OneGraphRouteDialogDataV2,
+  OnegraphBuyCombinationStats,
+  OnegraphRecommendationsV2,
+} from "@/interfaces/route-page";
 import {
   calculateAccumulatedValues,
   calculateExchanges,
@@ -214,9 +219,31 @@ export default function RoutePage() {
         if (!reco || reco.length !== 2) continue;
         const goAndReturn = reco;
 
+        const goAndRtProfit = goAndReturn.reduce((acc, cur) => acc + cur.profit, 0);
+        const goAndRtFatigue = goAndReturn[0].fatigue + goAndReturn[1].fatigue;
+        const goAndRtProfitPerFatigue = goAndRtFatigue > 0 ? Math.round(goAndRtProfit / goAndRtFatigue) : 0;
+        const goAndRtRestockCount = goAndReturn[0].restock + goAndReturn[1].restock;
+        const goProfitGeneratedByRestock = goAndReturn[0].restock * goAndReturn[0].profitPerRestock;
+        const returnProfitGeneratedByRestock = goAndReturn[1].restock * goAndReturn[1].profitPerRestock;
+        const totalProfitGeneratedByRestock = goProfitGeneratedByRestock + returnProfitGeneratedByRestock;
+        const goAndRtProfitPerRestock =
+          goAndRtRestockCount > 0 ? Math.round(totalProfitGeneratedByRestock / goAndRtRestockCount) : 0;
+
+        const goAndReturnTotal: OnegraphBuyCombinationStats = {
+          combinations: [], // dummy prop
+          profit: goAndRtProfit,
+          restock: goAndRtRestockCount,
+          fatigue: goAndRtFatigue,
+          profitPerFatigue: goAndRtProfitPerFatigue,
+          profitPerRestock: goAndRtProfitPerRestock,
+          usedLot: -1, // dummy prop
+          lastNotWastingRestock: -1, // dummy prop
+        };
+
         results[fromCity][toCity] = {
           simpleGo,
           goAndReturn,
+          goAndReturnTotal,
         };
       }
     }
@@ -509,17 +536,14 @@ export default function RoutePage() {
                         return EmptyCell();
                       }
 
-                      const profit = onegraphGoAndReturn
-                        ? reco.goAndReturn.reduce((acc, cur) => acc + cur.profit, 0)
-                        : reco.simpleGo.profit;
-                      const fatigue = onegraphGoAndReturn
-                        ? reco.goAndReturn[0].fatigue + reco.goAndReturn[1].fatigue
-                        : reco.simpleGo.fatigue;
-                      const profitPerFatigue = Math.round(profit / fatigue);
-                      const restockCount = onegraphGoAndReturn
-                        ? reco.goAndReturn[0].restock + reco.goAndReturn[1].restock
-                        : reco.simpleGo.restock;
-                      const profitPerRestock = restockCount > 0 ? Math.round(profit / restockCount) : 0;
+                      const goAndRtStats = reco.goAndReturnTotal;
+                      const profit = onegraphGoAndReturn ? goAndRtStats.profit : reco.simpleGo.profit;
+                      const profitPerFatigue = onegraphGoAndReturn
+                        ? goAndRtStats.profitPerFatigue
+                        : reco.simpleGo.profitPerFatigue;
+                      const profitPerRestock = onegraphGoAndReturn
+                        ? goAndRtStats.profitPerRestock
+                        : reco.simpleGo.profitPerRestock;
 
                       const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
                       const maxProfitOfAll = topProfitsLocal[0];
@@ -872,6 +896,7 @@ export default function RoutePage() {
               <Typography>卖价为抬价后税前价格。</Typography>
               <Typography>利润为税后利润。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
+              <Typography>单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
             </div>
           </div>
         </div>

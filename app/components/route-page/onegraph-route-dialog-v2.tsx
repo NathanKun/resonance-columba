@@ -28,7 +28,7 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
   }
 
   const { stats, playerConfig, fromCity, toCity } = data;
-  const { simpleGo: simpleGoData, goAndReturn: goAndReturnData } = stats;
+  const { simpleGo: simpleGoData, goAndReturn: goAndReturnData, goAndReturnTotal: goAndReturnTotalData } = stats;
   const { bargain, returnBargain } = playerConfig;
   const { bargainFatigue: bargainFatigueGo, raiseFatigue: raiseFatigueGo, disabled: goBargainDisabled } = bargain;
   const { bargainFatigue: bargainFatigueRt, raiseFatigue: raiseFatigueRt, disabled: rtBargainDisabled } = returnBargain;
@@ -57,17 +57,13 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
     if (!goAndReturn) {
       return undefined;
     }
-    const totalProfit = goDisplayData.profit + returnDisplayData!.profit;
-    const totalFatigue = goDisplayData.fatigue + returnDisplayData!.fatigue;
-    const profitPerFatigue = Math.round(totalProfit / totalFatigue);
-    const totalRestockCount = goDisplayData.restockCount + returnDisplayData!.restockCount;
-    const profitPerRestock = totalRestockCount > 0 ? Math.round(totalProfit / totalRestockCount) : 0;
+    const { profit, fatigue, profitPerFatigue, profitPerRestock, restock } = goAndReturnTotalData;
     return {
-      profit: totalProfit,
-      fatigue: totalFatigue,
-      profitPerFatigue: profitPerFatigue,
-      restockCount: goDisplayData.restockCount + returnDisplayData!.restockCount,
+      profit,
+      fatigue,
+      profitPerFatigue,
       profitPerRestock,
+      restockCount: restock,
     };
   })();
 
