@@ -75,8 +75,8 @@ dependencies:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
   resonance-data-columba:
-    specifier: ^1.1.18
-    version: 1.1.18
+    specifier: ^1.1.20
+    version: 1.1.20
   tailwindcss:
     specifier: 3.4.3
     version: 3.4.3
@@ -5225,8 +5225,8 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: false
 
-  /resonance-data-columba@1.1.18:
-    resolution: {integrity: sha512-D7C6NxqR1AgHVYlJftHwv3nplzEmCKvewq1sz/+J6NuQOKbr/HKdTlD3Kj0f1TjqOALx4ZKb3UiyqrrrluXEEw==}
+  /resonance-data-columba@1.1.20:
+    resolution: {integrity: sha512-/4vI9EgyBV7+HIMFBX8UlCF6iBhabro/2H3+fUhdwK2+O2dJe3j/7IoI1QJ2L6II0gWgXWRYF4eO0N4lpv5sjA==}
     dev: false
 
   /retry-request@7.0.2:
