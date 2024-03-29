@@ -117,7 +117,9 @@ export default function RoutePage() {
   };
 
   const setBargainDisabled = (value: boolean, isGo: boolean) => {
-    onPlayerConfigChange(isGo ? "bargain" : "returnBargain", { ...playerConfig.bargain, disabled: value });
+    const propName = isGo ? "bargain" : "returnBargain";
+    const bargainObj = playerConfig[propName];
+    onPlayerConfigChange(propName, { ...bargainObj, disabled: value });
   };
 
   const onPrestigeChange = (city: CityName, value: number) => {
