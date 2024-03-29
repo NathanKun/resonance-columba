@@ -5,11 +5,13 @@ import NumberInput from "./number-input";
 export default function BargainInputs(props: {
   barginConfig: PlayerConfigBargain;
   onBargainChange: (field: string, value: number) => void;
+  className?: string;
 }) {
-  const { barginConfig, onBargainChange } = props;
+  const { barginConfig, onBargainChange, className } = props;
   return (
     <>
       <NumberInput
+        className={className}
         label="抬价"
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
         min={0}
@@ -22,6 +24,7 @@ export default function BargainInputs(props: {
         setValue={(newValue) => onBargainChange("raisePercent", newValue)}
       />
       <NumberInput
+        className={className}
         label="抬价疲劳"
         min={0}
         max={100}
@@ -31,6 +34,7 @@ export default function BargainInputs(props: {
         setValue={(newValue) => onBargainChange("raiseFatigue", newValue)}
       />
       <NumberInput
+        className={className}
         label="砍价"
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
         min={0}
@@ -43,6 +47,7 @@ export default function BargainInputs(props: {
         setValue={(newValue) => onBargainChange("bargainPercent", newValue)}
       />
       <NumberInput
+        className={className}
         label="砍价疲劳"
         min={0}
         max={100}

@@ -52,12 +52,12 @@ type Props = {
   type: "integer" | "float";
   decimalPlaces?: number;
   InputProps?: Partial<OutlinedInputProps>;
-
+  className?: string;
   setValue: (value: number, event: any) => void;
 };
 
 export default function NumberInput(props: Props) {
-  const { type, value, label, min, max, step, defaultValue, InputProps, setValue } = { ...props };
+  const { type, value, label, min, max, step, defaultValue, InputProps, setValue, className } = { ...props };
   const decimalPlaces = props.decimalPlaces ?? 1;
 
   const [focused, setFocused] = useState(false);
@@ -124,6 +124,7 @@ export default function NumberInput(props: Props) {
 
   return (
     <TextField
+      className={className}
       type="number"
       size="small"
       variant="outlined"
