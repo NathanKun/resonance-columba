@@ -105,4 +105,5 @@ export interface OnegraphRecommendationsV2 {
 export interface OnegraphBuyCombinationTwoWayStats {
   simpleGo: OnegraphBuyCombinationStats;
   goAndReturn: OnegraphBuyCombinationStats[];
+  goAndReturnTotal: OnegraphBuyCombinationStats;
 }
