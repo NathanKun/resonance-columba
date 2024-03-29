@@ -882,6 +882,7 @@ export default function RoutePage() {
               <Typography>卖价为抬价后税前价格。</Typography>
               <Typography>利润为税后利润。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
+              <Typography>单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
             </div>
           </div>
         </div>
