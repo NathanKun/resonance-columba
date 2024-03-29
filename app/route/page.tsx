@@ -35,7 +35,6 @@ import {
   MenuItem,
   Select,
   Slider,
-  Stack,
   Switch,
   ThemeProvider,
   Typography,
@@ -373,7 +372,7 @@ export default function RoutePage() {
               <Typography>{onegraphMaxRestock}</Typography>
             </Box>
 
-            <Stack spacing={2} direction="row" alignItems="center" className="mb-2 justify-center">
+            <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
               <FormControlLabel
                 className="w-30"
                 control={
@@ -412,22 +411,17 @@ export default function RoutePage() {
                 }
                 label={<Typography>显示单位进货书利润</Typography>}
               />
-            </Stack>
+            </Box>
 
-            <Box
-              alignItems="center"
-              className="mb-2 flex justify-center flex-wrap"
-              sx={{
-                "& .MuiFormControl-root": {
-                  width: "7rem",
-                  margin: "0.5rem",
-                },
-              }}
-            >
-              <Typography className="p-4">去程</Typography>
-              <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
+            <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
+              <Typography className="m-4 grow basis-1/2 sm:grow-0 sm:basis-auto -order-2">去程</Typography>
+              <BargainInputs
+                barginConfig={playerConfig.bargain}
+                onBargainChange={onGoBargainChange}
+                className="basis-2/5 p-2 sm:w-40 sm:basis-auto"
+              />
               <FormControlLabel
-                className="w-30 pl-4"
+                className="w-30 ml-4 -order-1 sm:-order-none"
                 control={
                   <Switch
                     checked={playerConfig.bargain.disabled}
@@ -440,20 +434,15 @@ export default function RoutePage() {
               />
             </Box>
 
-            <Box
-              alignItems="center"
-              className="mb-2 flex justify-center flex-wrap"
-              sx={{
-                "& .MuiFormControl-root": {
-                  width: "7rem",
-                  margin: "0.5rem",
-                },
-              }}
-            >
-              <Typography className="p-4">回程</Typography>
-              <BargainInputs barginConfig={playerConfig.returnBargain} onBargainChange={onReturnBargainChange} />
+            <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
+              <Typography className="m-4 grow basis-1/2 sm:grow-0 sm:basis-auto -order-2">回程</Typography>
+              <BargainInputs
+                barginConfig={playerConfig.returnBargain}
+                onBargainChange={onReturnBargainChange}
+                className="basis-2/5 p-2 sm:w-40 sm:basis-auto"
+              />
               <FormControlLabel
-                className="w-30 pl-4"
+                className="w-30 ml-4 -order-1 sm:-order-none"
                 control={
                   <Switch
                     checked={playerConfig.returnBargain.disabled}
@@ -472,16 +461,16 @@ export default function RoutePage() {
             className="w-full bg-white dark:bg-gray-800 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4"
           >
             <Table
+              className="w-auto m-0 lg:m-12"
               sx={{
-                width: "auto",
-                margin: "4rem auto",
                 "& th, & td": {
                   border: "1px solid gray",
                   padding: "0.25rem",
                   color: prefersDarkMode ? "white" : "black",
+                  width: "7rem",
                 },
                 "& td": {
-                  width: "6rem",
+                  width: "7rem",
                 },
                 "& .onegraph-cell-fromcity-source": {
                   width: "2rem",
@@ -519,7 +508,7 @@ export default function RoutePage() {
                     )}
 
                     {/** city name */}
-                    <TableCell className="onegraph-cell-fromcity-cityname">{fromCity}</TableCell>
+                    <TableCell className="onegraph-cell-fromcity-cityname min-w-14">{fromCity}</TableCell>
 
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
@@ -565,6 +554,9 @@ export default function RoutePage() {
                         textClass = "";
                       }
 
+                      // use 万 as unit, keep 0 decimal
+                      const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
+
                       return (
                         <TableCell
                           key={key}
@@ -582,7 +574,7 @@ export default function RoutePage() {
                           >
                             <span className={`flex justify-center items-center ${textClass}`}>
                               {RankIcon}
-                              {profit}
+                              {displayProfit}
                             </span>
 
                             {onegraphShowFatigue && <span className="flex justify-center">{profitPerFatigue}</span>}
