@@ -519,7 +519,17 @@ export default function RoutePage() {
                       const restockCount = onegraphGoAndReturn
                         ? reco.goAndReturn[0].restock + reco.goAndReturn[1].restock
                         : reco.simpleGo.restock;
-                      const profitPerRestock = restockCount > 0 ? Math.round(profit / restockCount) : 0;
+                      let profitPerRestock = reco.simpleGo.profitPerRestock;
+                      if (onegraphGoAndReturn) {
+                        const goProfitGeneratedByRestock =
+                          reco.goAndReturn[0].restock * reco.goAndReturn[0].profitPerRestock;
+                        const returnProfitGeneratedByRestock =
+                          reco.goAndReturn[1].restock * reco.goAndReturn[1].profitPerRestock;
+                        const totalProfitGeneratedByRestock =
+                          goProfitGeneratedByRestock + returnProfitGeneratedByRestock;
+                        profitPerRestock =
+                          restockCount > 0 ? Math.round(totalProfitGeneratedByRestock / restockCount) : 0;
+                      }
 
                       const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
                       const maxProfitOfAll = topProfitsLocal[0];
