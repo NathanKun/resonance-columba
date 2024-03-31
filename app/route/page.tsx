@@ -689,12 +689,12 @@ export default function RoutePage() {
                       <ListItemText
                         className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
                         primary={profitPerFatigue}
-                        secondary="单位疲劳利润"
+                        secondary="利润 / 疲劳"
                       />
                       <ListItemText
                         className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
                         primary={profitPerRestock}
-                        secondary="单位进货书利润"
+                        secondary="利润 / 进货书"
                       />
                       <Button onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>详情</Button>
                     </ListItem>
