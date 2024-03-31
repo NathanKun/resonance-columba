@@ -74,8 +74,8 @@ export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props)
   return (
     <React.Fragment>
       <Dialog fullWidth={true} maxWidth="xl" open={open} onClose={handleClose}>
-        <DialogTitle>
-          {fromCity} <RouteOutlinedIcon /> {toCity}
+        <DialogTitle className="flex items-center">
+          {fromCity} <RouteOutlinedIcon className="px-4" /> {toCity}
         </DialogTitle>
         <DialogContent>
           <Box className="m-8">

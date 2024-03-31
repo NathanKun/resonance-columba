@@ -33,4 +33,5 @@ export interface PlayerConfigOnegraph {
   goAndReturn: boolean;
   showFatigue: boolean; // actually is showProfitPerFatigue
   showProfitPerRestock: boolean;
+  displayMode: "table" | "list";
 }

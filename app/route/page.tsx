@@ -8,6 +8,7 @@ import {
   OneGraphRouteDialogDataV2,
   OnegraphBuyCombinationStats,
   OnegraphRecommendationsV2,
+  OnegraphTopProfitItem,
 } from "@/interfaces/route-page";
 import {
   calculateAccumulatedValues,
@@ -25,18 +26,27 @@ import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoIcon from "@mui/icons-material/LooksTwo";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import TableViewIcon from "@mui/icons-material/TableView";
+import ViewListIcon from "@mui/icons-material/ViewList";
 import {
+  Avatar,
   Box,
   Button,
   FormControl,
   FormControlLabel,
   IconButton,
   InputLabel,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   MenuItem,
   Select,
   Slider,
   Switch,
   ThemeProvider,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   createTheme,
   useMediaQuery,
@@ -167,12 +177,14 @@ export default function RoutePage() {
     maxRestock: onegraphMaxRestock,
     showFatigue: onegraphShowFatigue,
     showProfitPerRestock: onegraphShowProfitPerRestock,
+    displayMode: onegraphDisplayMode,
   } = playerConfig.onegraph;
   const setOnegraphGoAndReturn = (value: boolean) => oneOnegraphPlayerConfigChange("goAndReturn", value);
   const setMaxRestock = (value: number) => oneOnegraphPlayerConfigChange("maxRestock", value);
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
   const setOnegraphShowProfitPerRestock = (value: boolean) =>
     oneOnegraphPlayerConfigChange("showProfitPerRestock", value);
+  const setOnegraphDisplayMode = (value: "table" | "list") => oneOnegraphPlayerConfigChange("displayMode", value);
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   // no brain brute force aller-retour calculation :)
@@ -253,19 +265,49 @@ export default function RoutePage() {
 
     return results;
   }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
-  const topProfits: { go: number[]; goAndReturn: number[] } = useMemo(() => {
-    let goProfits = [];
-    let goAndReturnProfits = [];
+  const topProfits: {
+    go: OnegraphTopProfitItem[];
+    goAndReturn: OnegraphTopProfitItem[];
+  } = useMemo(() => {
+    let goProfits: OnegraphTopProfitItem[] = [];
+    let goAndReturnProfits: OnegraphTopProfitItem[] = [];
     for (const fromCity in onegraphRecommendations) {
       for (const toCity in onegraphRecommendations[fromCity]) {
         const reco = onegraphRecommendations[fromCity][toCity];
         if (!reco || !reco.simpleGo || reco.goAndReturn?.length !== 2) continue;
-        goProfits.push(reco.simpleGo.profit);
-        goAndReturnProfits.push(reco.goAndReturn[0].profit + reco.goAndReturn[1].profit);
+        goProfits.push({
+          profit: reco.simpleGo.profit,
+          reco,
+          fromCity,
+          toCity,
+        });
+
+        goAndReturnProfits.push({
+          profit: reco.goAndReturnTotal.profit,
+          reco,
+          fromCity,
+          toCity,
+        });
       }
     }
-    goProfits = [...new Set(goProfits)].sort((a, b) => b - a).slice(0, 3);
-    goAndReturnProfits = [...new Set(goAndReturnProfits)].sort((a, b) => b - a).slice(0, 3);
+    goProfits = [...new Set(goProfits)].sort((a, b) => b.profit - a.profit);
+    goAndReturnProfits = [...new Set(goAndReturnProfits)].sort((a, b) => b.profit - a.profit);
+
+    // remove same go and return route:
+    // 2 items has the same profit, and the one's fromCity and toCity is the reverse of the other,
+    // this happens when the go bargain config is the same as the return bargain config
+    goAndReturnProfits = goAndReturnProfits.filter((item) => {
+      // only need to filter on half of the list
+      if (item.fromCity < item.toCity) {
+        return true;
+      }
+
+      const reverseItem = goAndReturnProfits.find(
+        (i) => i.profit === item.profit && i.fromCity === item.toCity && i.toCity === item.fromCity
+      );
+      return !reverseItem;
+    });
+
     return { go: goProfits, goAndReturn: goAndReturnProfits };
   }, [onegraphRecommendations]);
   const showOneGraphRouteDialog = (fromCity: CityName, toCity: CityName) => {
@@ -456,142 +498,202 @@ export default function RoutePage() {
             </Box>
           </Box>
 
-          <TableContainer
-            component={Paper}
-            className="w-full bg-white dark:bg-gray-800 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4"
-          >
-            <Table
-              className="w-auto m-0 lg:m-12"
-              sx={{
-                "& th, & td": {
-                  border: "1px solid gray",
-                  padding: "0.25rem",
-                  color: prefersDarkMode ? "white" : "black",
-                  width: "7rem",
-                },
-                "& td": {
-                  width: "7rem",
-                },
-                "& .onegraph-cell-fromcity-source": {
-                  width: "2rem",
-                },
-                "& .onegraph-cell-fromcity-cityname": {
-                  width: "7rem",
-                },
-              }}
+          <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4">
+            {/* display mode toggle */}
+            <ToggleButtonGroup
+              value={onegraphDisplayMode}
+              exclusive
+              onChange={(event, newValue) => setOnegraphDisplayMode(newValue)}
+              aria-label="onegraph display mode"
             >
-              <TableHead>
-                {/** header 1 - spanning 终点 cell */}
-                <TableRow>
-                  <TableCell align="center" colSpan={CITIES.length + 2}>
-                    终点
-                  </TableCell>
-                </TableRow>
-                {/** header 2 - city cells */}
-                <TableRow>
-                  <TableCell colSpan={2}></TableCell>
-                  {CITIES.map((city) => (
-                    <TableCell key={`onegraphv2-${city}`} align="center">
-                      {city}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {CITIES.map((fromCity, index) => (
-                  <TableRow key={`onegraphv2-row-${fromCity}`}>
-                    {/** spaning 起点 cell */}
-                    {index === 0 && (
-                      <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
-                        起点
+              <ToggleButton value="table" aria-label="table">
+                <TableViewIcon />
+              </ToggleButton>
+              <ToggleButton value="list" aria-label="list">
+                <ViewListIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
+
+            {/* table view */}
+            {onegraphDisplayMode === "table" && (
+              <TableContainer component={Paper}>
+                <Table
+                  className="w-auto m-0 lg:m-12"
+                  sx={{
+                    "& th, & td": {
+                      border: "1px solid gray",
+                      padding: "0.25rem",
+                      color: prefersDarkMode ? "white" : "black",
+                      width: "7rem",
+                    },
+                    "& td": {
+                      width: "7rem",
+                    },
+                    "& .onegraph-cell-fromcity-source": {
+                      width: "2rem",
+                    },
+                    "& .onegraph-cell-fromcity-cityname": {
+                      width: "7rem",
+                    },
+                  }}
+                >
+                  <TableHead>
+                    {/** header 1 - spanning 终点 cell */}
+                    <TableRow>
+                      <TableCell align="center" colSpan={CITIES.length + 2}>
+                        终点
                       </TableCell>
-                    )}
-
-                    {/** city name */}
-                    <TableCell className="onegraph-cell-fromcity-cityname min-w-14">{fromCity}</TableCell>
-
-                    {/** profit cells */}
-                    {CITIES.map((toCity) => {
-                      const key = `onegraphv2-row-${fromCity}-cell-${toCity}`;
-                      const EmptyCell = () => (
-                        <TableCell key={key} align="center">
-                          -
+                    </TableRow>
+                    {/** header 2 - city cells */}
+                    <TableRow>
+                      <TableCell colSpan={2}></TableCell>
+                      {CITIES.map((city) => (
+                        <TableCell key={`onegraphv2-${city}`} align="center">
+                          {city}
                         </TableCell>
-                      );
-                      if (fromCity === toCity) {
-                        return EmptyCell();
-                      }
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {CITIES.map((fromCity, index) => (
+                      <TableRow key={`onegraphv2-row-${fromCity}`}>
+                        {/** spaning 起点 cell */}
+                        {index === 0 && (
+                          <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
+                            起点
+                          </TableCell>
+                        )}
 
-                      const reco = onegraphRecommendations[fromCity]?.[toCity];
-                      if (!reco) {
-                        return EmptyCell();
-                      }
+                        {/** city name */}
+                        <TableCell className="onegraph-cell-fromcity-cityname min-w-14">{fromCity}</TableCell>
 
-                      const goAndRtStats = reco.goAndReturnTotal;
-                      const profit = onegraphGoAndReturn ? goAndRtStats.profit : reco.simpleGo.profit;
-                      const profitPerFatigue = onegraphGoAndReturn
-                        ? goAndRtStats.profitPerFatigue
-                        : reco.simpleGo.profitPerFatigue;
-                      const profitPerRestock = onegraphGoAndReturn
-                        ? goAndRtStats.profitPerRestock
-                        : reco.simpleGo.profitPerRestock;
+                        {/** profit cells */}
+                        {CITIES.map((toCity) => {
+                          const key = `onegraphv2-row-${fromCity}-cell-${toCity}`;
+                          const EmptyCell = () => (
+                            <TableCell key={key} align="center">
+                              -
+                            </TableCell>
+                          );
+                          if (fromCity === toCity) {
+                            return EmptyCell();
+                          }
 
-                      const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
-                      const maxProfitOfAll = topProfitsLocal[0];
-                      const percentageToMax = Math.round((profit / maxProfitOfAll) * 100);
-                      let RankIcon, textClass;
-                      if (profit === topProfitsLocal[0]) {
-                        RankIcon = <LooksOneIcon className="text-base" />;
-                        textClass = "font-black";
-                      } else if (profit === topProfitsLocal[1]) {
-                        RankIcon = <LooksTwoIcon className="text-base" />;
-                        textClass = "font-bold";
-                      } else if (profit === topProfitsLocal[2]) {
-                        RankIcon = <Looks3Icon className="text-base" />;
-                        textClass = "font-medium";
-                      } else {
-                        RankIcon = <></>;
-                        textClass = "";
-                      }
+                          const reco = onegraphRecommendations[fromCity]?.[toCity];
+                          if (!reco) {
+                            return EmptyCell();
+                          }
 
-                      // use 万 as unit, keep 0 decimal
-                      const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
+                          const goAndRtStats = reco.goAndReturnTotal;
+                          const profit = onegraphGoAndReturn ? goAndRtStats.profit : reco.simpleGo.profit;
+                          const profitPerFatigue = onegraphGoAndReturn
+                            ? goAndRtStats.profitPerFatigue
+                            : reco.simpleGo.profitPerFatigue;
+                          const profitPerRestock = onegraphGoAndReturn
+                            ? goAndRtStats.profitPerRestock
+                            : reco.simpleGo.profitPerRestock;
 
-                      return (
-                        <TableCell
-                          key={key}
-                          align="center"
-                          sx={{
-                            background: `linear-gradient(90deg, ${
-                              prefersDarkMode ? "darkred" : "lightcoral"
-                            } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
-                          }}
-                        >
-                          <Button
-                            className="w-full h-full block p-0"
-                            color="inherit"
-                            onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
-                          >
-                            <span className={`flex justify-center items-center ${textClass}`}>
-                              {RankIcon}
-                              {displayProfit}
-                            </span>
+                          const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
+                          const maxProfitOfAll = topProfitsLocal[0].profit;
+                          const percentageToMax = Math.round((profit / maxProfitOfAll) * 100);
+                          let RankIcon, textClass;
+                          if (profit === topProfitsLocal[0].profit) {
+                            RankIcon = <LooksOneIcon className="text-base" />;
+                            textClass = "font-black";
+                          } else if (profit === topProfitsLocal[1].profit) {
+                            RankIcon = <LooksTwoIcon className="text-base" />;
+                            textClass = "font-bold";
+                          } else if (profit === topProfitsLocal[2].profit) {
+                            RankIcon = <Looks3Icon className="text-base" />;
+                            textClass = "font-medium";
+                          } else {
+                            RankIcon = <></>;
+                            textClass = "";
+                          }
 
-                            {onegraphShowFatigue && <span className="flex justify-center">{profitPerFatigue}</span>}
+                          // use 万 as unit, keep 0 decimal
+                          const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
 
-                            {onegraphShowProfitPerRestock && (
-                              <span className="flex justify-center">{profitPerRestock}</span>
-                            )}
-                          </Button>
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          return (
+                            <TableCell
+                              key={key}
+                              align="center"
+                              sx={{
+                                background: `linear-gradient(90deg, ${
+                                  prefersDarkMode ? "darkred" : "lightcoral"
+                                } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
+                              }}
+                            >
+                              <Button
+                                className="w-full h-full block p-0"
+                                color="inherit"
+                                onClick={() => showOneGraphRouteDialog(fromCity, toCity)}
+                              >
+                                <span className={`flex justify-center items-center ${textClass}`}>
+                                  {RankIcon}
+                                  {displayProfit}
+                                </span>
 
+                                {onegraphShowFatigue && <span className="flex justify-center">{profitPerFatigue}</span>}
+
+                                {onegraphShowProfitPerRestock && (
+                                  <span className="flex justify-center">{profitPerRestock}</span>
+                                )}
+                              </Button>
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+
+            {/* list view */}
+            {onegraphDisplayMode === "list" && (
+              <List className="w-full">
+                {(onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go).slice(0, 10).map((item, index) => {
+                  const { fromCity, toCity, reco } = item;
+                  const stats = onegraphGoAndReturn ? reco.goAndReturnTotal : reco.simpleGo;
+                  const { profit, profitPerFatigue, profitPerRestock } = stats;
+                  const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
+                  return (
+                    <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center">
+                      <ListItemAvatar>
+                        <Avatar>{index + 1}</Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
+                        primary={
+                          <>
+                            {fromCity} <RouteOutlinedIcon className="px-2" /> {toCity}
+                          </>
+                        }
+                        primaryTypographyProps={{ className: "flex items-center" }}
+                      />
+                      <ListItemText
+                        className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                        primary={displayProfit}
+                        secondary="总利润"
+                      />
+                      <ListItemText
+                        className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                        primary={profitPerFatigue}
+                        secondary="单位疲劳利润"
+                      />
+                      <ListItemText
+                        className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                        primary={profitPerRestock}
+                        secondary="单位进货书利润"
+                      />
+                      <Button onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>详情</Button>
+                    </ListItem>
+                  );
+                })}
+              </List>
+            )}
+          </Paper>
           <OneGraphRouteDialogV2
             open={onegraphRouteDialogOpen}
             setOpen={setOnegraphRouteDialogOpen}
