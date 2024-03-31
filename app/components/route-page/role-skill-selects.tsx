@@ -79,13 +79,13 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
           <TableBody>
             {Object.entries(ROLE_RESONANCE_SKILLS).map(([role, resonanceSkills]) => (
               <TableRow key={`role-${role}`}>
-                <TableCell scope="row">
+                <TableCell scope="row" className="max-sm:p-1">
                   <Avatar>
                     <Image src={`/roles/head/${role}.png`} alt={role} width={40} height={40} />
                   </Avatar>
                   <span className="mx-auto block text-center pt-2">{role}</span>
                 </TableCell>
-                <TableCell scope="row">
+                <TableCell scope="row" className="max-sm:p-1">
                   <Button
                     startIcon={(playerRoles?.[role]?.resonance ?? 0) === 0 ? <CheckBoxIcon /> : null}
                     onClick={() => handleResonanceLevelClick(role, 0)}
@@ -99,11 +99,11 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
                   const key = `resonance-${role}-${resonanceLevel}`;
                   const roleSkills = resonanceSkills[resonanceLevel];
                   if (!roleSkills) {
-                    return <TableCell key={key} align="center"></TableCell>;
+                    return <TableCell key={key} align="center" className="max-sm:p-1"></TableCell>;
                   }
 
                   return (
-                    <TableCell key={key} align="center">
+                    <TableCell key={key} align="center" className="max-sm:p-1">
                       <Button
                         startIcon={(playerRoles?.[role]?.resonance ?? 0) === resonanceLevel ? <CheckBoxIcon /> : null}
                         onClick={() => handleResonanceLevelClick(role, resonanceLevel)}
