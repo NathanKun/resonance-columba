@@ -75,7 +75,7 @@ export const isValidPlayerConfig = (config: any) => {
     const onegraph = config.onegraph;
     if (
       Object.keys(onegraph).filter(
-        (key) => !["maxRestock", "goAndReturn", "showFatigue", "showProfitPerRestock"].includes(key)
+        (key) => !["maxRestock", "goAndReturn", "showFatigue", "showProfitPerRestock", "displayMode"].includes(key)
       ).length > 0
     ) {
       return false;
@@ -94,6 +94,10 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (onegraph.showProfitPerRestock !== undefined && typeof onegraph.showProfitPerRestock !== "boolean") {
+      return false;
+    }
+
+    if (onegraph.displayMode !== undefined && onegraph.displayMode !== "table" && onegraph.displayMode !== "list") {
       return false;
     }
   }
@@ -176,5 +180,6 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     goAndReturn: false,
     showFatigue: false,
     showProfitPerRestock: false,
+    displayMode: "table",
   },
 };

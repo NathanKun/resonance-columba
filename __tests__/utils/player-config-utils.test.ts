@@ -90,6 +90,7 @@ const validConfig1 = {
     goAndReturn: true,
     showFatigue: true,
     showProfitPerRestock: true,
+    displayMode: "table",
   },
   returnBargain: {
     bargainPercent: 20,
@@ -281,6 +282,38 @@ const invalidConfigs = [
       goAndReturn: true,
       showFatigue: true,
       data: "hello",
+    },
+  },
+  {
+    onegraph: {
+      maxRestock: 0,
+      goAndReturn: true,
+      showFatigue: true,
+      showProfitPerRestock: true,
+      displayMode: "hey",
+    },
+  },
+  {
+    onegraph: {
+      maxRestock: 0,
+      goAndReturn: true,
+      showFatigue: true,
+      showProfitPerRestock: true,
+      displayMode: false,
+    },
+  },
+  {
+    onegraph: {
+      showProfitPerRestock: true,
+      displayMode: 123,
+    },
+  },
+  {
+    onegraph: {
+      showProfitPerRestock: true,
+      displayMode: {
+        hello: "world",
+      },
     },
   },
   {

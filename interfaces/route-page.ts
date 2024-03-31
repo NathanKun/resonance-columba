@@ -107,3 +107,10 @@ export interface OnegraphBuyCombinationTwoWayStats {
   goAndReturn: OnegraphBuyCombinationStats[];
   goAndReturnTotal: OnegraphBuyCombinationStats;
 }
+
+export interface OnegraphTopProfitItem {
+  fromCity: CityName;
+  toCity: CityName;
+  profit: number;
+  reco: OnegraphBuyCombinationTwoWayStats;
+}
