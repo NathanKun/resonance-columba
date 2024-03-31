@@ -515,9 +515,11 @@ export default function RoutePage() {
             >
               <ToggleButton value="table" aria-label="table">
                 <TableViewIcon />
+                表格
               </ToggleButton>
               <ToggleButton value="list" aria-label="list">
                 <ViewListIcon />
+                排序
               </ToggleButton>
             </ToggleButtonGroup>
 
