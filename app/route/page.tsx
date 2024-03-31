@@ -503,7 +503,7 @@ export default function RoutePage() {
             </Box>
           </Box>
 
-          <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4">
+          <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4 dark:bg-neutral-900 ">
             {/* display mode toggle */}
             <ToggleButtonGroup
               value={onegraphDisplayMode}
@@ -527,7 +527,7 @@ export default function RoutePage() {
 
             {/* table view */}
             {onegraphDisplayMode === "table" && (
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} className="dark:bg-neutral-900">
                 <Table
                   className="w-auto m-0 lg:m-12"
                   sx={{
