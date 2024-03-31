@@ -506,7 +506,11 @@ export default function RoutePage() {
             <ToggleButtonGroup
               value={onegraphDisplayMode}
               exclusive
-              onChange={(event, newValue) => setOnegraphDisplayMode(newValue)}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setOnegraphDisplayMode(newValue);
+                }
+              }}
               aria-label="onegraph display mode"
             >
               <ToggleButton value="table" aria-label="table">
