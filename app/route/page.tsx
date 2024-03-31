@@ -659,12 +659,12 @@ export default function RoutePage() {
                   const { profit, profitPerFatigue, profitPerRestock } = stats;
                   const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
                   return (
-                    <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap">
+                    <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center">
                       <ListItemAvatar>
                         <Avatar>{index + 1}</Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        className="sm:basis-2/5 basis-3/4"
+                        className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
                         primary={
                           <>
                             {fromCity} <RouteOutlinedIcon className="px-2" /> {toCity}
