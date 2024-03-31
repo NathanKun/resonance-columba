@@ -374,6 +374,9 @@ export default function RoutePage() {
                 表格中的数值可查看路线详情。
               </Typography>
               <Typography>强烈建议先前往个性化设置页面，填写货舱大小以及声望等级，以获得更准确的结果。</Typography>
+              <Typography>
+                来回选项开启时，算法会以最优解自动分配进货书，显示的线路是利润最大的进货书分配方法。
+              </Typography>
             </div>
           </div>
 
@@ -993,6 +996,9 @@ export default function RoutePage() {
               <Typography>利润为税后利润。</Typography>
               <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
               <Typography>单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
+              <Typography>
+                交易所结算页面所展示的利润是不含买入税与卖出时的利润税的，而算法计算的利润是税后的，所以模拟的利润会稍低于交易所显示的利润。
+              </Typography>
             </div>
           </div>
         </div>
