@@ -668,7 +668,7 @@ export default function RoutePage() {
                   const { profit, profitPerFatigue, profitPerRestock } = stats;
                   const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
                   return (
-                    <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center">
+                    <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center py-3">
                       <ListItemAvatar>
                         <Avatar>{index + 1}</Avatar>
                       </ListItemAvatar>
