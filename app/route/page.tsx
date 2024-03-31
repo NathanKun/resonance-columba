@@ -367,14 +367,16 @@ export default function RoutePage() {
         <div role="tabpanel" hidden={tabIndex !== 0}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
-              <Typography>
+              <Typography className="py-1">
                 <Typography component="strong" fontSize={18}>
                   点击
                 </Typography>
                 表格中的数值可查看路线详情。
               </Typography>
-              <Typography>强烈建议先前往个性化设置页面，填写货舱大小以及声望等级，以获得更准确的结果。</Typography>
-              <Typography>
+              <Typography className="py-1">
+                强烈建议先前往个性化设置页面，填写货舱大小以及声望等级，以获得更准确的结果。
+              </Typography>
+              <Typography className="py-1">
                 来回选项开启时，算法会以最优解自动分配进货书，显示的线路是利润最大的进货书分配方法。
               </Typography>
             </div>
@@ -721,8 +723,8 @@ export default function RoutePage() {
               },
             }}
           >
-            <Typography>无垠号</Typography>
             <Box className="m-4">
+              <Typography>无垠号</Typography>
               <NumberInput
                 label="货舱大小"
                 min={100}
@@ -734,8 +736,8 @@ export default function RoutePage() {
               />
             </Box>
 
-            <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
             <Box className="m-4">
+              <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
               <NumberInput
                 label="修格里城"
                 min={8}
@@ -774,21 +776,23 @@ export default function RoutePage() {
               />
             </Box>
 
-            <Typography>议价</Typography>
             <Box className="m-4">
+              <Typography>议价</Typography>
               <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
             </Box>
 
-            <Typography>乘员共振</Typography>
-            <Accordion className="my-4">
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
-              <AccordionDetails>
-                <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
-              </AccordionDetails>
-            </Accordion>
+            <Box className="m-4">
+              <Typography>乘员共振</Typography>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
+                <AccordionDetails className="p-0">
+                  <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
+                </AccordionDetails>
+              </Accordion>
+            </Box>
 
-            <Typography>数据同步</Typography>
-            <Box className="m-4 max-sm:mx-0">
+            <Box className="m-4">
+              <Typography>数据同步</Typography>
               <SyncPlayerConfigPanel
                 playerConfig={playerConfig}
                 setPlayerConfig={setPlayerConfig}
@@ -808,8 +812,8 @@ export default function RoutePage() {
               </Typography>
             </div>
             <div className="flex flex-col">
-              <Typography>需要填写个性化设置。</Typography>
-              <Typography>选择购买的商品种类越多，所需进货书越少，但利润一般也越低。</Typography>
+              <Typography className="py-1">需要填写个性化设置。</Typography>
+              <Typography className="py-1">选择购买的商品种类越多，所需进货书越少，但利润一般也越低。</Typography>
             </div>
           </div>
 
@@ -899,10 +903,12 @@ export default function RoutePage() {
               <Typography component="h3">选择一个或多个起始城市以及终点城市，查看所有线路以及最优交易组合。</Typography>
             </div>
             <div className="flex flex-col">
-              <Typography>需要填写个性化设置。</Typography>
-              <Typography>路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
-              <Typography>累计利润为当前商品以及它上面所有商品的单批利润的和。累计舱位同理。</Typography>
-              <Typography>列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
+              <Typography className="py-1">需要填写个性化设置。</Typography>
+              <Typography className="py-1">路线中的产品已经按利润进行了排序，排第一的商品为利润最高的商品。</Typography>
+              <Typography className="py-1">
+                累计利润为当前商品以及它上面所有商品的单批利润的和。累计舱位同理。
+              </Typography>
+              <Typography className="py-1">列车长请根据补货意愿从上往下选择一个或多个商品进行购买。</Typography>
             </div>
           </div>
 
@@ -997,12 +1003,14 @@ export default function RoutePage() {
         <div role="tabpanel" hidden={tabIndex !== 4}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
-              <Typography>买价为砍价后税前价格。</Typography>
-              <Typography>卖价为抬价后税前价格。</Typography>
-              <Typography>利润为税后利润。</Typography>
-              <Typography>利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。</Typography>
-              <Typography>单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
-              <Typography>
+              <Typography className="py-1">买价为砍价后税前价格。</Typography>
+              <Typography className="py-1">卖价为抬价后税前价格。</Typography>
+              <Typography className="py-1">利润为税后利润。</Typography>
+              <Typography className="py-1">
+                利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。
+              </Typography>
+              <Typography className="py-1">单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
+              <Typography className="py-1">
                 交易所结算页面所展示的利润是不含买入税与卖出时的利润税的，而算法计算的利润是税后的，所以模拟的利润会稍低于交易所显示的利润。
               </Typography>
             </div>
