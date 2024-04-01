@@ -288,6 +288,22 @@ export const ROLE_RESONANCE_SKILLS: {
       },
     },
   },
+  妮蔻拉: {
+    4: {
+      buyMore: {
+        city: {
+          阿妮塔能源研究所: 20,
+        },
+      },
+    },
+    5: {
+      buyMore: {
+        city: {
+          阿妮塔能源研究所: 30,
+        },
+      },
+    },
+  },
 };
 
 /*
