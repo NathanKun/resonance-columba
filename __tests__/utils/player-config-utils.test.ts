@@ -99,6 +99,10 @@ const validConfig1 = {
     raiseFatigue: 95,
     disabled: true,
   },
+  productUnlockStatus: {
+    琥珀: true,
+    防弹背心: false,
+  },
 };
 
 const invalidConfigs = [
@@ -330,5 +334,25 @@ const invalidConfigs = [
   },
   {
     nanoid: {},
+  },
+  {
+    productUnlockStatus: "123",
+  },
+  {
+    productUnlockStatus: {
+      琥珀: true,
+      防弹背心心: false,
+    },
+  },
+  {
+    productUnlockStatus: {
+      琥珀: true,
+      防弹背心: "qsdqsd",
+    },
+  },
+  {
+    productUnlockStatus: {
+      琥珀: 0,
+    },
   },
 ];
