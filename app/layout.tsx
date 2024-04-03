@@ -5,7 +5,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_SC } from "next/font/google";
 import { env } from "process";
 import Header from "./components/header/header";
 import "./globals.css";
@@ -32,17 +31,12 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-const inter = Noto_Sans_SC({
-  preload: false,
-  variable: "--font-noto-sans-sc",
-}); // use font-sans
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" id="root">
       <StyledEngineProvider injectFirst>
         <CssBaseline />
-        <body className={`${inter.variable} min-h-screen m-0`}>
+        <body className="min-h-screen m-0">
           <PriceProvider>
             <Header />
             <main className="relative flex flex-col items-center justify-center">
