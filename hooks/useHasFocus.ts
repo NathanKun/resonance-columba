@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export const useHasFocus = () => {
+export default function useHasFocus() {
   // get the initial state
   const [focus, setFocus] = useState(() => {
     // only run on the client
@@ -29,4 +29,4 @@ export const useHasFocus = () => {
 
   // return the status
   return focus;
-};
+}

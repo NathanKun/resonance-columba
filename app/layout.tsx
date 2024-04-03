@@ -1,7 +1,4 @@
-// import { Analytics } from "@vercel/analytics/react";
-// import { SpeedInsights } from "@vercel/speed-insights/next";
-// import { GoogleAnalytics } from "@next/third-parties/google";
-import CssBaseline from "@mui/material/CssBaseline";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
@@ -34,17 +31,18 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" id="root">
-      <StyledEngineProvider injectFirst>
-        <CssBaseline />
-        <body className="min-h-screen m-0">
-          <PriceProvider>
-            <Header />
-            <main className="relative flex flex-col items-center justify-center">
-              <div className="w-full">{children}</div>
-            </main>
-          </PriceProvider>
-        </body>
-      </StyledEngineProvider>
+      <body className="min-h-screen m-0">
+        <StyledEngineProvider injectFirst>
+          <AppRouterCacheProvider>
+            <PriceProvider>
+              <Header />
+              <main className="relative flex flex-col items-center justify-center">
+                <div className="w-full">{children}</div>
+              </main>
+            </PriceProvider>
+          </AppRouterCacheProvider>
+        </StyledEngineProvider>
+      </body>
       <GoogleTagManager gtmId={env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER!} />
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { CityName } from "@/data/Cities";
-import { useHasFocus } from "@/hooks/useHasFocus";
+import useHasFocus from "@/hooks/useHasFocus";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { ExchangeType, SetPriceRequest } from "@/interfaces/set-price";
 import { Trend } from "@/interfaces/trend";

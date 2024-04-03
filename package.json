@@ -16,6 +16,7 @@
     "@giscus/react": "^3.0.0",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
+    "@mui/material-nextjs": "^5.15.11",
     "@next/bundle-analyzer": "^14.1.4",
     "@next/third-parties": "^14.1.4",
     "@types/node": "18.17.1",
