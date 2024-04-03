@@ -52,13 +52,15 @@ export default function usePlayerConfig() {
     });
   };
 
-  const setProductUnlock = (pdtName: string, unlocked: boolean) => {
+  const setProductUnlock = (newConfig: {
+    [pdtName: string]: boolean; // product name to unlock status
+  }) => {
     internalSetPlayerConfig((oldConfig) => {
       return {
         ...oldConfig,
         productUnlockStatus: {
           ...oldConfig.productUnlockStatus,
-          [pdtName]: unlocked,
+          ...newConfig,
         },
       };
     });

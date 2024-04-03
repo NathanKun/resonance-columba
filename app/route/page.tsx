@@ -202,9 +202,17 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.bargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        playerConfig.productUnlockStatus
       ),
-    [prices, playerConfig.maxLot, playerConfig.bargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.bargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      playerConfig.productUnlockStatus,
+    ]
   );
   const onegraphBuyCombinationsRt = useMemo(
     () =>
@@ -213,9 +221,17 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.returnBargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        playerConfig.productUnlockStatus
       ),
-    [prices, playerConfig.maxLot, playerConfig.returnBargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.returnBargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      playerConfig.productUnlockStatus,
+    ]
   );
   const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
