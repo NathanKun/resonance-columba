@@ -7,12 +7,13 @@ import { Box, Slider, useMediaQuery, useTheme } from "@mui/material";
 import { useMemo } from "react";
 interface ProductUnlockSelectProps {
   playerConfig: PlayerConfig;
-  setProductUnlock: (pdtName: string, unlocked: boolean) => void;
+  setProductUnlock: (newConfig: {
+    [pdtName: string]: boolean; // product name to unlock status
+  }) => void;
 }
 
 export default function ProductUnlockSelect(props: ProductUnlockSelectProps) {
   const { playerConfig, setProductUnlock } = props;
-  const { productUnlockStatus } = playerConfig;
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const unlockableProductsByCity = useMemo(() => {
@@ -29,39 +30,42 @@ export default function ProductUnlockSelect(props: ProductUnlockSelectProps) {
 
       results[city] = unlockableProducts;
     });
-    console.log(results);
     return results;
   }, []);
+  const unlockedProductsByCity = useMemo(() => {
+    const results: {
+      [city: CityName]: string[];
+    } = {};
+    CITIES.forEach((city) => {
+      const conditions = PRODUCT_UNLOCK_CONDITIONS[city];
+      if (!conditions) return;
 
-  const unlockedProductsToInvest = (city: string, unlockedProducts: string[]) => {
-    const conditions = PRODUCT_UNLOCK_CONDITIONS[city];
-    if (!conditions) return 0;
+      const unlockedProducts = Object.entries(conditions)
+        .filter(([pdtName]) => (playerConfig.productUnlockStatus?.[pdtName] ?? true) === true)
+        .map(([pdtName]) => pdtName);
 
-    const invest = unlockedProducts.map((pdtName) => conditions[pdtName].invest).reduce((a, b) => Math.max(a, b), 0);
-
-    return invest;
-  };
-
-  const getUnlockedProductsOfCityFromPlayerConfig = (city: string) => {
-    const conditions = PRODUCT_UNLOCK_CONDITIONS[city];
-    if (!conditions) return [];
-
-    const unlockedProducts = Object.entries(conditions)
-      .filter(([pdtName]) => (productUnlockStatus?.[pdtName] ?? true) === true)
-      .map(([pdtName]) => pdtName);
-
-    return unlockedProducts;
-  };
+      results[city] = unlockedProducts;
+    });
+    return results;
+  }, [playerConfig.productUnlockStatus]);
 
   const onSliderChange = (city: string, value: number) => {
     const unlockableProducts = unlockableProductsByCity[city];
     // value is the index + 1 of the unlockable products, 0 means no product unlocked
     const unlockedProducts = value === 0 ? [] : unlockableProducts.slice(0, value);
-    console.log(city, unlockedProducts, unlockableProducts);
+    const lockedProducts = unlockableProducts.slice(value);
 
-    unlockableProducts.forEach((pdtName) => {
-      setProductUnlock(pdtName, unlockedProducts.includes(pdtName));
+    const newConfig: {
+      [pdtName: string]: boolean;
+    } = {};
+    unlockedProducts.forEach((pdtName) => {
+      newConfig[pdtName] = true;
     });
+    lockedProducts.forEach((pdtName) => {
+      newConfig[pdtName] = false;
+    });
+
+    setProductUnlock(newConfig);
   };
 
   return (
@@ -89,13 +93,13 @@ export default function ProductUnlockSelect(props: ProductUnlockSelectProps) {
           });
 
         // get player's unlocked products
-        const unlockedProducts = getUnlockedProductsOfCityFromPlayerConfig(city);
+        const unlockedProducts = unlockedProductsByCity[city];
         const value = unlockedProducts.length;
 
         return (
           <Box
             key={city}
-            className="flex flex-col items-center w-10/12"
+            className="flex flex-col items-center w-11/12"
             sx={
               smallScreen
                 ? {
