@@ -1,8 +1,10 @@
+import { CssBaseline } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { env } from "process";
+import MuiThemeProvider from "./components/MuiThemeProvider";
 import Header from "./components/header/header";
 import "./globals.css";
 import PriceProvider from "./price-provider";
@@ -35,10 +37,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StyledEngineProvider injectFirst>
           <AppRouterCacheProvider>
             <PriceProvider>
-              <Header />
-              <main className="relative flex flex-col items-center justify-center">
-                <div className="w-full">{children}</div>
-              </main>
+              <MuiThemeProvider>
+                <CssBaseline />
+                <Header />
+                <main className="relative flex flex-col items-center justify-center">
+                  <div className="w-full">{children}</div>
+                </main>
+              </MuiThemeProvider>
             </PriceProvider>
           </AppRouterCacheProvider>
         </StyledEngineProvider>

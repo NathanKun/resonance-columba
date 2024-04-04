@@ -48,8 +48,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  createTheme,
-  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -78,19 +77,8 @@ export default function RoutePage() {
   const { prices } = useContext(PriceContext);
 
   /* theme */
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-        typography: {
-          fontSize: 12,
-        },
-      }),
-    [prefersDarkMode]
-  );
+  const theme = useTheme();
+  const prefersDarkMode = theme.palette.mode === "dark";
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
