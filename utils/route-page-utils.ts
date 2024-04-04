@@ -5,7 +5,13 @@ import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { GetPricesProducts } from "@/interfaces/get-prices";
-import { PlayerConfig, PlayerConfigBargain, PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
+import {
+  PlayerConfig,
+  PlayerConfigBargain,
+  PlayerConfigPrestige,
+  PlayerConfigProductUnlockStatus,
+  PlayerConfigRoles,
+} from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
 import {
   Buy,
@@ -40,7 +46,9 @@ export const calculateExchanges = (
   }
 
   for (const fromCity of fromCities) {
-    const availableProducts = getProductsOfCity(fromCity);
+    const availableProducts = getProductsOfCity(fromCity).filter(
+      (product) => playerConfig.productUnlockStatus?.[product.name] ?? true
+    );
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
     const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCityMaster]);
     if (!buyPrestige) {
@@ -359,7 +367,8 @@ export const calculateOneGraphBuyCombinations = (
   maxLot: number,
   bargain: PlayerConfigBargain,
   prestige: PlayerConfigPrestige,
-  roles: PlayerConfigRoles
+  roles: PlayerConfigRoles,
+  productUnlockStatus: PlayerConfigProductUnlockStatus
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -384,7 +393,10 @@ export const calculateOneGraphBuyCombinations = (
       continue;
     }
 
-    const availableProducts = getProductsOfCity(fromCity);
+    const availableProducts = getProductsOfCity(fromCity)
+      // exclude products that are not unlocked,
+      // by default all products are unlocked, in productUnlockStatus the product should be set to false if the product is not unlocked
+      .filter((product) => productUnlockStatus?.[product.name] ?? true);
 
     for (const toCity of CITIES) {
       if (fromCity === toCity) {

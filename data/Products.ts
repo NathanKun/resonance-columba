@@ -1,5 +1,8 @@
-import { Product } from "@/interfaces/product";
-import { PRODUCTS as pdtData } from "resonance-data-columba/dist/columbabuild";
+import { Product, ProductUnlockConditions } from "@/interfaces/product";
+import {
+  GOODS_UNLOCK_CONDITIONS as goodsUnlockConditions,
+  PRODUCTS as pdtData,
+} from "resonance-data-columba/dist/columbabuild";
 
 const pdts: Product[] = Object.values(pdtData) as Product[];
 
@@ -18,3 +21,5 @@ export const PRODUCTS: Product[] = pdts.filter((product) => {
   }
   return true;
 });
+
+export const PRODUCT_UNLOCK_CONDITIONS: ProductUnlockConditions = goodsUnlockConditions;

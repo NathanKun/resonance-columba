@@ -7,6 +7,7 @@ export interface PlayerConfig {
   prestige: PlayerConfigPrestige;
   roles: PlayerConfigRoles;
   onegraph: PlayerConfigOnegraph;
+  productUnlockStatus: PlayerConfigProductUnlockStatus;
   nanoid?: string;
 }
 
@@ -34,4 +35,8 @@ export interface PlayerConfigOnegraph {
   showFatigue: boolean; // actually is showProfitPerFatigue
   showProfitPerRestock: boolean;
   displayMode: "table" | "list";
+}
+
+export interface PlayerConfigProductUnlockStatus {
+  [pdtName: string]: boolean; // false is not unlocked yet, by default all products are unlocked, this should be set to false if the product is not unlocked
 }

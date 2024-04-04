@@ -52,6 +52,20 @@ export default function usePlayerConfig() {
     });
   };
 
+  const setProductUnlock = (newConfig: {
+    [pdtName: string]: boolean; // product name to unlock status
+  }) => {
+    internalSetPlayerConfig((oldConfig) => {
+      return {
+        ...oldConfig,
+        productUnlockStatus: {
+          ...oldConfig.productUnlockStatus,
+          ...newConfig,
+        },
+      };
+    });
+  };
+
   const uploadPlayerConfig = async (config: PlayerConfig): Promise<boolean> => {
     if (!config.nanoid) {
       return false;
@@ -125,6 +139,7 @@ export default function usePlayerConfig() {
     playerConfig,
     setPlayerConfig: internalSetPlayerConfig,
     setRoleResonance,
+    setProductUnlock,
     uploadPlayerConfig,
     downloadPlayerConfig,
   };

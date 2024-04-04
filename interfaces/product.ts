@@ -20,3 +20,11 @@ export interface Product {
 
 export const ProductTypes = ["Normal", "Special", "Craft"] as const;
 export type ProductType = (typeof ProductTypes)[number];
+
+export interface ProductUnlockConditions {
+  [cityName: CityName]: {
+    [pdtName: string]: {
+      invest: number;
+    };
+  };
+}

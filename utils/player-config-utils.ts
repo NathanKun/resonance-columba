@@ -1,4 +1,5 @@
 import { CITIES } from "@/data/Cities";
+import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
 
@@ -17,7 +18,17 @@ export const isValidPlayerConfig = (config: any) => {
 
   if (
     Object.keys(config).filter(
-      (key) => !["maxLot", "bargain", "returnBargain", "prestige", "roles", "onegraph", "nanoid"].includes(key)
+      (key) =>
+        ![
+          "maxLot",
+          "bargain",
+          "returnBargain",
+          "prestige",
+          "roles",
+          "onegraph",
+          "nanoid",
+          "productUnlockStatus",
+        ].includes(key)
     ).length > 0
   ) {
     return false;
@@ -112,6 +123,20 @@ export const isValidPlayerConfig = (config: any) => {
     }
   }
 
+  if (config.productUnlockStatus) {
+    if (
+      Object.keys(config.productUnlockStatus).filter((key) => typeof config.productUnlockStatus[key] !== "boolean")
+        .length > 0
+    ) {
+      return false;
+    }
+
+    const pdtNames = PRODUCTS.map((pdt) => pdt.name);
+    if (Object.keys(config.productUnlockStatus).filter((key) => !pdtNames.includes(key)).length > 0) {
+      return false;
+    }
+  }
+
   return true;
 };
 
@@ -182,4 +207,5 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     showProfitPerRestock: false,
     displayMode: "table",
   },
+  productUnlockStatus: {},
 };

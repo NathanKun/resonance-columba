@@ -7,7 +7,7 @@ import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import { IconButton, ThemeProvider, alpha, createTheme, darken, lighten, useMediaQuery } from "@mui/material";
+import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
   MRT_Cell,
   MRT_Column,
@@ -31,19 +31,7 @@ export default function PricesTable() {
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
     localStorageKey: "selectedCities",
   });
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-        typography: {
-          fontSize: 12,
-        },
-      }),
-    [prefersDarkMode]
-  );
+  const theme = useTheme();
 
   const baseBackgroundColor =
     theme.palette.mode === "dark" ? lighten(theme.palette.background.default, 0.05) : theme.palette.background.default;

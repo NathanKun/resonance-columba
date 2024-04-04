@@ -48,8 +48,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  createTheme,
-  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -69,6 +68,7 @@ import MultipleSelect from "../components/prices-table/multiple-select";
 import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
 import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
+import ProductUnlockSelect from "../components/route-page/product-unlock-select";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
 import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-panel";
 import { PriceContext } from "../price-provider";
@@ -77,19 +77,8 @@ export default function RoutePage() {
   const { prices } = useContext(PriceContext);
 
   /* theme */
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-        typography: {
-          fontSize: 12,
-        },
-      }),
-    [prefersDarkMode]
-  );
+  const theme = useTheme();
+  const prefersDarkMode = theme.palette.mode === "dark";
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
@@ -106,8 +95,14 @@ export default function RoutePage() {
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
 
   /* player config */
-  const { playerConfig, setPlayerConfig, setRoleResonance, downloadPlayerConfig, uploadPlayerConfig } =
-    usePlayerConfig();
+  const {
+    playerConfig,
+    setPlayerConfig,
+    setRoleResonance,
+    setProductUnlock,
+    downloadPlayerConfig,
+    uploadPlayerConfig,
+  } = usePlayerConfig();
 
   const onPlayerConfigChange = (field: string, value: any) => {
     setPlayerConfig((prev) => ({ ...prev, [field]: value }));
@@ -195,9 +190,17 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.bargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        playerConfig.productUnlockStatus
       ),
-    [prices, playerConfig.maxLot, playerConfig.bargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.bargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      playerConfig.productUnlockStatus,
+    ]
   );
   const onegraphBuyCombinationsRt = useMemo(
     () =>
@@ -206,9 +209,17 @@ export default function RoutePage() {
         playerConfig.maxLot,
         playerConfig.returnBargain,
         playerConfig.prestige,
-        playerConfig.roles
+        playerConfig.roles,
+        playerConfig.productUnlockStatus
       ),
-    [prices, playerConfig.maxLot, playerConfig.returnBargain, playerConfig.prestige, playerConfig.roles]
+    [
+      prices,
+      playerConfig.maxLot,
+      playerConfig.returnBargain,
+      playerConfig.prestige,
+      playerConfig.roles,
+      playerConfig.productUnlockStatus,
+    ]
   );
   const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendationsV2 = {};
@@ -715,7 +726,7 @@ export default function RoutePage() {
         {/* 个性化设置 */}
         <div role="tabpanel" hidden={tabIndex !== 1}>
           <Paper
-            className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full"
+            className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full box-border"
             sx={{
               "& .MuiFormControl-root": {
                 width: "10rem",
@@ -787,6 +798,16 @@ export default function RoutePage() {
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
                 <AccordionDetails className="p-0">
                   <RoleSkillSelects playerConfig={playerConfig} setRoleResonance={setRoleResonance} />
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+
+            <Box className="m-4">
+              <Typography>商品解锁</Typography>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
+                <AccordionDetails className="p-0">
+                  <ProductUnlockSelect playerConfig={playerConfig} setProductUnlock={setProductUnlock} />
                 </AccordionDetails>
               </Accordion>
             </Box>
