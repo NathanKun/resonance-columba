@@ -541,13 +541,14 @@ export const calculateOneGraphBuyCombinations = (
         const buyCombination: OnegraphBuy[] = [];
         while (usedLot < maxLot && productIndex < priceData.length) {
           const pdt = priceData[productIndex];
-          const avaiableLot = pdt.buyLot * (restock + 1);
-          const buyLot = Math.min(maxLot - usedLot, avaiableLot);
+          const availableLot = pdt.buyLot * (restock + 1);
+          const buyLot = Math.min(maxLot - usedLot, availableLot);
           usedLot += buyLot;
           buyCombination.push({
             buyLot,
             name: pdt.name,
             profit: pdt.singleProfit * buyLot,
+            availableLot,
           });
           productIndex++;
         }
