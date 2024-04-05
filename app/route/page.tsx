@@ -82,7 +82,7 @@ export default function RoutePage() {
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
-  const tabNames = ["一图流", "个性化设置", "最优线路详细信息", "硬核模拟", "计算说明"];
+  const tabNames = ["一图流", "个性化设置", "线路优选", "硬核模拟", "计算说明"];
   const onTabChange = (newIndex: number) => {
     setTabIndex(newIndex);
     trackTabChange(newIndex);
@@ -689,7 +689,7 @@ export default function RoutePage() {
                         className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
                         primary={
                           <>
-                            {fromCity} <RouteOutlinedIcon className="px-2" /> {toCity}
+                            {fromCity} <RouteOutlinedIcon className="px-2 text-4xl" /> {toCity}
                           </>
                         }
                         primaryTypographyProps={{ className: "flex items-center" }}
@@ -824,7 +824,7 @@ export default function RoutePage() {
           </Paper>
         </div>
 
-        {/* 最优线路详细信息 */}
+        {/* 线路优选 */}
         <div role="tabpanel" hidden={tabIndex !== 2}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex justify-between items-center mb-4">
@@ -835,6 +835,9 @@ export default function RoutePage() {
             <div className="flex flex-col">
               <Typography className="py-1">需要填写个性化设置。</Typography>
               <Typography className="py-1">选择购买的商品种类越多，所需进货书越少，但利润一般也越低。</Typography>
+              <Typography className="py-1">
+                算法对进货书的使用方式与一图流不同，以不浪费为目的，即会确保能买完所有进货的商品才会使用进货书，最后再用下一利润顺位的商品来补满仓。
+              </Typography>
             </div>
           </div>
 
@@ -965,7 +968,7 @@ export default function RoutePage() {
                       key={`table-${fromCity}-${toCity}`}
                       className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full box-border"
                     >
-                      <Typography className="my-4">
+                      <Typography className="my-4 flex items-center">
                         {fromCity}
                         <RouteOutlinedIcon className="mx-2" />
                         {toCity}
