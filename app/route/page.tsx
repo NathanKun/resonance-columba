@@ -996,7 +996,7 @@ export default function RoutePage() {
                               <TableRow
                                 key={`row-${row.product}-${row.fromCity}-${row.toCity}`}
                                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                className={row.loss ? "line-through" : ""}
+                                className={row.loss ? "line-through decoration-red-500 decoration-1" : ""}
                               >
                                 <TableCell scope="row">{row.product}</TableCell>
                                 <TableCell align="right">{row.buyPrice}</TableCell>
