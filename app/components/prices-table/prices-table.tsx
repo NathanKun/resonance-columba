@@ -5,6 +5,7 @@ import { PRODUCTS } from "@/data/Products";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
+import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
@@ -36,6 +37,11 @@ export default function PricesTable() {
     theme.palette.mode === "dark" ? lighten(theme.palette.background.default, 0.05) : theme.palette.background.default;
   const cellBorderStyle =
     theme.palette.mode === "dark" ? "1px solid rgba(31, 41, 55, 1)" : "1px solid rgba(224, 224, 224, 1)";
+
+  const [trendCellColorDisabled, setTrendCellColorDisabled] = useState(false);
+  const onTrendCellColorButtonClick = useCallback(() => {
+    setTrendCellColorDisabled(!trendCellColorDisabled);
+  }, [trendCellColorDisabled]);
 
   // build table rows
   const data = useMemo<ProductRow[]>(() => {
@@ -112,6 +118,10 @@ export default function PricesTable() {
         return null;
       }
 
+      if (trendCellColorDisabled) {
+        return null;
+      }
+
       const value = cell.getValue();
       let background = "";
       if (Number.isInteger(value)) {
@@ -126,7 +136,7 @@ export default function PricesTable() {
 
       return background;
     },
-    [theme.palette.mode]
+    [theme.palette.mode, trendCellColorDisabled]
   );
 
   const getVariationCellMuiProps = useCallback(
@@ -396,9 +406,13 @@ export default function PricesTable() {
         <IconButton onClick={switchSourceAndTargetCities} size="small">
           <SyncAltIcon />
         </IconButton>
+        <IconButton onClick={onTrendCellColorButtonClick} size="small">
+          <PaletteIcon />
+        </IconButton>
       </div>
     );
   }, [
+    onTrendCellColorButtonClick,
     selectedCities.sourceCities,
     selectedCities.targetCities,
     setSourceCities,
