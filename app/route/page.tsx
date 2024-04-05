@@ -689,7 +689,7 @@ export default function RoutePage() {
                         className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
                         primary={
                           <>
-                            {fromCity} <RouteOutlinedIcon className="px-2" /> {toCity}
+                            {fromCity} <RouteOutlinedIcon className="px-2 text-4xl" /> {toCity}
                           </>
                         }
                         primaryTypographyProps={{ className: "flex items-center" }}
