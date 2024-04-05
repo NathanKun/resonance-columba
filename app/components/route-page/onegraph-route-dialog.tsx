@@ -1,4 +1,4 @@
-import { OneGraphRouteDialogV2Props, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
+import { OneGraphRouteDialogProps, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -21,7 +21,7 @@ interface DisplayData {
   lastNotWastingRestock: number;
 }
 
-export default function OneGraphRouteDialogV2(props: OneGraphRouteDialogV2Props) {
+export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const { open, setOpen, data } = props;
   if (!data) {
     return null;

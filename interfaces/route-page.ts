@@ -41,13 +41,13 @@ export interface CityGroupedExchanges {
   };
 }
 
-export interface OneGraphRouteDialogV2Props {
+export interface OneGraphRouteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  data?: OneGraphRouteDialogDataV2;
+  data?: OneGraphRouteDialogData;
 }
 
-export interface OneGraphRouteDialogDataV2 {
+export interface OneGraphRouteDialogData {
   stats: OnegraphBuyCombinationTwoWayStats;
   playerConfig: PlayerConfig;
   fromCity: CityName;
@@ -96,7 +96,7 @@ export interface OnegraphBuyCombinations {
   };
 }
 
-export interface OnegraphRecommendationsV2 {
+export interface OnegraphRecommendations {
   [fromCity: CityName]: {
     [toCity: CityName]: OnegraphBuyCombinationTwoWayStats;
   };
