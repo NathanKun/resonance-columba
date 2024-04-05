@@ -5,9 +5,9 @@ import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import {
   CityGroupedExchanges,
-  OneGraphRouteDialogDataV2,
+  OneGraphRouteDialogData,
   OnegraphBuyCombinationStats,
-  OnegraphRecommendationsV2,
+  OnegraphRecommendations,
   OnegraphTopProfitItem,
 } from "@/interfaces/route-page";
 import {
@@ -67,7 +67,7 @@ import { useContext, useMemo, useState } from "react";
 import MultipleSelect from "../components/prices-table/multiple-select";
 import BargainInputs from "../components/route-page/bargain-inputs";
 import NumberInput from "../components/route-page/number-input";
-import OneGraphRouteDialogV2 from "../components/route-page/onegraph-route-dialog-v2";
+import OneGraphRouteDialog from "../components/route-page/onegraph-route-dialog";
 import ProductUnlockSelect from "../components/route-page/product-unlock-select";
 import RoleSkillSelects from "../components/route-page/role-skill-selects";
 import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-panel";
@@ -180,7 +180,7 @@ export default function RoutePage() {
   const setOnegraphShowProfitPerRestock = (value: boolean) =>
     oneOnegraphPlayerConfigChange("showProfitPerRestock", value);
   const setOnegraphDisplayMode = (value: "table" | "list") => oneOnegraphPlayerConfigChange("displayMode", value);
-  const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogDataV2>();
+  const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   // no brain brute force aller-retour calculation :)
   const onegraphBuyCombinationsGo = useMemo(
@@ -222,7 +222,7 @@ export default function RoutePage() {
     ]
   );
   const onegraphRecommendations = useMemo(() => {
-    const results: OnegraphRecommendationsV2 = {};
+    const results: OnegraphRecommendations = {};
     for (const fromCity of CITIES) {
       results[fromCity] = {};
       for (const toCity of CITIES) {
@@ -570,7 +570,7 @@ export default function RoutePage() {
                     <TableRow>
                       <TableCell colSpan={2}></TableCell>
                       {CITIES.map((city) => (
-                        <TableCell key={`onegraphv2-${city}`} align="center">
+                        <TableCell key={`onegraph-${city}`} align="center">
                           {city}
                         </TableCell>
                       ))}
@@ -578,7 +578,7 @@ export default function RoutePage() {
                   </TableHead>
                   <TableBody>
                     {CITIES.map((fromCity, index) => (
-                      <TableRow key={`onegraphv2-row-${fromCity}`}>
+                      <TableRow key={`onegraph-row-${fromCity}`}>
                         {/** spaning 起点 cell */}
                         {index === 0 && (
                           <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
@@ -591,7 +591,7 @@ export default function RoutePage() {
 
                         {/** profit cells */}
                         {CITIES.map((toCity) => {
-                          const key = `onegraphv2-row-${fromCity}-cell-${toCity}`;
+                          const key = `onegraph-row-${fromCity}-cell-${toCity}`;
                           const EmptyCell = () => (
                             <TableCell key={key} align="center">
                               -
@@ -716,7 +716,7 @@ export default function RoutePage() {
               </List>
             )}
           </Paper>
-          <OneGraphRouteDialogV2
+          <OneGraphRouteDialog
             open={onegraphRouteDialogOpen}
             setOpen={setOnegraphRouteDialogOpen}
             data={onegraphRouteDialogData}
