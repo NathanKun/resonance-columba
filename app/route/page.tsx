@@ -965,7 +965,7 @@ export default function RoutePage() {
                       key={`table-${fromCity}-${toCity}`}
                       className="p-2 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-5xl mx-auto my-2 w-full box-border"
                     >
-                      <Typography className="my-4">
+                      <Typography className="my-4 flex items-center">
                         {fromCity}
                         <RouteOutlinedIcon className="mx-2" />
                         {toCity}
