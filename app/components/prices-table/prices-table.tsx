@@ -5,7 +5,6 @@ import { PRODUCTS } from "@/data/Products";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
-import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
@@ -69,7 +68,7 @@ export default function PricesTable() {
             return;
           }
 
-          const { variation, trend, time } = productPriceFromApi;
+          const { variation, trend, time, price } = productPriceFromApi;
           let timeDiffNum = Math.ceil((Date.now() / 1000 - time) / 60); // in minutes
           let timeDiff: string;
           if (timeDiffNum >= 60) {
@@ -79,15 +78,11 @@ export default function PricesTable() {
             timeDiff = timeDiffNum + "分钟";
           }
 
-          // calculate profit
-          const profit = calculateProfit(product, currentColumnCity, sourceCity, isBuyableCity, prices);
-
           const productPriceForTable: ProductRowCityPrice = {
             variation,
             trend,
             timeDiff,
-            singleProfit: profit,
-            lotProfit: profit * (product.buyLot?.[sourceCity] ?? 0),
+            price: price!,
           };
 
           if (isBuyableCity) {
@@ -103,7 +98,7 @@ export default function PricesTable() {
           productName,
           source,
           targetCity,
-          craftable: isCraftableProduct(productName),
+          craftable: PRODUCTS.find((pdt) => pdt.name === productName)?.craft ? true : false,
         });
       }
     });
@@ -160,7 +155,7 @@ export default function PricesTable() {
           id: city + "-group",
           header: city,
           columns: [
-            // variation, trend, lastUpdated, profit
+            // variation, trend, price, lastUpdated
             {
               id: `targetCity-${city}-variation`,
               accessorFn: (row: ProductRow) => row.targetCity[city]?.variation,
@@ -226,21 +221,9 @@ export default function PricesTable() {
               enableEditing: false,
             },
             {
-              id: `targetCity-${city}-singleprofit`,
-              accessorFn: (row: ProductRow) => row.targetCity[city]?.singleProfit,
-              header: "单个利润",
-              size: 50,
-              enableEditing: false,
-              muiTableBodyCellProps: {
-                sx: {
-                  textAlign: "right",
-                },
-              },
-            },
-            {
-              id: `targetCity-${city}-lotprofit`,
-              accessorFn: (row: ProductRow) => row.targetCity[city]?.lotProfit,
-              header: "单批利润",
+              id: `targetCity-${city}-price`,
+              accessorFn: (row: ProductRow) => row.targetCity[city]?.price,
+              header: "价格",
               size: 50,
               enableEditing: false,
               muiTableBodyCellProps: {
@@ -252,74 +235,6 @@ export default function PricesTable() {
           ],
         } as MRT_ColumnDef<ProductRow>;
       }) ?? [];
-
-    // highest profit group
-    result.unshift({
-      id: "highest-profit-group",
-      header: "最高利润",
-
-      columns: [
-        {
-          id: "highest-profit-single",
-          accessorFn: (row: ProductRow) => highestProfitCity(row),
-          header: "单个",
-          size: 50,
-          enableEditing: false,
-          Cell: (props: any) => {
-            const { renderedCellValue: city, row } = props;
-            const profit = row.original.targetCity?.[city]?.singleProfit;
-            if (!city || !profit) {
-              return null;
-            }
-            return (
-              <span>
-                {profit} {city}
-              </span>
-            );
-          },
-          sortingFn: (rowA, rowB, columnId) => {
-            const productRow1 = rowA.original;
-            const productRow2 = rowB.original;
-            const city1 = highestProfitCity(productRow1);
-            const city2 = highestProfitCity(productRow2);
-            const profit1 = productRow1.targetCity[city1]?.singleProfit ?? 0;
-            const profit2 = productRow2.targetCity[city2]?.singleProfit ?? 0;
-            return profit1 - profit2;
-          },
-        },
-        {
-          id: "highest-profit-lot",
-          accessorFn: (row: ProductRow) => {
-            const city = highestProfitCity(row);
-            return city;
-          },
-          header: "单批",
-          size: 50,
-          enableEditing: false,
-          Cell: (props: any) => {
-            const { renderedCellValue: city, row } = props;
-            const profit = row.original.targetCity?.[city]?.lotProfit;
-            if (!city || !profit) {
-              return null;
-            }
-            return (
-              <span>
-                {profit} {city}
-              </span>
-            );
-          },
-          sortingFn: (rowA, rowB, columnId) => {
-            const productRow1 = rowA.original;
-            const productRow2 = rowB.original;
-            const city1 = highestProfitCity(productRow1);
-            const city2 = highestProfitCity(productRow2);
-            const profit1 = productRow1.targetCity[city1]?.lotProfit ?? 0;
-            const profit2 = productRow2.targetCity[city2]?.lotProfit ?? 0;
-            return profit1 - profit2;
-          },
-        },
-      ],
-    });
 
     // source city group
     result.unshift({
@@ -399,11 +314,28 @@ export default function PricesTable() {
           },
         },
         {
+          id: "source-price",
+          accessorFn: (row: ProductRow) => row.source?.price,
+          header: "价格",
+          size: 50,
+          enableEditing: false,
+          muiTableBodyCellProps: {
+            sx: {
+              textAlign: "right",
+            },
+          },
+        },
+        {
           id: "source-time",
           accessorFn: (row: ProductRow) => row.source?.timeDiff,
           header: "更新",
           size: 50,
           enableEditing: false,
+          muiTableBodyCellProps: {
+            sx: {
+              textAlign: "right",
+            },
+          },
         },
       ],
     });
@@ -420,8 +352,7 @@ export default function PricesTable() {
       result[`targetCity-${city}-variation`] = false;
       result[`targetCity-${city}-trend`] = false;
       result[`targetCity-${city}-time`] = false;
-      result[`targetCity-${city}-singleprofit`] = false;
-      result[`targetCity-${city}-lotprofit`] = false;
+      result[`targetCity-${city}-price`] = false;
     });
     return result;
   }, [selectedCities.targetCities]);
@@ -494,7 +425,7 @@ export default function PricesTable() {
       expanded: true,
       grouping: ["source-city"],
       columnPinning: {
-        left: ["source-city", "source-productName", "source-variation", "source-trend", "source-time"],
+        left: ["source-city", "source-productName", "source-variation", "source-trend", "source-price", "source-time"],
       },
       density: "compact",
     },
