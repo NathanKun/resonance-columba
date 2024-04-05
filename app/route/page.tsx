@@ -24,6 +24,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Looks3Icon from "@mui/icons-material/Looks3";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoIcon from "@mui/icons-material/LooksTwo";
+import PaletteIcon from "@mui/icons-material/Palette";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import TableViewIcon from "@mui/icons-material/TableView";
@@ -180,6 +181,10 @@ export default function RoutePage() {
   const setOnegraphShowProfitPerRestock = (value: boolean) =>
     oneOnegraphPlayerConfigChange("showProfitPerRestock", value);
   const setOnegraphDisplayMode = (value: "table" | "list") => oneOnegraphPlayerConfigChange("displayMode", value);
+  const [onegraphCellColorDisabled, setOnegraphCellColorDisabled] = useState(false);
+  const onOnegraphCellColorDisabledButtonClick = () => {
+    setOnegraphCellColorDisabled((prev) => !prev);
+  };
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
   // no brain brute force aller-retour calculation :)
@@ -515,26 +520,31 @@ export default function RoutePage() {
           </Box>
 
           <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4 dark:bg-neutral-900 ">
-            {/* display mode toggle */}
-            <ToggleButtonGroup
-              value={onegraphDisplayMode}
-              exclusive
-              onChange={(event, newValue) => {
-                if (newValue) {
-                  setOnegraphDisplayMode(newValue);
-                }
-              }}
-              aria-label="onegraph display mode"
-            >
-              <ToggleButton value="table" aria-label="table">
-                <TableViewIcon />
-                表格
-              </ToggleButton>
-              <ToggleButton value="list" aria-label="list">
-                <ViewListIcon />
-                排序
-              </ToggleButton>
-            </ToggleButtonGroup>
+            {/* display mode toggle & disable cell color btn */}
+            <Box className="flex justify-between items-center">
+              <ToggleButtonGroup
+                value={onegraphDisplayMode}
+                exclusive
+                onChange={(event, newValue) => {
+                  if (newValue) {
+                    setOnegraphDisplayMode(newValue);
+                  }
+                }}
+                aria-label="onegraph display mode"
+              >
+                <ToggleButton value="table" aria-label="table">
+                  <TableViewIcon />
+                  表格
+                </ToggleButton>
+                <ToggleButton value="list" aria-label="list">
+                  <ViewListIcon />
+                  排序
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <IconButton onClick={onOnegraphCellColorDisabledButtonClick} className="p-3">
+                <PaletteIcon />
+              </IconButton>
+            </Box>
 
             {/* table view */}
             {onegraphDisplayMode === "table" && (
@@ -641,9 +651,11 @@ export default function RoutePage() {
                               key={key}
                               align="center"
                               sx={{
-                                background: `linear-gradient(90deg, ${
-                                  prefersDarkMode ? "darkred" : "lightcoral"
-                                } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
+                                background: onegraphCellColorDisabled
+                                  ? ""
+                                  : `linear-gradient(90deg, ${
+                                      prefersDarkMode ? "darkred" : "lightcoral"
+                                    } ${percentageToMax}%, #0000 ${percentageToMax}%)`,
                               }}
                             >
                               <Button
