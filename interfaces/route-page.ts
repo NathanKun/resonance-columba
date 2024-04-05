@@ -72,6 +72,7 @@ export interface OnegraphPriceDataItem {
 }
 
 export interface OnegraphBuyCombination {
+  availableLot: number;
   buyLot: number;
   name: string;
   profit: number;

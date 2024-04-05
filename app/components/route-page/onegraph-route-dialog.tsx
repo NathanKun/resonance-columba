@@ -38,12 +38,23 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const goAndReturn = playerConfig.onegraph.goAndReturn;
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats): DisplayData => {
+    const buyProducts = stats.combinations
+      .map((c) => {
+        const { name, buyLot, availableLot } = c;
+
+        if (buyLot < availableLot) {
+          return `${name} (${buyLot} / ${availableLot})`;
+        }
+
+        return `${name}`;
+      })
+      .join(", ");
     return {
       profit: stats.profit,
       fatigue: stats.fatigue,
       profitPerFatigue: stats.profitPerFatigue,
       profitPerRestock: stats.profitPerRestock,
-      buyProducts: stats.combinations.map((c) => c.name).join(", "),
+      buyProducts,
       usedLot: stats.usedLot,
       restockCount: stats.restock,
       isWastingRestock: stats.lastNotWastingRestock !== stats.restock,
@@ -75,7 +86,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
     <React.Fragment>
       <Dialog fullWidth={true} maxWidth="xl" open={open} onClose={handleClose}>
         <DialogTitle className="flex items-center">
-          {fromCity} <RouteOutlinedIcon className="px-4" /> {toCity}
+          {fromCity} <RouteOutlinedIcon className="px-4 text-6xl" /> {toCity}
         </DialogTitle>
         <DialogContent>
           <Box className="m-8">
