@@ -2,9 +2,11 @@
 
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
+import useColumnVisibilityOverride from "@/hooks/useColumnVisibilityOverride";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
+import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
@@ -84,10 +86,14 @@ export default function PricesTable() {
             timeDiff = timeDiffNum + "分钟";
           }
 
+          // calculate profit
+          const profit = calculateProfit(product, currentColumnCity, sourceCity, isBuyableCity, prices);
+
           const productPriceForTable: ProductRowCityPrice = {
             variation,
             trend,
             timeDiff,
+            singleProfit: profit,
             price: price!,
           };
 
@@ -104,7 +110,7 @@ export default function PricesTable() {
           productName,
           source,
           targetCity,
-          craftable: PRODUCTS.find((pdt) => pdt.name === productName)?.craft ? true : false,
+          craftable: isCraftableProduct(productName),
         });
       }
     });
@@ -165,7 +171,7 @@ export default function PricesTable() {
           id: city + "-group",
           header: city,
           columns: [
-            // variation, trend, price, lastUpdated
+            // variation, trend, price, lastUpdated, profit
             {
               id: `targetCity-${city}-variation`,
               accessorFn: (row: ProductRow) => row.targetCity[city]?.variation,
@@ -231,6 +237,18 @@ export default function PricesTable() {
               enableEditing: false,
             },
             {
+              id: `targetCity-${city}-singleprofit`,
+              accessorFn: (row: ProductRow) => row.targetCity[city]?.singleProfit,
+              header: "利润",
+              size: 50,
+              enableEditing: false,
+              muiTableBodyCellProps: {
+                sx: {
+                  textAlign: "right",
+                },
+              },
+            },
+            {
               id: `targetCity-${city}-price`,
               accessorFn: (row: ProductRow) => row.targetCity[city]?.price,
               header: "价格",
@@ -245,6 +263,43 @@ export default function PricesTable() {
           ],
         } as MRT_ColumnDef<ProductRow>;
       }) ?? [];
+
+    // highest profit group
+    result.unshift({
+      id: "highest-profit-group",
+      header: "最高利润",
+
+      columns: [
+        {
+          id: "highest-profit-single",
+          accessorFn: (row: ProductRow) => highestProfitCity(row),
+          header: "利润",
+          size: 50,
+          enableEditing: false,
+          Cell: (props: any) => {
+            const { renderedCellValue: city, row } = props;
+            const profit = row.original.targetCity?.[city]?.singleProfit;
+            if (!city || !profit) {
+              return null;
+            }
+            return (
+              <span>
+                {profit} {city}
+              </span>
+            );
+          },
+          sortingFn: (rowA, rowB, columnId) => {
+            const productRow1 = rowA.original;
+            const productRow2 = rowB.original;
+            const city1 = highestProfitCity(productRow1);
+            const city2 = highestProfitCity(productRow2);
+            const profit1 = productRow1.targetCity[city1]?.singleProfit ?? 0;
+            const profit2 = productRow2.targetCity[city2]?.singleProfit ?? 0;
+            return profit1 - profit2;
+          },
+        },
+      ],
+    });
 
     // source city group
     result.unshift({
@@ -353,38 +408,7 @@ export default function PricesTable() {
     return result;
   }, [getVariationCellMuiProps, setPrice]);
 
-  const baseColumnVisibility = useMemo(() => {
-    const visibleCities = selectedCities.targetCities;
-    const invisibleCities = CITIES.filter((city) => !visibleCities?.includes(city));
-    const result: { [key: string]: boolean } = {};
-    invisibleCities.forEach((city) => {
-      result[city + "-group"] = false;
-      result[`targetCity-${city}-variation`] = false;
-      result[`targetCity-${city}-trend`] = false;
-      result[`targetCity-${city}-time`] = false;
-      result[`targetCity-${city}-price`] = false;
-    });
-    return result;
-  }, [selectedCities.targetCities]);
-
-  const [manualVisibilityOverride, setManualVisibilityOverride] = useState<{ [key: string]: boolean }>({});
-  const onColumnVisibilityChange = (updater: any): void => {
-    const newSettings = updater();
-    setManualVisibilityOverride({ ...manualVisibilityOverride, ...newSettings });
-  };
-
-  const columnVisibility = useMemo(() => {
-    // merge base visibility with manual override
-    // except if a column is already false in base, don't allow it to be true
-    const result = { ...baseColumnVisibility };
-    Object.keys(manualVisibilityOverride).forEach((key) => {
-      if (baseColumnVisibility[key] === false) {
-        return;
-      }
-      result[key] = manualVisibilityOverride[key];
-    });
-    return result;
-  }, [baseColumnVisibility, manualVisibilityOverride]);
+  const { columnVisibility, onColumnVisibilityChange } = useColumnVisibilityOverride(selectedCities.targetCities);
 
   const renderCitySelects = useCallback(() => {
     return (

@@ -4,6 +4,7 @@ export interface ProductRowCityPrice {
   variation: number;
   trend: string; // up arrow, down arrow, or empty
   timeDiff: string; // e.g. 5分钟前
+  singleProfit: number;
   price: number;
 }
 
