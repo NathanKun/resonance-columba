@@ -15,6 +15,7 @@ interface DisplayData {
   fatigue: number;
   profitPerFatigue: number;
   buyProducts: string;
+  profitOrder: string;
   usedLot: number;
   restockCount: number;
   profitPerRestock: number;
@@ -39,6 +40,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const goAndReturn = playerConfig.onegraph.goAndReturn;
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats): DisplayData => {
+    // display products ordered base on profit
+    const profitOrder = stats.combinations.map((c) => c.name).join(", ");
+
+    // display products orderd base on in-game order
     const buyProducts = stats.combinations
       // find the index in data of the product
       .map((c) => {
@@ -67,6 +72,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
       profitPerFatigue: stats.profitPerFatigue,
       profitPerRestock: stats.profitPerRestock,
       buyProducts,
+      profitOrder,
       usedLot: stats.usedLot,
       restockCount: stats.restock,
       isWastingRestock: stats.lastNotWastingRestock !== stats.restock,
@@ -110,6 +116,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
               </DialogContentText>
             )}
             <DialogContentText>需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
+            <DialogContentText>产品利润顺位：{goDisplayData.profitOrder}</DialogContentText>
             <DialogContentText>所需舱位：{goDisplayData.usedLot}</DialogContentText>
             <DialogContentText>
               疲劳：{goDisplayData.fatigue}
@@ -132,6 +139,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                   </DialogContentText>
                 )}
                 <DialogContentText>需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
+                <DialogContentText>产品利润顺位：{returnDisplayData.profitOrder}</DialogContentText>
                 <DialogContentText>所需舱位：{returnDisplayData.usedLot}</DialogContentText>
                 <DialogContentText>
                   回程疲劳：{returnDisplayData.fatigue}
