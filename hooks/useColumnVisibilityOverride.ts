@@ -12,8 +12,13 @@ export default function useColumnVisibilityOverride(targetCities: string[]) {
     if (isServer) {
       return {};
     }
-    const data = localStorage.getItem(localStorageKey);
-    return data ? JSON.parse(data) : {};
+    try {
+      const data = localStorage.getItem(localStorageKey);
+      return data ? JSON.parse(data) : {};
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
   };
 
   const updateColumnVisibilityOverrideLsAndState = useCallback(
