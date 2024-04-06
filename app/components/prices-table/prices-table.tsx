@@ -2,6 +2,7 @@
 
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
+import useColumnVisibilityOverride from "@/hooks/useColumnVisibilityOverride";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
@@ -407,39 +408,7 @@ export default function PricesTable() {
     return result;
   }, [getVariationCellMuiProps, setPrice]);
 
-  const baseColumnVisibility = useMemo(() => {
-    const visibleCities = selectedCities.targetCities;
-    const invisibleCities = CITIES.filter((city) => !visibleCities?.includes(city));
-    const result: { [key: string]: boolean } = {};
-    invisibleCities.forEach((city) => {
-      result[city + "-group"] = false;
-      result[`targetCity-${city}-variation`] = false;
-      result[`targetCity-${city}-trend`] = false;
-      result[`targetCity-${city}-time`] = false;
-      result[`targetCity-${city}-singleprofit`] = false;
-      result[`targetCity-${city}-price`] = false;
-    });
-    return result;
-  }, [selectedCities.targetCities]);
-
-  const [manualVisibilityOverride, setManualVisibilityOverride] = useState<{ [key: string]: boolean }>({});
-  const onColumnVisibilityChange = (updater: any): void => {
-    const newSettings = updater();
-    setManualVisibilityOverride({ ...manualVisibilityOverride, ...newSettings });
-  };
-
-  const columnVisibility = useMemo(() => {
-    // merge base visibility with manual override
-    // except if a column is already false in base, don't allow it to be true
-    const result = { ...baseColumnVisibility };
-    Object.keys(manualVisibilityOverride).forEach((key) => {
-      if (baseColumnVisibility[key] === false) {
-        return;
-      }
-      result[key] = manualVisibilityOverride[key];
-    });
-    return result;
-  }, [baseColumnVisibility, manualVisibilityOverride]);
+  const { columnVisibility, onColumnVisibilityChange } = useColumnVisibilityOverride(selectedCities.targetCities);
 
   const renderCitySelects = useCallback(() => {
     return (
