@@ -19,3 +19,10 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
 }
+
+.hide-spin-button input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.hide-spin-button input[type="number"] {
+  -moz-appearance: textfield;
+}

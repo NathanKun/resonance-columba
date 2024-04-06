@@ -75,6 +75,9 @@ import SyncPlayerConfigPanel from "../components/route-page/sync-player-config-p
 import { PriceContext } from "../price-provider";
 
 export default function RoutePage() {
+  const MAX_ONEGRAPH_MAX_RESTOCK = 50;
+  const MAX_ONEGRAPH_MAX_RESTOCK_SLIDER = 20;
+
   const { prices } = useContext(PriceContext);
 
   /* theme */
@@ -395,6 +398,9 @@ export default function RoutePage() {
               <Typography className="py-1">
                 来回选项开启时，算法会以最优解自动分配进货书，显示的线路是利润最大的进货书分配方法。
               </Typography>
+              <Typography className="py-1">
+                总进货次数最大{MAX_ONEGRAPH_MAX_RESTOCK}，超过{MAX_ONEGRAPH_MAX_RESTOCK_SLIDER}时请通过输入框手动输入。
+              </Typography>
             </div>
           </div>
 
@@ -418,12 +424,12 @@ export default function RoutePage() {
                   value={onegraphMaxRestock}
                   onChange={(_e, newVal) => setMaxRestock(newVal as number)}
                   min={0}
-                  max={50}
+                  max={MAX_ONEGRAPH_MAX_RESTOCK_SLIDER}
                   size="small"
                 />
                 <IconButton
                   onClick={() => {
-                    if (onegraphMaxRestock < 30) {
+                    if (onegraphMaxRestock < MAX_ONEGRAPH_MAX_RESTOCK) {
                       setMaxRestock(onegraphMaxRestock + 1);
                     }
                   }}
@@ -432,7 +438,19 @@ export default function RoutePage() {
                   <ArrowRightIcon />
                 </IconButton>
               </Box>
-              <Typography>{onegraphMaxRestock}</Typography>
+              <NumberInput
+                className="w-9"
+                hiddenLabel
+                hideSpinButton
+                variant="standard"
+                min={0}
+                max={MAX_ONEGRAPH_MAX_RESTOCK}
+                defaultValue={0}
+                type="integer"
+                value={onegraphMaxRestock}
+                inputProps={{ className: "text-center" }}
+                setValue={(newVal) => setMaxRestock(newVal)}
+              />
             </Box>
 
             <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">

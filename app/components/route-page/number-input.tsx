@@ -1,4 +1,4 @@
-import { OutlinedInputProps, TextField } from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 import { useEffect, useState } from "react";
 
 type VALUE_TYPE = number | undefined;
@@ -43,7 +43,9 @@ const constrainedValue = (value: VALUE_TYPE, min: VALUE_TYPE, max: VALUE_TYPE): 
 };
 
 type Props = {
-  label: string;
+  label?: string;
+  hiddenLabel?: TextFieldProps["hiddenLabel"];
+  variant?: TextFieldProps["variant"];
   value: VALUE_TYPE;
   min: number;
   max: number;
@@ -51,13 +53,30 @@ type Props = {
   defaultValue: number;
   type: "integer" | "float";
   decimalPlaces?: number;
-  InputProps?: Partial<OutlinedInputProps>;
+  InputProps?: TextFieldProps["InputProps"];
+  inputProps?: TextFieldProps["inputProps"];
   className?: string;
+  hideSpinButton?: boolean;
   setValue: (value: number, event: any) => void;
 };
 
 export default function NumberInput(props: Props) {
-  const { type, value, label, min, max, step, defaultValue, InputProps, setValue, className } = { ...props };
+  const {
+    type,
+    value,
+    variant = "outlined",
+    label,
+    hiddenLabel = false,
+    min,
+    max,
+    step,
+    defaultValue,
+    InputProps,
+    inputProps,
+    setValue,
+    className,
+    hideSpinButton = false,
+  } = { ...props };
   const decimalPlaces = props.decimalPlaces ?? 1;
 
   const [focused, setFocused] = useState(false);
@@ -124,17 +143,18 @@ export default function NumberInput(props: Props) {
 
   return (
     <TextField
-      className={className}
+      className={`${hideSpinButton ? "hide-spin-button " : ""}${className ?? ""}`}
       type="number"
       size="small"
-      variant="outlined"
+      variant={variant}
       label={label}
+      hiddenLabel={hiddenLabel}
       value={displayValue}
       onFocus={onFocus}
       onBlur={onBlur}
       onChange={onChange}
       InputProps={InputProps}
-      inputProps={{ step }}
+      inputProps={{ ...inputProps, step }}
     />
   );
 }
