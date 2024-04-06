@@ -1,3 +1,4 @@
+import { PRODUCTS } from "@/data/Products";
 import { OneGraphRouteDialogProps, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import { Box } from "@mui/material";
@@ -39,11 +40,22 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats): DisplayData => {
     const buyProducts = stats.combinations
+      // find the index in data of the product
+      .map((c) => {
+        const dataIndex = PRODUCTS.findIndex((p) => p.name === c.name);
+        return {
+          dataIndex,
+          ...c,
+        };
+      })
+      // sort by index, to make it has the same order in game, instead of sorted by profit
+      .sort((a, b) => a.dataIndex - b.dataIndex)
+      // map to name for display
       .map((c) => {
         const { name, buyLot, availableLot } = c;
 
         if (buyLot < availableLot) {
-          return `${name} (${buyLot} / ${availableLot})`;
+          return `${name} (买${buyLot} / 总${availableLot})`;
         }
 
         return `${name}`;
