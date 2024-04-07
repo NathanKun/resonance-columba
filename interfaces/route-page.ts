@@ -1,4 +1,5 @@
 import { CityName } from "@/data/Cities";
+import { GetPricesProduct } from "./get-prices";
 import { PlayerConfig } from "./player-config";
 import { Product } from "./product";
 
@@ -63,7 +64,7 @@ export interface OnegraphPriceData {
 export interface OnegraphPriceDataItem {
   name: string;
   product: Product;
-  priceData: any;
+  priceData: GetPricesProduct;
   buyPrice: number;
   buyLot: number;
   buyTaxRate: number;
