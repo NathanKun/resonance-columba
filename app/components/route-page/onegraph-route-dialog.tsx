@@ -45,16 +45,16 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
 
     // display products orderd base on in-game order
     const buyProducts = stats.combinations
-      // find the index in data of the product
+      // find the basePrice of the product
       .map((c) => {
-        const dataIndex = PRODUCTS.findIndex((p) => p.name === c.name);
+        const basePrice = PRODUCTS.find((p) => p.name === c.name)?.buyPrices?.[fromCity] ?? 0;
         return {
-          dataIndex,
+          basePrice,
           ...c,
         };
       })
-      // sort by index, to make it has the same order in game, instead of sorted by profit
-      .sort((a, b) => a.dataIndex - b.dataIndex)
+      // sort by basePrice, to make it has the same order in game, instead of sorted by profit
+      .sort((a, b) => b.basePrice - a.basePrice)
       // map to name for display
       .map((c) => {
         const { name, buyLot, availableLot } = c;
