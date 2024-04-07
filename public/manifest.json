@@ -1,6 +1,21 @@
 {
   "name": "科伦巴商会",
   "short_name": "科伦巴商会",
+  "description": "雷索纳斯 科伦巴商会 跑商数据站",
+  "shortcuts": [
+    {
+      "name": "路线",
+      "url": "/route"
+    },
+    {
+      "name": "数据",
+      "url": "/prices"
+    },
+    {
+      "name": "讨论",
+      "url": "/discussion"
+    }
+  ],
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
