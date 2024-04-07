@@ -15,7 +15,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { grey, orange } from "@mui/material/colors";
 import Link from "next/link";
-import * as React from "react";
 import { useState } from "react";
 import LogoSvgIcon from "./logo-icon";
 import QQBtn from "./qq-btn";
