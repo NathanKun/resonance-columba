@@ -1,3 +1,10 @@
+import withSerwistInit from "@serwist/next";
+const withSerwist = withSerwistInit({
+  cacheOnNavigation: true,
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -19,7 +26,7 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default withSerwist(nextConfig);
 
 // const withBundleAnalyzer = require("@next/bundle-analyzer")({
 //   enabled: "true",
