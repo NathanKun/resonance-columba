@@ -64,7 +64,7 @@ export const viewport: Viewport = {
   // I think it's better to prevent scaling on mobile because there's nothing worth scaling on the website.
   // However, this is not work for iOS. It can only be solved by js, so forget it.
   userScalable: false,
-  themeColor: "#FFFFFF",
+  themeColor: "#ffb74d",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
