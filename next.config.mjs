@@ -3,7 +3,7 @@ const withSerwist = withSerwistInit({
   cacheOnNavigation: true,
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
-  globPublicPatterns: [],
+  globPublicPatterns: ["manifest.json"],
 });
 
 /** @type {import('next').NextConfig} */
