@@ -1,3 +1,4 @@
+import { CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import { OneGraphRouteDialogProps, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
@@ -39,7 +40,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
   const bargainFatigueTotal = bargainFatigueTotalGo + bargainFatigueTotalRt;
   const goAndReturn = playerConfig.onegraph.goAndReturn;
 
-  const buildDisplayData = (stats: OnegraphBuyCombinationStats): DisplayData => {
+  const buildDisplayData = (stats: OnegraphBuyCombinationStats, city: CityName): DisplayData => {
     // display products ordered base on profit
     const profitOrder = stats.combinations.map((c) => c.name).join(", ");
 
@@ -47,7 +48,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
     const buyProducts = stats.combinations
       // find the basePrice of the product
       .map((c) => {
-        const basePrice = PRODUCTS.find((p) => p.name === c.name)?.buyPrices?.[fromCity] ?? 0;
+        const basePrice = PRODUCTS.find((p) => p.name === c.name)?.buyPrices?.[city] ?? 0;
         return {
           basePrice,
           ...c,
@@ -80,8 +81,8 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
     } as DisplayData;
   };
 
-  const goDisplayData = buildDisplayData(goAndReturn ? goAndReturnData[0] : simpleGoData);
-  const returnDisplayData = goAndReturn ? buildDisplayData(goAndReturnData[1]) : undefined;
+  const goDisplayData = buildDisplayData(goAndReturn ? goAndReturnData[0] : simpleGoData, fromCity);
+  const returnDisplayData = goAndReturn ? buildDisplayData(goAndReturnData[1], toCity) : undefined;
   const totalDisplayData = (() => {
     if (!goAndReturn) {
       return undefined;
