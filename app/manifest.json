@@ -191,5 +191,5 @@
   "background_color": "#ffb74d",
   "start_url": "/route",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "natural"
 }
