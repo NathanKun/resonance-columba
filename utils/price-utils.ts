@@ -9,7 +9,7 @@ export const isCraftableProduct = (pdtName: string) => {
   return craft ? true : false;
 };
 
-export const highestProfitCity = (row: ProductRow) => {
+export const highestProfitCity = (row: ProductRow): CityName => {
   const highestProfitCity = CITIES.reduce((a, b) =>
     (row.targetCity[a]?.singleProfit ?? 0) > (row.targetCity[b]?.singleProfit ?? 0) ? a : b
   );

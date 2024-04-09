@@ -9,13 +9,16 @@ export default function TrendCell(props: any) {
     return null;
   }
 
-  let icon;
-
-  if (value === "up") {
-    icon = <TrendingUpIcon />;
-  } else if (value === "down") {
-    icon = <TrendingDownIcon />;
-  }
+  const icon = getTrendIcon(value);
 
   return <span style={{ display: "block", textAlign: "center" }}>{icon}</span>;
 }
+
+export const getTrendIcon = (value: string) => {
+  if (value === "up") {
+    return <TrendingUpIcon />;
+  } else if (value === "down") {
+    return <TrendingDownIcon />;
+  }
+  return null;
+};
