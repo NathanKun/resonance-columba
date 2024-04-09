@@ -23,7 +23,7 @@ import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { PriceContext } from "../../price-provider";
 import MultipleSelect from "./multiple-select";
-import TrendCell from "./trend-cell";
+import TrendCell, { getTrendIcon } from "./trend-cell";
 import TrendInput from "./trend-input";
 import VariationCell from "./variation-cell";
 import VariationInput from "./variation-input";
@@ -276,16 +276,22 @@ export default function PricesTable() {
           header: "利润",
           size: 50,
           enableEditing: false,
-          Cell: (props: any) => {
-            const { renderedCellValue: city, row } = props;
+          Cell: (props) => {
+            const { renderedCellValue, row } = props;
+            const city = renderedCellValue as CityName;
             const profit = row.original.targetCity?.[city]?.singleProfit;
+            const trend = row.original.targetCity?.[city]?.trend;
             if (!city || !profit) {
               return null;
             }
+            const trendIcon = getTrendIcon(trend);
             return (
-              <span>
-                {profit} {city}
-              </span>
+              <div className="flex items-center">
+                {trendIcon}
+                <span className="pl-2">
+                  {profit} {city}
+                </span>
+              </div>
             );
           },
           sortingFn: (rowA, rowB, columnId) => {
