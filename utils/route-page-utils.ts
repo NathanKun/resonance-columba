@@ -60,8 +60,8 @@ export const calculateExchanges = (
     const buys: Buy[] = availableProducts
       // group routes by fromCity and toCity
       .flatMap<Buy>((product) => {
-        // not support craftable products yet
-        if (product.craft) {
+        // not support craft products
+        if (product.type === "Craft") {
           return [];
         }
 
