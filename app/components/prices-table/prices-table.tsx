@@ -6,7 +6,7 @@ import useColumnVisibilityOverride from "@/hooks/useColumnVisibilityOverride";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
-import { calculateProfit, highestProfitCity, isCraftableProduct } from "@/utils/price-utils";
+import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/price-utils";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
@@ -110,7 +110,7 @@ export default function PricesTable() {
           productName,
           source,
           targetCity,
-          craftable: isCraftableProduct(productName),
+          craftable: isCraftOnlyProduct(productName),
         });
       }
     });

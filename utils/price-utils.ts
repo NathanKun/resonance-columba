@@ -4,9 +4,8 @@ import { GetPricesProduct, GetPricesProducts } from "@/interfaces/get-prices";
 import { ProductRow } from "@/interfaces/prices-table";
 import { Product } from "@/interfaces/product";
 
-export const isCraftableProduct = (pdtName: string) => {
-  const craft = PRODUCTS.find((pdt) => pdt.name === pdtName)?.craft;
-  return craft ? true : false;
+export const isCraftOnlyProduct = (pdtName: string) => {
+  return PRODUCTS.find((pdt) => pdt.name === pdtName)?.type === "Craft";
 };
 
 export const highestProfitCity = (row: ProductRow): CityName => {
@@ -38,51 +37,39 @@ export const calculateProfit = (
   const productPrices: GetPricesProduct = prices[product.name];
 
   // for a buyable (non craftable) product
-  if (!product.craft) {
-    let productBuyPrice = product.buyPrices[sourceCity] ?? 0;
-    const buyVariation = productPrices.buy?.[sourceCity]?.variation ?? 0;
-    productBuyPrice = Math.round((productBuyPrice * buyVariation) / 100); // no bargain buy price
-
-    let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
-    const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-    productSellPrice = Math.round((productSellPrice * sellVariation) / 100); // no bargain sell price
-
-    profit = Math.round(productSellPrice - productBuyPrice);
-  }
-  // a craftable product but with static price
-  else if (product.craft.static) {
-    const productBuyPrice = product.craft.static;
-    let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
-
-    const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-    productSellPrice = Math.round((productSellPrice * sellVariation) / 100);
+  if (product.type !== "Craft") {
+    const productBuyPrice = productPrices.buy?.[sourceCity]?.price ?? 0;
+    const productSellPrice = productPrices.sell?.[currentColumnCity]?.price ?? 0;
 
     profit = Math.round(productSellPrice - productBuyPrice);
   }
   // a craftable product with materials
-  else if (product.craft && !product.craft.static) {
+  else if (product.type === "Craft" && product.craft) {
     const craft = product.craft;
     let productCraftPrice = 0;
     const materials = Object.keys(craft);
-
     for (const material of materials) {
       const materialQuantity = craft[material]!;
-      // I assume the sourceCity of a craftable product is the same as the sourceCity of its materials,
-      // otherwise the calculation below will be incorrect
-      const materialBuyVariation = prices[material]?.buy?.[sourceCity]?.variation ?? 0;
-      let materialBuyPrice = PRODUCTS.find((p) => p.name === material)?.buyPrices?.[sourceCity] ?? 0;
-      materialBuyPrice = Math.round((materialBuyPrice * materialBuyVariation) / 100); // no bargain buy price
 
+      const materialBuy = prices[material]?.buy;
+      if (!materialBuy) {
+        continue;
+      }
+
+      const materialBuyableCities = Object.keys(materialBuy);
+      const materialBuyableCity = materialBuyableCities[0];
+      if (!materialBuyableCity) {
+        continue;
+      }
+
+      const materialBuyPrice = materialBuy[materialBuyableCity]?.price ?? 0;
       productCraftPrice += materialBuyPrice * materialQuantity;
     }
 
     if (productCraftPrice === 0) {
       profit = 0;
     } else {
-      let productSellPrice = product.sellPrices[currentColumnCity] ?? 0;
-      const sellVariation = productPrices.sell?.[currentColumnCity]?.variation ?? 0;
-      productSellPrice = Math.round((productSellPrice * sellVariation) / 100); // no bargain sell price
-
+      const productSellPrice = productPrices.sell?.[currentColumnCity]?.price ?? 0;
       profit = Math.round(productSellPrice - productCraftPrice);
     }
   }
