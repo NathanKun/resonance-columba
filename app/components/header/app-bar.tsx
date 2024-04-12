@@ -3,6 +3,7 @@
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import TableViewIcon from "@mui/icons-material/TableView";
 import { IconButton, Menu, MenuItem, ThemeProvider, createTheme } from "@mui/material";
@@ -17,8 +18,6 @@ import { grey, orange } from "@mui/material/colors";
 import Link from "next/link";
 import { useState } from "react";
 import LogoSvgIcon from "./logo-icon";
-import QQBtn from "./qq-btn";
-
 export default function HeaderAppBar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
@@ -69,6 +68,11 @@ export default function HeaderAppBar() {
                   路线
                 </Button>
               </Link>
+              <Link href="/formula" className="ml-2">
+                <Button variant="text" className=" px-0" startIcon={<PrecisionManufacturingIcon />}>
+                  制造
+                </Button>
+              </Link>
               <Link href="/discussion" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                   讨论
@@ -79,8 +83,6 @@ export default function HeaderAppBar() {
                   关于
                 </Button>
               </Link>
-
-              <QQBtn wrapperClassName="mx-2" buttonClassName="px-0" displayText={true} />
 
               <Link href="https://soli-reso.com/" className="ml-2" target="_blank">
                 <Button variant="outlined" sx={{ color: "black" }} color="error">
@@ -131,6 +133,13 @@ export default function HeaderAppBar() {
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
+                  <Link href="/formula" className="mx-auto">
+                    <Button variant="text" className="" startIcon={<PrecisionManufacturingIcon />}>
+                      制造
+                    </Button>
+                  </Link>
+                </MenuItem>
+                <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="/discussion" className="mx-auto">
                     <Button variant="text" className="" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                       讨论
@@ -143,9 +152,6 @@ export default function HeaderAppBar() {
                       关于
                     </Button>
                   </Link>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <QQBtn wrapperClassName="mx-auto" displayText={true} />
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Link href="https://soli-reso.com/" className="mx-auto" target="_blank">
