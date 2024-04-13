@@ -10,6 +10,7 @@ import {
   OnegraphRecommendations,
   OnegraphTopProfitItem,
 } from "@/interfaces/route-page";
+import { calculateRouteCycle } from "@/utils/route-cycle-utils";
 import {
   calculateAccumulatedValues,
   calculateExchanges,
@@ -86,7 +87,7 @@ export default function RoutePage() {
 
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
-  const tabNames = ["一图流", "个性化设置", "线路优选", "硬核模拟", "计算说明"];
+  const tabNames = ["一图流", "个性化设置", "线路优选", "硬核模拟", "环路推荐", "计算说明"];
   const onTabChange = (newIndex: number) => {
     setTabIndex(newIndex);
     trackTabChange(newIndex);
@@ -355,6 +356,16 @@ export default function RoutePage() {
     }
     return results;
   }, [cityGroupedExchangesAllTargetCities, playerConfig, selectedCityForReco]);
+
+  /* Route Cycle Recomendation */
+  const routeCycle = useMemo(() => {
+    try {
+      return calculateRouteCycle(prices, playerConfig);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }, [prices, playerConfig]);
 
   /* tracking */
   const trackTabChange = (index: number) => {
@@ -1053,8 +1064,63 @@ export default function RoutePage() {
           })}
         </div>
 
-        {/* 计算说明 */}
+        {/* 环路推荐 */}
         <div role="tabpanel" hidden={tabIndex !== 4}>
+          <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
+            <div className="flex flex-col">
+              <Typography className="py-1">开发中。</Typography>
+              <Typography className="py-1">多站点循环线路推荐，算法以单位疲劳利润优先。</Typography>
+            </div>
+          </div>
+          <Paper
+            className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full box-border"
+            sx={{
+              "& .MuiFormControl-root": {
+                width: "10rem",
+                margin: "0.5rem",
+              },
+            }}
+          >
+            {routeCycle && routeCycle.cycle && routeCycle.cycle.length > 1 && (
+              <Box>
+                <Typography>
+                  线路：{routeCycle.cycle.map((route) => route.fromCity).join(" -> ")}
+                  {" -> "}
+                  {routeCycle.cycle[0].fromCity}
+                </Typography>
+                <Typography>总利润：{routeCycle.totalProfit}</Typography>
+                <Typography>总疲劳：{routeCycle.totalFatigue}</Typography>
+                <Typography>单位疲劳利润：{routeCycle.profitPerFatigue}</Typography>
+                {routeCycle.cycle.map((route, index) => {
+                  const { fromCity, toCity, restock, profit, fatigue, profitPerFatigue, buys } = route;
+
+                  return (
+                    <Box key={`route-cycle-${fromCity}-${toCity}`}>
+                      <Typography>
+                        {fromCity} <RouteOutlinedIcon className="mx-2" /> {toCity}
+                      </Typography>
+                      <Typography>利润：{profit}</Typography>
+                      <Typography>疲劳：{fatigue}</Typography>
+                      <Typography>单位疲劳利润：{profitPerFatigue}</Typography>
+                      <Typography>进货次数：{restock}</Typography>
+                      <Typography>
+                        购买: &nbsp;
+                        {buys
+                          .map((buy) => {
+                            return buy.product + "(" + buy.lot + ")";
+                          })
+                          .join(", ")}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+            )}
+          </Paper>
+        </div>
+
+        {/* 计算说明 */}
+        <div role="tabpanel" hidden={tabIndex !== 5}>
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
               <Typography className="py-1">买价为砍价后税前价格。</Typography>
