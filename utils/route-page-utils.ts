@@ -120,7 +120,7 @@ export const calculateExchanges = (
         buyPrice = Math.round(buyPrice);
 
         // get prestiged tax to buy price
-        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+        let tax = buyPrestige.specialTax[fromCityMaster] ?? buyPrestige.generalTax;
 
         // get game event tax variation
         const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
@@ -190,7 +190,7 @@ export const calculateExchanges = (
         let singleProfit = sellPrice - buy.buyPrice;
 
         // get prestiged tax to profit
-        const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+        const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
 
         // deduct sell tax, it applies to (sell price - buy price before buy tax)
         singleProfit -= singleProfit * sellTaxRate;
@@ -431,7 +431,7 @@ export const calculateOneGraphBuyCombinations = (
         buyPrice = buyPrice * (1 - bargain / 100);
 
         // get prestiged tax to buy price
-        let tax = buyPrestige.specialTax[fromCity] ?? buyPrestige.generalTax;
+        let tax = buyPrestige.specialTax[fromCityMaster] ?? buyPrestige.generalTax;
 
         // get game event tax variation
         const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
@@ -496,7 +496,7 @@ export const calculateOneGraphBuyCombinations = (
           let singleProfit = sellPrice - buyPrice;
 
           // get prestiged tax
-          const sellTaxRate = sellPrestige.specialTax[toCity] ?? sellPrestige.generalTax;
+          const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
 
           // deduct sell tax, it applies to (sell price - buy price before buy tax)
           singleProfit -= singleProfit * sellTaxRate;
@@ -646,7 +646,7 @@ export const getOneGraphRecommendation = (
   return results;
 };
 
-const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Product, fromCity: CityName) => {
+export const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Product, fromCity: CityName) => {
   // get role resonance skill buy more percent
   let resonanceSkillBuyMorePercent = 0;
   for (const roleName in roles) {
@@ -677,7 +677,7 @@ const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, product: Prod
   return resonanceSkillBuyMorePercent;
 };
 
-const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
+export const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
   let eventBuyMorePercent = 0;
   for (const event of EVENTS) {
     const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
@@ -689,7 +689,7 @@ const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
   return eventBuyMorePercent;
 };
 
-const getGameEventTaxVariation = (product: Product, fromCity: CityName) => {
+export const getGameEventTaxVariation = (product: Product, fromCity: CityName) => {
   let eventTaxVariation = 0;
   for (const event of EVENTS) {
     const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;

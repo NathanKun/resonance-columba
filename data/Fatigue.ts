@@ -38,3 +38,8 @@ export const FATIGUES: Fatigue[] = [
   { cities: ["阿妮塔战备工厂", "铁盟哨站"], fatigue: 26 },
   { cities: ["阿妮塔战备工厂", "修格里城"], fatigue: 23 },
 ];
+
+export const findFatigue = (fromCity: string, toCity: string): number => {
+  const fatigue = FATIGUES.find((f) => f.cities.includes(fromCity) && f.cities.includes(toCity))?.fatigue ?? 0;
+  return fatigue;
+};
