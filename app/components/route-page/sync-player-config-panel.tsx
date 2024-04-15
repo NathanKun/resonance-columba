@@ -68,7 +68,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         event: "sync_player_config",
         category: "player_config",
         action: "download",
-        result: success ? "success" : "failure",
+        label: success ? "success" : "failure",
       });
     } else {
       setIdError(true);
@@ -97,7 +97,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
       event: "sync_player_config",
       category: "player_config",
       action: "upload",
-      result: success ? "success" : "failure",
+      label: success ? "success" : "failure",
     });
   };
 
