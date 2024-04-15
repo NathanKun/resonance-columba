@@ -1070,7 +1070,7 @@ export default function RoutePage() {
           <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
             <div className="flex flex-col">
               <Typography className="py-1">开发中。</Typography>
-              <Typography className="py-1">多站点循环线路推荐，算法以单位疲劳利润优先。</Typography>
+              <Typography className="py-1">多站点循环线路推荐。</Typography>
             </div>
           </div>
           <Paper
