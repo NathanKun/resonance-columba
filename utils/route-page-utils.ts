@@ -25,6 +25,13 @@ import {
   OnegraphPriceDataItem,
 } from "@/interfaces/route-page";
 
+const GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT = 33;
+
+export const calculateGeneralProfitIndex = (profit: number, fatigue: number, restock: number) => {
+  const index = profit / (fatigue + restock * GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT);
+  return Math.round(index);
+};
+
 const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
 
 export const calculateExchanges = (
@@ -577,10 +584,7 @@ export const calculateOneGraphBuyCombinations = (
           }
         }
 
-        // calculate the profit per restock
-        // (currentProfit - zeroRestockProfit) / restock
-        const zeroRestockProfit = buyCombinations[fromCity][toCity][0]?.profit ?? 0;
-        const profitPerRestock = restock > 0 ? Math.round((totalProfit - zeroRestockProfit) / restock) : 0;
+        const generalProfitIndex = calculateGeneralProfitIndex(totalProfit, fatigue, restock);
 
         buyCombinations[fromCity][toCity][restock] = {
           combinations: buyCombination,
@@ -588,7 +592,7 @@ export const calculateOneGraphBuyCombinations = (
           restock,
           fatigue,
           profitPerFatigue: Math.round(totalProfit / fatigue),
-          profitPerRestock,
+          generalProfitIndex,
           usedLot,
           lastNotWastingRestock,
         };

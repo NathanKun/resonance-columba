@@ -90,6 +90,7 @@ const validConfig1 = {
     goAndReturn: true,
     showFatigue: true,
     showProfitPerRestock: true,
+    showGeneralProfitIndex: true,
     displayMode: "table",
   },
   returnBargain: {
@@ -278,6 +279,12 @@ const invalidConfigs = [
       showProfitPerRestock: {
         data: "hello",
       },
+    },
+  },
+  {
+    onegraph: {
+      showFatigue: true,
+      showGeneralProfitIndex: "true",
     },
   },
   {

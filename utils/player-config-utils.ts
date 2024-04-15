@@ -86,13 +86,25 @@ export const isValidPlayerConfig = (config: any) => {
     const onegraph = config.onegraph;
     if (
       Object.keys(onegraph).filter(
-        (key) => !["maxRestock", "goAndReturn", "showFatigue", "showProfitPerRestock", "displayMode"].includes(key)
+        (key) =>
+          ![
+            "maxRestock",
+            "goAndReturn",
+            "showFatigue",
+            "showProfitPerRestock",
+            "showGeneralProfitIndex",
+            "displayMode",
+          ].includes(key)
       ).length > 0
     ) {
       return false;
     }
 
-    if (isNaN(onegraph.maxRestock) || onegraph.maxRestock < 0 || onegraph.maxRestock > 100) {
+    if (
+      (onegraph.maxRestock !== undefined && isNaN(onegraph.maxRestock)) ||
+      onegraph.maxRestock < 0 ||
+      onegraph.maxRestock > 100
+    ) {
       return false;
     }
 
@@ -105,6 +117,10 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (onegraph.showProfitPerRestock !== undefined && typeof onegraph.showProfitPerRestock !== "boolean") {
+      return false;
+    }
+
+    if (onegraph.showGeneralProfitIndex !== undefined && typeof onegraph.showGeneralProfitIndex !== "boolean") {
       return false;
     }
 
@@ -205,6 +221,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     goAndReturn: false,
     showFatigue: false,
     showProfitPerRestock: false,
+    showGeneralProfitIndex: false,
     displayMode: "table",
   },
   productUnlockStatus: {},
