@@ -65,8 +65,9 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         openSnackBar("下载失败，请检查ID是否正确。");
       }
       sendGTMEvent({
-        event: "download_player_config",
+        event: "sync_player_config",
         category: "player_config",
+        action: "download",
         result: success ? "success" : "failure",
       });
     } else {
@@ -92,7 +93,12 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
       openSnackBar("上传失败。");
     }
 
-    sendGTMEvent({ event: "upload_player_config", category: "player_config", result: success ? "success" : "failure" });
+    sendGTMEvent({
+      event: "sync_player_config",
+      category: "player_config",
+      action: "upload",
+      result: success ? "success" : "failure",
+    });
   };
 
   const handleCopy = () => {
