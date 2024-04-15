@@ -33,7 +33,11 @@ export interface PlayerConfigOnegraph {
   maxRestock: number;
   goAndReturn: boolean;
   showFatigue: boolean; // actually is showProfitPerFatigue
+  /**
+   * @deprecated
+   */
   showProfitPerRestock: boolean;
+  showGeneralProfitIndex: boolean;
   displayMode: "table" | "list";
 }
 

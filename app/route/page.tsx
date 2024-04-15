@@ -14,6 +14,7 @@ import { calculateRouteCycle } from "@/utils/route-cycle-utils";
 import {
   calculateAccumulatedValues,
   calculateExchanges,
+  calculateGeneralProfitIndex,
   calculateOneGraphBuyCombinations,
   getBestRoutesByNumberOfBuyingProductTypes,
   getOneGraphRecommendation,
@@ -176,14 +177,14 @@ export default function RoutePage() {
     goAndReturn: onegraphGoAndReturn,
     maxRestock: onegraphMaxRestock,
     showFatigue: onegraphShowFatigue,
-    showProfitPerRestock: onegraphShowProfitPerRestock,
+    showGeneralProfitIndex: onegraphShowGeneralProfitIndex,
     displayMode: onegraphDisplayMode,
   } = playerConfig.onegraph;
   const setOnegraphGoAndReturn = (value: boolean) => oneOnegraphPlayerConfigChange("goAndReturn", value);
   const setMaxRestock = (value: number) => oneOnegraphPlayerConfigChange("maxRestock", value);
   const setOnegraphShowFatigue = (value: boolean) => oneOnegraphPlayerConfigChange("showFatigue", value);
-  const setOnegraphShowProfitPerRestock = (value: boolean) =>
-    oneOnegraphPlayerConfigChange("showProfitPerRestock", value);
+  const setOnegraphShowGeneralProfitIndex = (value: boolean) =>
+    oneOnegraphPlayerConfigChange("showGeneralProfitIndex", value);
   const setOnegraphDisplayMode = (value: "table" | "list") => oneOnegraphPlayerConfigChange("displayMode", value);
   const [onegraphCellColorDisabled, setOnegraphCellColorDisabled] = useState(false);
   const onOnegraphCellColorDisabledButtonClick = () => {
@@ -256,11 +257,11 @@ export default function RoutePage() {
         const goAndRtFatigue = goAndReturn[0].fatigue + goAndReturn[1].fatigue;
         const goAndRtProfitPerFatigue = goAndRtFatigue > 0 ? Math.round(goAndRtProfit / goAndRtFatigue) : 0;
         const goAndRtRestockCount = goAndReturn[0].restock + goAndReturn[1].restock;
-        const goProfitGeneratedByRestock = goAndReturn[0].restock * goAndReturn[0].profitPerRestock;
-        const returnProfitGeneratedByRestock = goAndReturn[1].restock * goAndReturn[1].profitPerRestock;
-        const totalProfitGeneratedByRestock = goProfitGeneratedByRestock + returnProfitGeneratedByRestock;
-        const goAndRtProfitPerRestock =
-          goAndRtRestockCount > 0 ? Math.round(totalProfitGeneratedByRestock / goAndRtRestockCount) : 0;
+        const goAndRtGeneralProfitIndex = calculateGeneralProfitIndex(
+          goAndRtProfit,
+          goAndRtFatigue,
+          goAndRtRestockCount
+        );
 
         const goAndReturnTotal: OnegraphBuyCombinationStats = {
           combinations: [], // dummy prop
@@ -268,7 +269,7 @@ export default function RoutePage() {
           restock: goAndRtRestockCount,
           fatigue: goAndRtFatigue,
           profitPerFatigue: goAndRtProfitPerFatigue,
-          profitPerRestock: goAndRtProfitPerRestock,
+          generalProfitIndex: goAndRtGeneralProfitIndex,
           usedLot: -1, // dummy prop
           lastNotWastingRestock: -1, // dummy prop
         };
@@ -495,13 +496,13 @@ export default function RoutePage() {
                 className="w-30"
                 control={
                   <Switch
-                    checked={onegraphShowProfitPerRestock}
+                    checked={onegraphShowGeneralProfitIndex}
                     onChange={(e) => {
-                      setOnegraphShowProfitPerRestock(e.target.checked);
+                      setOnegraphShowGeneralProfitIndex(e.target.checked);
                     }}
                   />
                 }
-                label={<Typography>显示单位进货书利润</Typography>}
+                label={<Typography>显示综合参考利润</Typography>}
               />
             </Box>
 
@@ -650,9 +651,9 @@ export default function RoutePage() {
                           const profitPerFatigue = onegraphGoAndReturn
                             ? goAndRtStats.profitPerFatigue
                             : reco.simpleGo.profitPerFatigue;
-                          const profitPerRestock = onegraphGoAndReturn
-                            ? goAndRtStats.profitPerRestock
-                            : reco.simpleGo.profitPerRestock;
+                          const generalProfitIndex = onegraphGoAndReturn
+                            ? goAndRtStats.generalProfitIndex
+                            : reco.simpleGo.generalProfitIndex;
 
                           const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
                           const maxProfitOfAll = topProfitsLocal[0].profit;
@@ -699,8 +700,8 @@ export default function RoutePage() {
 
                                 {onegraphShowFatigue && <span className="flex justify-center">{profitPerFatigue}</span>}
 
-                                {onegraphShowProfitPerRestock && (
-                                  <span className="flex justify-center">{profitPerRestock}</span>
+                                {onegraphShowGeneralProfitIndex && (
+                                  <span className="flex justify-center">{generalProfitIndex}</span>
                                 )}
                               </Button>
                             </TableCell>
@@ -719,7 +720,7 @@ export default function RoutePage() {
                 {(onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go).slice(0, 10).map((item, index) => {
                   const { fromCity, toCity, reco } = item;
                   const stats = onegraphGoAndReturn ? reco.goAndReturnTotal : reco.simpleGo;
-                  const { profit, profitPerFatigue, profitPerRestock } = stats;
+                  const { profit, profitPerFatigue, generalProfitIndex } = stats;
                   const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
                   return (
                     <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center py-3">
@@ -747,8 +748,8 @@ export default function RoutePage() {
                       />
                       <ListItemText
                         className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
-                        primary={profitPerRestock}
-                        secondary="利润 / 进货书"
+                        primary={generalProfitIndex}
+                        secondary="综合参考利润"
                       />
                       <Button onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>详情</Button>
                     </ListItem>
@@ -1133,6 +1134,7 @@ export default function RoutePage() {
               <Typography className="py-1">
                 交易所结算页面所展示的利润是不含买入税与卖出时的利润税的，而算法计算的利润是税后的，所以模拟的利润会稍低于交易所显示的利润。
               </Typography>
+              <Typography className="py-1">综合参考利润算法为：总利润 /（总疲劳消耗 + 总票数 * 33）</Typography>
             </div>
           </div>
         </div>
