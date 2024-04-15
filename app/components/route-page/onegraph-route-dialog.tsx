@@ -2,7 +2,7 @@ import { CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import { OneGraphRouteDialogProps, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
-import { Box } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -15,8 +15,8 @@ interface DisplayData {
   profit: number;
   fatigue: number;
   profitPerFatigue: number;
-  buyProducts: string;
-  profitOrder: string;
+  buyProducts: React.JSX.Element[];
+  profitOrder: React.JSX.Element[];
   usedLot: number;
   restockCount: number;
   generalProfitIndex: number;
@@ -42,7 +42,11 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats, city: CityName): DisplayData => {
     // display products ordered base on profit
-    const profitOrder = stats.combinations.map((c) => c.name).join(", ");
+    const profitOrder = stats.combinations.map((c) => (
+      <span key={`profitorder-${c.name}`} className="mx-1">
+        {c.name}
+      </span>
+    ));
 
     // display products orderd base on in-game order
     const buyProducts = stats.combinations
@@ -59,14 +63,16 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
       // map to name for display
       .map((c) => {
         const { name, buyLot, availableLot } = c;
+        const chipText = buyLot < availableLot ? `(买${buyLot} / 总${availableLot})` : buyLot;
+        const BuyNumberChip = <Chip label={chipText} size="small" className="mx-1" />;
 
-        if (buyLot < availableLot) {
-          return `${name} (买${buyLot} / 总${availableLot})`;
-        }
-
-        return `${name}`;
-      })
-      .join(", ");
+        return (
+          <span key={`buyproducts-${name}`} className="mx-1">
+            {name}
+            {BuyNumberChip}
+          </span>
+        );
+      });
     return {
       profit: stats.profit,
       fatigue: stats.fatigue,
