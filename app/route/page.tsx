@@ -1130,7 +1130,6 @@ export default function RoutePage() {
               <Typography className="py-1">
                 利润排序使用的是单位舱位利润，暂不支持单位疲劳利润或单位进货卡利润。
               </Typography>
-              <Typography className="py-1">单位进货书利润算法为：（利润 - 不进货路线利润） / 进货次数</Typography>
               <Typography className="py-1">
                 交易所结算页面所展示的利润是不含买入税与卖出时的利润税的，而算法计算的利润是税后的，所以模拟的利润会稍低于交易所显示的利润。
               </Typography>
