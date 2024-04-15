@@ -3,6 +3,7 @@ import { INITIAL_PLAYER_CONFIG } from "@/utils/player-config-utils";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 interface SyncPlayerConfigPanelProps {
@@ -63,6 +64,11 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         // TODO: show error message
         openSnackBar("下载失败，请检查ID是否正确。");
       }
+      sendGTMEvent({
+        event: "download_player_config",
+        category: "player_config",
+        result: success ? "success" : "failure",
+      });
     } else {
       setIdError(true);
     }
@@ -85,6 +91,8 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
     } else {
       openSnackBar("上传失败。");
     }
+
+    sendGTMEvent({ event: "upload_player_config", category: "player_config", result: success ? "success" : "failure" });
   };
 
   const handleCopy = () => {
