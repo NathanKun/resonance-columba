@@ -67,7 +67,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
         const BuyNumberChip = <Chip label={chipText} size="small" className="mx-1" />;
 
         return (
-          <span key={`buyproducts-${name}`} className="mx-1">
+          <span key={`buyproducts-${name}`} className="mx-1 inline-flex items-center">
             {name}
             {BuyNumberChip}
           </span>
