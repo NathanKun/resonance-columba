@@ -22,7 +22,7 @@ export default function usePlayerConfig() {
     }
   };
 
-  const internalSetPlayerConfig = (updater: SetStateAction<PlayerConfig>) => {
+  const internalSetPlayerConfig = (updater: SetStateAction<PlayerConfig>): void => {
     setPlayerConfig((oldVal) => {
       let newVal;
       if (typeof updater === "function") {
