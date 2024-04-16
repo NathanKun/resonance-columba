@@ -47,9 +47,9 @@ import TableRow from "@mui/material/TableRow";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import { PriceContext } from "../../../price-provider";
-import BargainInputs from "../../route-page/bargain-inputs";
-import NumberInput from "../../route-page/number-input";
-import OneGraphRouteDialog from "../../route-page/onegraph-route-dialog";
+import BargainInputs from "../bargain-inputs";
+import NumberInput from "../number-input";
+import OneGraphRouteDialog from "../onegraph-route-dialog";
 
 interface OnegraphTabProps {
   playerConfig: PlayerConfig;

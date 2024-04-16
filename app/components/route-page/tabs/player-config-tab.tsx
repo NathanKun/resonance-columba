@@ -7,11 +7,11 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import { SetStateAction } from "react";
-import BargainInputs from "../../route-page/bargain-inputs";
-import NumberInput from "../../route-page/number-input";
-import ProductUnlockSelect from "../../route-page/product-unlock-select";
-import RoleSkillSelects from "../../route-page/role-skill-selects";
-import SyncPlayerConfigPanel from "../../route-page/sync-player-config-panel";
+import BargainInputs from "../bargain-inputs";
+import NumberInput from "../number-input";
+import ProductUnlockSelect from "../product-unlock-select";
+import RoleSkillSelects from "../role-skill-selects";
+import SyncPlayerConfigPanel from "../sync-player-config-panel";
 
 interface PlayerConfigTabProps {
   playerConfig: PlayerConfig;
