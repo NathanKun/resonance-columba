@@ -9,7 +9,7 @@ import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/price-utils";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import { IconButton, ThemeProvider, alpha, darken, lighten, useTheme } from "@mui/material";
+import { IconButton, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
   MRT_Cell,
   MRT_Column,
@@ -530,11 +530,7 @@ export default function PricesTable() {
     },
   });
 
-  return (
-    <ThemeProvider theme={theme}>
-      <MaterialReactTable table={table} />
-    </ThemeProvider>
-  );
+  return <MaterialReactTable table={table} />;
 }
 
 interface MRT_EditFunctionProps {

@@ -17,9 +17,6 @@ import { PriceContext } from "../price-provider";
 export default function RoutePage() {
   const { prices } = useContext(PriceContext);
 
-  /* theme */
-  const theme = useTheme();
-
   /* tabs */
   const [tabIndex, setTabIndex] = useState(0);
   const tabNames = ["一图流", "个性化设置", "线路优选", "硬核模拟", "环路推荐", "计算说明"];
@@ -64,7 +61,6 @@ export default function RoutePage() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
     <Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -145,6 +141,5 @@ export default function RoutePage() {
         </div>
       </div>
     </Box>
-    </ThemeProvider>
   );
 }
