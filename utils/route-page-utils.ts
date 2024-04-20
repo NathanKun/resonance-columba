@@ -25,7 +25,7 @@ import {
   OnegraphPriceDataItem,
 } from "@/interfaces/route-page";
 
-const GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT = 33;
+export const GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT = 33;
 
 export const calculateGeneralProfitIndex = (profit: number, fatigue: number, restock: number) => {
   const index = profit / (fatigue + restock * GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT);
