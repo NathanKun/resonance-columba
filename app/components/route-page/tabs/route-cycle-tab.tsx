@@ -95,7 +95,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
     const totalRestock = routeCycleV2.reduce((acc, route) => acc + route.graphItem.restock, 0);
     const totalBargain = routeCycleV2.reduce((acc, route) => acc + route.graphItem.bargainCount, 0);
     const totalRaise = routeCycleV2.reduce((acc, route) => acc + route.graphItem.raiseCount, 0);
-    const profitPerFatigue = totalProfit / totalFatigue;
+    const profitPerFatigue = Math.round(totalProfit / totalFatigue);
     const generalProfitIndex = calculateGeneralProfitIndex(totalProfit, totalFatigue, totalRestock);
 
     return {
@@ -305,7 +305,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
             <Typography>总进货书需求：{v2Stats.totalRestock}</Typography>
             <Typography>总砍价次数：{v2Stats.totalBargain}</Typography>
             <Typography>总抬价次数：{v2Stats.totalRaise}</Typography>
-            {routeCycleV2.map((route, index) => {
+            {routeCycleV2.map((route) => {
               const { fromCity, toCity, graphItem } = route;
               const {
                 bargainCount,
