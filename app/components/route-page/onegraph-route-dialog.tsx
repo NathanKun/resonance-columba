@@ -122,7 +122,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 进货过多！会浪费进货书。使用超过{goDisplayData.lastNotWastingRestock}本进货书后不会再产生收益。
               </DialogContentText>
             )}
-            <DialogContentText>需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
+            <DialogContentText component="div">需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
             <DialogContentText>产品利润顺位：{goDisplayData.profitOrder}</DialogContentText>
             <DialogContentText>所需舱位：{goDisplayData.usedLot}</DialogContentText>
             <DialogContentText>
@@ -145,7 +145,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                     本进货书后不会再产生收益。
                   </DialogContentText>
                 )}
-                <DialogContentText>需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
+                <DialogContentText component="div">需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
                 <DialogContentText>产品利润顺位：{returnDisplayData.profitOrder}</DialogContentText>
                 <DialogContentText>所需舱位：{returnDisplayData.usedLot}</DialogContentText>
                 <DialogContentText>
