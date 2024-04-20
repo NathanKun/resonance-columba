@@ -3,21 +3,26 @@ import { findFatigue } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
-import { PlayerConfig } from "@/interfaces/player-config";
+import { PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
 import {
+  calculateGeneralProfitIndex,
   getGameEventBuyMorePercent,
   getGameEventTaxVariation,
   getResonanceSkillBuyMorePercent,
 } from "./route-page-utils";
 
-export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: PlayerConfig) => {
+export const calculateRouteCycle = (
+  prices: GetPricesProducts,
+  maxLot: number,
+  playerConfigRoles: PlayerConfigRoles,
+  playerConfigPrestige: PlayerConfigPrestige
+) => {
   const start = performance.now();
 
-  // 货车的容量
-  const CAPACITY = playerConfig.maxLot;
-
   const CITIY_NUM = CITIES.length;
+  const MAX_RESTOCK = 3; // try to restock up to this on a same city
+  const RESTOCK_THRESHOLD = 80000; // if a restock can make profit more than this, do it
 
   // 问题描述：
   // 有 CITIY_NUM 个城市，一个含有 PRODUCT_NUM 件商品的列表，一个容量为 CAPACITY 的货车。
@@ -46,10 +51,10 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
 
   for (const fromCity of CITIES) {
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
-    const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCityMaster]);
+    const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfigPrestige[fromCityMaster]);
     if (!buyPrestige) {
       console.warn(
-        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfig.prestige[fromCityMaster]}`
+        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfigPrestige[fromCityMaster]}`
       );
       continue;
     }
@@ -63,10 +68,10 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
       let profits: [Product, number][] = [];
       for (const product of PRODUCTS) {
         const toCityMaster = CITY_BELONGS_TO[toCity] ?? toCity;
-        const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCityMaster]);
+        const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfigPrestige[toCityMaster]);
         if (!sellPrestige) {
           console.warn(
-            `Prestige configurtation not found for ${toCityMaster} level ${playerConfig.prestige[toCityMaster]}`
+            `Prestige configurtation not found for ${toCityMaster} level ${playerConfigPrestige[toCityMaster]}`
           );
           continue;
         }
@@ -109,11 +114,11 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
 
       const doBuy = (buysCombination: [Product, number][], restock: number) => {
         let profit = 0;
-        let cap = CAPACITY;
+        let cap = maxLot;
         for (let [product, pdtProfit] of profits) {
           if (pdtProfit > 0) {
             // get role resonance skill buy more percent
-            const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(playerConfig.roles, product, fromCity);
+            const resonanceSkillBuyMorePercent = getResonanceSkillBuyMorePercent(playerConfigRoles, product, fromCity);
 
             // get prestige buy more percent
             const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
@@ -143,15 +148,14 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
 
       let lastProfit = 0;
       let lastProfitRestock = 0;
-      for (let restock = 0; restock < 4; restock++) {
+      for (let restock = 0; restock < MAX_RESTOCK + 1; restock++) {
         const buyCombinations: [Product, number][] = [];
         const profit = doBuy(buyCombinations, restock);
         BUYS[fromCity][toCity][restock] = buyCombinations;
 
         // if profit is greater than last profit + restockThreshold, continue to next restock,
         // otherwise, stop, use last profit
-        const restockThreshold = 80000;
-        if (restock > 0 && profit - lastProfit <= restockThreshold) {
+        if (restock > 0 && profit - lastProfit <= RESTOCK_THRESHOLD) {
           break;
         }
         lastProfit = profit;
@@ -171,7 +175,7 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
   // console.log("BUYS", BUYS);
 
   // # 计算每单位疲劳的利润
-  const PROFIT_PER_DISTANCE: {
+  const PROFIT_PER_FATIGUE: {
     [fromCity: CityName]: {
       [toCity: CityName]: number;
     };
@@ -192,16 +196,16 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
       }
 
       const profitPerDistance = PROFIT[fromCity][toCity].profit / fatigue;
-      const fromCityData = PROFIT_PER_DISTANCE[fromCity] ?? {};
+      const fromCityData = PROFIT_PER_FATIGUE[fromCity] ?? {};
       fromCityData[toCity] = profitPerDistance;
-      PROFIT_PER_DISTANCE[fromCity] = fromCityData;
+      PROFIT_PER_FATIGUE[fromCity] = fromCityData;
     }
   }
 
   // console.log("PROFIT_PER_DISTANCE", PROFIT_PER_DISTANCE);
 
   // # 找到最大单次利润，理论上界
-  let profitUpperBound = Math.max(...Object.values(PROFIT_PER_DISTANCE).map((v) => Math.max(...Object.values(v))));
+  let profitUpperBound = Math.max(...Object.values(PROFIT_PER_FATIGUE).map((v) => Math.max(...Object.values(v))));
   let profitLowerBound = 0;
   // console.log("profitUpperBound", profitUpperBound);
 
@@ -344,7 +348,7 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
           restock,
           profit: PROFIT[fromCity][toCity].profit,
           fatigue: findFatigue(fromCity, toCity),
-          profitPerFatigue: PROFIT_PER_DISTANCE[fromCity][toCity],
+          profitPerFatigue: PROFIT_PER_FATIGUE[fromCity][toCity],
           buys: BUYS[fromCity][toCity][restock].map(([product, lot]) => ({
             product: product.name,
             lot,
@@ -358,5 +362,10 @@ export const calculateRouteCycle = (prices: GetPricesProducts, playerConfig: Pla
     totalProfit: cycleResult?.[1] ?? 0,
     totalFatigue: cycleResult?.[2] ?? 0,
     profitPerFatigue: cycleResult?.[3] ?? 0,
+    generalProfitIndex: calculateGeneralProfitIndex(
+      cycleResult?.[1] ?? 0,
+      cycleResult?.[2] ?? 0,
+      cycle.reduce((acc, cycleIt) => acc + cycleIt.restock, 0)
+    ),
   };
 };
