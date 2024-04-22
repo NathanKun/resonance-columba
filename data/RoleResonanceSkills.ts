@@ -3,6 +3,13 @@ import { ResonanceSkills } from "@/interfaces/role-skill";
 export const ROLE_RESONANCE_SKILLS: {
   [role: string]: ResonanceSkills;
 } = {
+  波克士: {
+    1: {
+      other: {
+        driveLessFatigue: 1,
+      },
+    },
+  },
   星花: {
     1: {
       buyMore: {
@@ -86,7 +93,15 @@ export const ROLE_RESONANCE_SKILLS: {
     },
   },
   黛丝莉: {
+    1: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
+    },
     4: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
       buyMore: {
         product: {
           毛绒玩具: 20,
@@ -94,6 +109,9 @@ export const ROLE_RESONANCE_SKILLS: {
       },
     },
     5: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
       buyMore: {
         product: {
           毛绒玩具: 30,
@@ -173,7 +191,20 @@ export const ROLE_RESONANCE_SKILLS: {
         },
       },
     },
+    4: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
+      buyMore: {
+        product: {
+          金箔酒: 20,
+        },
+      },
+    },
     5: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
       buyMore: {
         product: {
           金箔酒: 30,
@@ -245,7 +276,15 @@ export const ROLE_RESONANCE_SKILLS: {
     },
   },
   卡莲: {
+    1: {
+      bargain: {
+        afterFailedSuccessRate: 2,
+      },
+    },
     4: {
+      bargain: {
+        afterFailedSuccessRate: 2,
+      },
       buyMore: {
         city: {
           贡露城: 20,
@@ -301,6 +340,219 @@ export const ROLE_RESONANCE_SKILLS: {
         city: {
           阿妮塔能源研究所: 30,
         },
+      },
+    },
+  },
+
+  霖: {
+    1: {
+      bargain: {
+        bargainCount: 1,
+      },
+    },
+    4: {
+      bargain: {
+        bargainCount: 1,
+        firstTrySuccessRate: 2,
+      },
+    },
+    5: {
+      bargain: {
+        bargainCount: 1,
+        firstTrySuccessRate: 3,
+      },
+    },
+  },
+  伊洛娜: {
+    1: {
+      bargain: {
+        firstTrySuccessRate: 2,
+      },
+    },
+    4: {
+      bargain: {
+        firstTrySuccessRate: 2,
+        raiseSuccessRate: 1,
+      },
+    },
+    5: {
+      bargain: {
+        firstTrySuccessRate: 2,
+        raiseSuccessRate: 2,
+      },
+    },
+  },
+  薇尔岚: {
+    1: {
+      bargain: {
+        afterFailedSuccessRate: 2,
+      },
+    },
+    5: {
+      bargain: {
+        afterFailedSuccessRate: 3,
+      },
+    },
+  },
+  宵月: {
+    1: {
+      bargain: {
+        bargainCount: 1,
+      },
+    },
+  },
+  卡塔斯: {
+    1: {
+      bargain: {
+        bargainRate: 0.3,
+      },
+    },
+    4: {
+      bargain: {
+        bargainRate: 0.3,
+        bargainCount: 1,
+      },
+    },
+    5: {
+      bargain: {
+        bargainRate: 0.5,
+        bargainCount: 1,
+      },
+    },
+  },
+  跳鼠: {
+    4: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
+    },
+  },
+  夏洛蒂: {
+    4: {
+      bargain: {
+        bargainSuccessRate: 1,
+      },
+    },
+    5: {
+      bargain: {
+        bargainSuccessRate: 2,
+      },
+    },
+  },
+  莉薇娅: {
+    1: {
+      bargain: {
+        bargainRate: 0.3,
+      },
+    },
+    4: {
+      bargain: {
+        bargainRate: 0.3,
+        afterFailedLessFatigue: 1,
+      },
+    },
+    5: {
+      bargain: {
+        bargainRate: 0.5,
+        afterFailedLessFatigue: 1,
+      },
+    },
+  },
+  苍叶: {
+    1: {
+      bargain: {
+        raiseCount: 1,
+      },
+    },
+  },
+  那由他: {
+    1: {
+      bargain: {
+        raiseCount: 1,
+      },
+    },
+  },
+  马吉拉: {
+    1: {
+      bargain: {
+        raiseRate: 0.3,
+      },
+    },
+    4: {
+      bargain: {
+        raiseCount: 1,
+        raiseRate: 0.3,
+      },
+    },
+    5: {
+      bargain: {
+        raiseCount: 1,
+        raiseRate: 0.5,
+      },
+    },
+  },
+  冯·里奈: {
+    1: {
+      bargain: {
+        raiseSuccessRate: 1,
+      },
+    },
+    5: {
+      bargain: {
+        raiseSuccessRate: 2,
+      },
+    },
+  },
+  约书亚: {
+    1: {
+      bargain: {
+        raiseRate: 0.3,
+      },
+    },
+    4: {
+      bargain: {
+        raiseSuccessRate: 1,
+        raiseRate: 0.3,
+      },
+    },
+    5: {
+      bargain: {
+        raiseSuccessRate: 1,
+        raiseRate: 0.5,
+      },
+    },
+  },
+  闻笙: {
+    1: {
+      bargain: {
+        afterFailedLessFatigue: 1,
+      },
+    },
+    4: {
+      bargain: {
+        afterFailedLessFatigue: 1,
+      },
+      buyMore: {
+        product: {
+          限定公仔: 20,
+        },
+      },
+    },
+    5: {
+      bargain: {
+        afterFailedLessFatigue: 1,
+      },
+      buyMore: {
+        product: {
+          限定公仔: 30,
+        },
+      },
+    },
+  },
+  阿尔喀娜: {
+    4: {
+      bargain: {
+        afterFailedLessFatigue: 1,
       },
     },
   },

@@ -2,18 +2,7 @@ import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
 import { ResonanceSkill } from "@/interfaces/role-skill";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import {
-  Avatar,
-  Box,
-  Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Avatar, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Image from "next/image";
 
 interface RoleSkillSelectsProps {
@@ -30,28 +19,85 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
   };
 
   const renderSkillText = (roleSkill: ResonanceSkill) => {
+    const block = (keyPrefix: string, text: string): JSX.Element => (
+      <span key={keyPrefix} className="mx-auto block text-center pt-1 max-sm:min-w-24">
+        {text}
+      </span>
+    );
+
     const texts: any = [];
 
-    const pdtSkill = roleSkill.buyMore.product;
+    const pdtSkill = roleSkill?.buyMore?.product;
     if (pdtSkill) {
       Object.entries(pdtSkill).map(([pdt, percent]) => {
-        texts.push(
-          <span key={`roleskilltext-pdt-${pdt}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
-            {pdt}+{percent}%
-          </span>,
-        );
+        texts.push(block(`roleskilltext-pdt-${pdt}`, `${pdt}+${percent}%`));
       });
     }
 
-    const citySkill = roleSkill.buyMore.city;
+    const citySkill = roleSkill?.buyMore?.city;
     if (citySkill) {
       Object.entries(citySkill).map(([city, percent]) => {
-        texts.push(
-          <span key={`roleskilltext-city-${city}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
-            {city}特产+{percent}%
-          </span>,
-        );
+        texts.push(block(`roleskilltext-city-${city}`, `${city}特产+${percent}%`));
       });
+    }
+
+    const bargainSkills = roleSkill?.bargain;
+    if (bargainSkills) {
+      const {
+        firstTrySuccessRate,
+        afterFailedSuccessRate,
+        bargainCount,
+        bargainSuccessRate,
+        bargainRate,
+        raiseCount,
+        raiseSuccessRate,
+        raiseRate,
+        afterFailedLessFatigue,
+      } = bargainSkills;
+
+      if (firstTrySuccessRate) {
+        texts.push(block("roleskilltext-firstTrySuccessRate", `首次议价成功率+${firstTrySuccessRate}%`));
+      }
+
+      if (afterFailedSuccessRate) {
+        texts.push(block("roleskilltext-afterFailedSuccessRate", `议价失败后下次成功率+${afterFailedSuccessRate}%`));
+      }
+
+      if (bargainCount) {
+        texts.push(block("roleskilltext-bargainCount", `砍价次数+${bargainCount}`));
+      }
+
+      if (bargainSuccessRate) {
+        texts.push(block("roleskilltext-bargainSuccessRate", `砍价成功率+${bargainSuccessRate}%`));
+      }
+
+      if (bargainRate) {
+        texts.push(block("roleskilltext-bargainRate", `砍价幅度+${bargainRate}%`));
+      }
+
+      if (raiseCount) {
+        texts.push(block("roleskilltext-raiseCount", `抬价次数+${raiseCount}`));
+      }
+
+      if (raiseSuccessRate) {
+        texts.push(block("roleskilltext-raiseSuccessRate", `抬价成功率+${raiseSuccessRate}%`));
+      }
+
+      if (raiseRate) {
+        texts.push(block("roleskilltext-raiseRate", `抬价幅度外+${raiseRate}%`));
+      }
+
+      if (afterFailedLessFatigue) {
+        texts.push(block("roleskilltext-afterFailedLessFatigue", `价失败时增加的疲劳值-${afterFailedLessFatigue}`));
+      }
+    }
+
+    const otherSkills = roleSkill?.other;
+    if (otherSkills) {
+      const { driveLessFatigue } = otherSkills;
+      if (driveLessFatigue) {
+        texts.push(block("roleskilltext-driveLessFatigue", `驾驶疲劳值-${driveLessFatigue}`));
+      }
     }
 
     return texts;
@@ -77,7 +123,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
             {Object.entries(ROLE_RESONANCE_SKILLS).map(([role, resonanceSkills]) => (
               <TableRow key={`role-${role}`}>
                 <TableCell scope="row" className="max-sm:p-1">
-                  <Avatar>
+                  <Avatar className="mx-auto">
                     <Image src={`/roles/head/${role}.png`} alt={role} width={40} height={40} />
                   </Avatar>
                   <span className="mx-auto block text-center pt-2">{role}</span>

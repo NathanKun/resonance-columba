@@ -1,6 +1,6 @@
 import { CITIES, CITY_BELONGS_TO, CityName } from "@/data/Cities";
 import { EVENTS } from "@/data/Event";
-import { FATIGUES } from "@/data/Fatigue";
+import { findFatigue } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
@@ -280,7 +280,7 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
         exchange.restockAccumulatedLot = (restockCount + 1) * exchange.accumulatedLot;
 
         // fatigue calculation
-        const fatigue = getRouteFatigue(fromCity, toCity);
+        const fatigue = findFatigue(fromCity, toCity, playerConfig.roles);
         if (fatigue) {
           const bargainFatigue = playerConfig.bargain.bargainFatigue ?? 0;
           const raiseFatigue = playerConfig.bargain.raiseFatigue ?? 0;
@@ -291,10 +291,6 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
       }
     }
   }
-};
-
-export const getRouteFatigue = (city1: CityName, city2: CityName) => {
-  return FATIGUES.find((fatigue) => fatigue.cities.includes(city1) && fatigue.cities.includes(city2))?.fatigue;
 };
 
 export const getBestRoutesByNumberOfBuyingProductTypes = (
@@ -564,7 +560,7 @@ export const calculateOneGraphBuyCombinations = (
         buyCombinations[fromCity][toCity] = buyCombinations[fromCity][toCity] ?? {};
 
         const totalProfit = buyCombination.reduce((acc, it) => acc + it.profit, 0);
-        let fatigue = getRouteFatigue(fromCity, toCity) ?? 0;
+        let fatigue = findFatigue(fromCity, toCity, roles) ?? 0;
         if (!barginDisabled) {
           fatigue += bargainFatigue + raiseFatigue;
         }
