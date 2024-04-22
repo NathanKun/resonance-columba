@@ -38,7 +38,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
         texts.push(
           <span key={`roleskilltext-pdt-${pdt}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
             {pdt}+{percent}%
-          </span>
+          </span>,
         );
       });
     }
@@ -49,7 +49,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
         texts.push(
           <span key={`roleskilltext-city-${city}`} className="mx-auto block text-center pt-1 max-sm:min-w-24">
             {city}特产+{percent}%
-          </span>
+          </span>,
         );
       });
     }
@@ -60,10 +60,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
   // table of role skills per resonance level
   return (
     <Box>
-      <TableContainer
-        component={Paper}
-        className="w-full bg-white dark:bg-gray-800 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4"
-      >
+      <TableContainer className="w-full bg-white dark:bg-gray-800 max-w-6xl mx-auto">
         <Table>
           <TableHead>
             <TableRow>

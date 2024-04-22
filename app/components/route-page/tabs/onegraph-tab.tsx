@@ -392,7 +392,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
           <BargainInputs
             barginConfig={playerConfig.bargain}
             onBargainChange={onGoBargainChange}
-            className="basis-2/5 p-2 sm:w-40 sm:basis-auto"
+            className="basis-2/5 m-2 sm:w-36 sm:basis-auto"
           />
           <FormControlLabel
             className="w-30 ml-4 -order-1 sm:-order-none"
@@ -413,7 +413,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
           <BargainInputs
             barginConfig={playerConfig.returnBargain}
             onBargainChange={onReturnBargainChange}
-            className="basis-2/5 p-2 sm:w-40 sm:basis-auto"
+            className="basis-2/5 m-2 sm:w-36 sm:basis-auto"
           />
           <FormControlLabel
             className="w-30 ml-4 -order-1 sm:-order-none"
@@ -458,7 +458,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
 
         {/* table view */}
         {onegraphDisplayMode === "table" && (
-          <TableContainer component={Paper} className="dark:bg-neutral-900">
+          <TableContainer className="dark:bg-neutral-900">
             <Table
               className="w-auto m-0 lg:m-12"
               sx={{
