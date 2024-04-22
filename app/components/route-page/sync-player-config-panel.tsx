@@ -124,7 +124,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         value={id}
         onChange={(e) => setId(e.target.value)}
         onBlur={onIdFieldBlur}
-        error={idError}
+        error={idError && !!id}
         // disabled={playerConfig.nanoid !== undefined}
       />
       <Button className="m-4" disabled={(!!id && idError) || loading} onClick={handleUpload}>
