@@ -190,7 +190,7 @@ export const calculateRouteCycle = (
         continue;
       }
 
-      const fatigue = findFatigue(fromCity, toCity);
+      const fatigue = findFatigue(fromCity, toCity, playerConfigRoles);
       if (fatigue <= 0) {
         continue;
       }
@@ -256,9 +256,9 @@ export const calculateRouteCycle = (
           // Calculate total fatigue of the cycle
           let cycle_fatigue = 0;
           for (let i = 0; i < cycle.length - 1; i++) {
-            cycle_fatigue += findFatigue(CITIES[cycle[i]], CITIES[cycle[i + 1]]);
+            cycle_fatigue += findFatigue(CITIES[cycle[i]], CITIES[cycle[i + 1]], playerConfigRoles);
           }
-          cycle_fatigue += findFatigue(CITIES[cycle[cycle.length - 1]], CITIES[cycle[0]]);
+          cycle_fatigue += findFatigue(CITIES[cycle[cycle.length - 1]], CITIES[cycle[0]], playerConfigRoles);
 
           // Calculate total profit/total fatigue of the cycle
           let cycle_profit_per_fatigue = cycle_profit / cycle_fatigue;
@@ -286,7 +286,8 @@ export const calculateRouteCycle = (
       .map(() => Array(CITIY_NUM).fill(0));
     for (let i = 0; i < CITIY_NUM; i++) {
       for (let j = 0; j < CITIY_NUM; j++) {
-        WEIGHT[i][j] = search * findFatigue(CITIES[i], CITIES[j]) - (PROFIT[CITIES[i]]?.[CITIES[j]]?.profit ?? 0);
+        WEIGHT[i][j] =
+          search * findFatigue(CITIES[i], CITIES[j], playerConfigRoles) - (PROFIT[CITIES[i]]?.[CITIES[j]]?.profit ?? 0);
       }
     }
 
@@ -347,7 +348,7 @@ export const calculateRouteCycle = (
           toCity,
           restock,
           profit: PROFIT[fromCity][toCity].profit,
-          fatigue: findFatigue(fromCity, toCity),
+          fatigue: findFatigue(fromCity, toCity, playerConfigRoles),
           profitPerFatigue: PROFIT_PER_FATIGUE[fromCity][toCity],
           buys: BUYS[fromCity][toCity][restock].map(([product, lot]) => ({
             product: product.name,

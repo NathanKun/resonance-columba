@@ -263,7 +263,7 @@ export const calculateRouteCycleV2 = (
       };
 
       // run the doBuy function for each restock, bargain, raise count combination
-      const routeFatigue = findFatigue(fromCity, toCity);
+      const routeFatigue = findFatigue(fromCity, toCity, roles);
       const possibleGraphItems: GraphItem[] = [];
       for (let restock = 0; restock <= maxRestockCount; restock++) {
         for (let bargainCount = 0; bargainCount <= maxBargainCount; bargainCount++) {
