@@ -99,7 +99,7 @@ export default function ProductUnlockSelect(props: ProductUnlockSelectProps) {
         return (
           <Box
             key={city}
-            className="flex flex-col items-center w-11/12"
+            className="flex flex-col items-center w-full md:px-12 pb-4"
             sx={
               smallScreen
                 ? {
@@ -120,12 +120,23 @@ export default function ProductUnlockSelect(props: ProductUnlockSelectProps) {
               min={0}
               max={marks.at(-1)!.value}
               valueLabelDisplay="on"
+              valueLabelFormat={(x) => (x >= 10000 ? `${(x / 10000).toFixed(0)}万` : x)}
               orientation={smallScreen ? "vertical" : "horizontal"}
               sx={
                 smallScreen
                   ? {
                       '& input[type="range"]': {
                         WebkitAppearance: "slider-vertical",
+                      },
+                    }
+                  : marks.length >= 8
+                  ? {
+                      // Prevent mark label overlap
+                      "& .MuiSlider-markLabel": {
+                        maxWidth: 80,
+                        width: "max-content",
+                        textWrap: "wrap",
+                        textAlign: "center",
                       },
                     }
                   : {}
