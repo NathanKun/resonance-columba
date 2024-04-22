@@ -19,9 +19,9 @@
     "@mui/material-nextjs": "^5.15.11",
     "@next/bundle-analyzer": "^14.1.4",
     "@next/third-parties": "^14.1.4",
-    "@serwist/next": "9.0.0-preview.21",
-    "@serwist/precaching": "9.0.0-preview.21",
-    "@serwist/sw": "9.0.0-preview.21",
+    "@serwist/next": "9.0.1",
+    "@serwist/precaching": "9.0.1",
+    "@serwist/sw": "9.0.1",
     "@types/node": "18.17.1",
     "@types/react": "18.2.74",
     "@types/react-dom": "18.2.24",
@@ -41,11 +41,11 @@
     "typescript": "5.4.4"
   },
   "devDependencies": {
-    "@serwist/core": "9.0.0-preview.21",
     "@testing-library/react": "^14.2.2",
     "@types/ms": "^0.7.34",
     "@vitejs/plugin-react": "^4.2.1",
     "jsdom": "^24.0.0",
+    "serwist": "^9.0.0",
     "turbo": "^1.13.2",
     "vitest": "^1.4.0"
   }
