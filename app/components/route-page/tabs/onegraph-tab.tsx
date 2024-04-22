@@ -208,7 +208,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       }
     }
 
-    console.debug(onegraphBuyCombinationsGo, onegraphBuyCombinationsRt, results);
+    // console.debug(onegraphBuyCombinationsGo, onegraphBuyCombinationsRt, results);
 
     return results;
   }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
