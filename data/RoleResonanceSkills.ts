@@ -3,6 +3,13 @@ import { ResonanceSkills } from "@/interfaces/role-skill";
 export const ROLE_RESONANCE_SKILLS: {
   [role: string]: ResonanceSkills;
 } = {
+  波克士: {
+    1: {
+      other: {
+        driveLessFatigue: 1,
+      },
+    },
+  },
   星花: {
     1: {
       buyMore: {
@@ -546,13 +553,6 @@ export const ROLE_RESONANCE_SKILLS: {
     4: {
       bargain: {
         afterFailedLessFatigue: 1,
-      },
-    },
-  },
-  波克士: {
-    1: {
-      other: {
-        driveLessFatigue: 1,
       },
     },
   },
