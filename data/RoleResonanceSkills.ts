@@ -549,6 +549,13 @@ export const ROLE_RESONANCE_SKILLS: {
       },
     },
   },
+  波克士: {
+    1: {
+      other: {
+        driveLessFatigue: 1,
+      },
+    },
+  },
 };
 
 /*

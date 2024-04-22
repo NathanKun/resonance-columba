@@ -18,6 +18,9 @@ export interface ResonanceSkill {
     raiseRate?: number; // + raise rate
     afterFailedLessFatigue?: number; // - fatigue after failed bargain
   };
+  other?: {
+    driveLessFatigue?: number; // - fatigue for driving
+  };
 }
 
 export interface ResonanceSkills {

@@ -92,6 +92,14 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
       }
     }
 
+    const otherSkills = roleSkill?.other;
+    if (otherSkills) {
+      const { driveLessFatigue } = otherSkills;
+      if (driveLessFatigue) {
+        texts.push(block("roleskilltext-driveLessFatigue", `驾驶疲劳值-${driveLessFatigue}`));
+      }
+    }
+
     return texts;
   };
 
