@@ -21,6 +21,7 @@ export const isValidPlayerConfig = (config: any) => {
       (key) =>
         ![
           "maxLot",
+          "tradeLevel",
           "bargain",
           "returnBargain",
           "prestige",
@@ -34,7 +35,20 @@ export const isValidPlayerConfig = (config: any) => {
     return false;
   }
 
-  if (config.maxLot && (isNaN(config.maxLot) || config.maxLot < 0 || config.maxLot > 5000)) {
+  if (
+    config.maxLot !== undefined &&
+    (typeof config.maxLot === "string" || isNaN(config.maxLot) || config.maxLot < 0 || config.maxLot > 5000)
+  ) {
+    return false;
+  }
+
+  if (
+    config.tradeLevel !== undefined &&
+    (typeof config.tradeLevel === "string" ||
+      isNaN(config.tradeLevel) ||
+      config.tradeLevel < 1 ||
+      config.tradeLevel > 60)
+  ) {
     return false;
   }
 
@@ -101,9 +115,11 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (
-      (onegraph.maxRestock !== undefined && isNaN(onegraph.maxRestock)) ||
-      onegraph.maxRestock < 0 ||
-      onegraph.maxRestock > 100
+      onegraph.maxRestock !== undefined &&
+      (typeof onegraph.maxRestock === "string" ||
+        isNaN(onegraph.maxRestock) ||
+        onegraph.maxRestock < 0 ||
+        onegraph.maxRestock > 100)
     ) {
       return false;
     }
@@ -195,6 +211,7 @@ export const mergePlayerConfigs = (newConfig: any): PlayerConfig => {
 
 export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
   maxLot: 500,
+  tradeLevel: 20,
   bargain: {
     bargainPercent: 0,
     raisePercent: 0,

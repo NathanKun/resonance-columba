@@ -145,7 +145,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         清空本地配置
       </Button>
 
-      <Typography className="basis-full">
+      <Typography className="basis-full p-2">
         第一次上传时将ID留空，直接点击上传按钮，系统会自动生成ID。之后将ID填入到需要同步的设备，点击下载即可。
       </Typography>
 

@@ -53,7 +53,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
       }}
     >
       <Box className="m-4">
-        <Typography>无垠号</Typography>
+        <Typography className="p-2">无垠号</Typography>
         <NumberInput
           label="货舱大小"
           min={100}
@@ -63,10 +63,21 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
           value={playerConfig.maxLot}
           setValue={(newValue) => onPlayerConfigChange("maxLot", newValue)}
         />
+        <NumberInput
+          label="贸易等级"
+          min={1}
+          max={60}
+          defaultValue={10}
+          type="integer"
+          value={playerConfig.tradeLevel}
+          setValue={(newValue) => onPlayerConfigChange("tradeLevel", newValue)}
+        />
       </Box>
 
       <Box className="m-4">
-        <Typography>声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。</Typography>
+        <Typography className="p-2">
+          声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。
+        </Typography>
         <NumberInput
           label="修格里城"
           min={8}
@@ -106,12 +117,12 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
       </Box>
 
       <Box className="m-4">
-        <Typography>议价</Typography>
+        <Typography className="p-2">议价</Typography>
         <BargainInputs barginConfig={playerConfig.bargain} onBargainChange={onGoBargainChange} />
       </Box>
 
       <Box className="m-4">
-        <Typography>乘员共振</Typography>
+        <Typography className="p-2">乘员共振</Typography>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
           <AccordionDetails className="p-0">
@@ -121,7 +132,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
       </Box>
 
       <Box className="m-4">
-        <Typography>商品解锁</Typography>
+        <Typography className="p-2">商品解锁</Typography>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
           <AccordionDetails className="p-0">
@@ -131,7 +142,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
       </Box>
 
       <Box className="m-4">
-        <Typography>数据同步</Typography>
+        <Typography className="p-2">数据同步</Typography>
         <SyncPlayerConfigPanel
           playerConfig={playerConfig}
           setPlayerConfig={setPlayerConfig}

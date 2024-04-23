@@ -2,6 +2,7 @@ import { CityName } from "@/data/Cities";
 
 export interface PlayerConfig {
   maxLot: number;
+  tradeLevel: number;
   bargain: PlayerConfigBargain;
   returnBargain: PlayerConfigBargain;
   prestige: PlayerConfigPrestige;
