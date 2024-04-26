@@ -1,5 +1,6 @@
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { PlayerConfig } from "@/interfaces/player-config";
+import { getBargainSummary } from "@/utils/bargain-utils";
 import { calculateRouteCycleV2 } from "@/utils/route-cycle-utils-v2";
 import { calculateGeneralProfitIndex } from "@/utils/route-page-utils";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
@@ -80,6 +81,11 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
       generalProfitIndex,
     };
   }, [routeCycleV2]);
+
+  const bargainSummery = useMemo(
+    () => getBargainSummary(playerConfig.roles, playerConfig.prestige, playerConfig.tradeLevel),
+    [playerConfig.roles, playerConfig.prestige, playerConfig.tradeLevel]
+  );
 
   const nb = (number: number) => Number(number.toFixed(2));
 
@@ -208,6 +214,23 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
             })}
           </Box>
         )}
+      </Paper>
+
+      {/* display bargain summery */}
+      <Paper>
+        <Typography>个性化设置议价总结</Typography>
+        <Typography>砍价率：{bargainSummery?.bargainRate}</Typography>
+        <Typography>抬价率：{bargainSummery?.raiseRate}</Typography>
+        <Typography>生活技能提供：</Typography>
+        <Typography>砍价次数：{bargainSummery?.skillBargainCount}</Typography>
+        <Typography>抬价次数：{bargainSummery?.skillRaiseCount}</Typography>
+        <Typography>砍价率：{bargainSummery?.skillBargainRate}</Typography>
+        <Typography>抬价率：{bargainSummery?.skillRaiseRate}</Typography>
+        <Typography>砍价成功率：{bargainSummery?.skillBargainSuccessRate}</Typography>
+        <Typography>抬价成功率：{bargainSummery?.skillRaiseSuccessRate}</Typography>
+        <Typography>首次成功率：{bargainSummery?.skillFirstTrySuccessRate}</Typography>
+        <Typography>失败后成功率：{bargainSummery?.skillAfterFailedSuccessRate}</Typography>
+        <Typography>失败后疲劳减少：{bargainSummery?.skillAfterFailedLessFatigue}</Typography>
       </Paper>
     </>
   );
