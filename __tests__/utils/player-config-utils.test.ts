@@ -57,7 +57,8 @@ test("mergePlayerConfigs", () => {
 });
 
 const validConfig1 = {
-  maxLot: 500,
+  maxLot: 600,
+  tradeLevel: 50,
   bargain: {
     bargainPercent: 10,
     raisePercent: 10,
@@ -115,6 +116,15 @@ const invalidConfigs = [
   },
   {
     maxLot: 12345,
+  },
+  {
+    tradeLevel: 0,
+  },
+  {
+    tradeLevel: 61,
+  },
+  {
+    tradeLevel: "20",
   },
   {
     bargain: {
