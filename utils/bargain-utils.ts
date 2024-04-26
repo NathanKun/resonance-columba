@@ -28,7 +28,7 @@ import { PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-con
 
 type BargainType = "bargain" | "raise";
 
-interface BargainSummary {
+export interface BargainSummary {
   bargainRate: number;
   raiseRate: number;
   skillBargainCount: number;
@@ -42,10 +42,9 @@ interface BargainSummary {
   skillAfterFailedSuccessRate: number;
 }
 
-export const doBargain = (
-  roles: PlayerConfigRoles,
+export const simulateBargain = (
   prestige: PlayerConfigPrestige,
-  tradeLevel: number,
+  bargainSummary: BargainSummary,
   city: CityName,
   type: BargainType,
   maxTriesParam: number
@@ -60,31 +59,51 @@ export const doBargain = (
     };
   }
 
-  const maxTimes = Math.min(getBargainMaxTimes(roles, prestige, city, type), maxTriesParam, 10); // force max 10 tries, otherwise it will be too slow
+  const {
+    bargainRate,
+    raiseRate,
+    skillBargainCount,
+    skillRaiseCount,
+    skillBargainSuccessRate,
+    skillRaiseSuccessRate,
+    skillFirstTrySuccessRate: firstTrySuccessRate,
+    skillAfterFailedLessFatigue: fatigueReduceOnFailed,
+    skillAfterFailedSuccessRate: afterFailedSuccessRate,
+  } = bargainSummary;
 
-  const bargainRatePerTry = getBargainRate(roles, tradeLevel, type);
+  const maxTimes = Math.min(
+    getBargainMaxTimes(skillBargainCount, skillRaiseCount, prestige, city, type),
+    maxTriesParam,
+    10
+  ); // force max 10 tries, otherwise it will be too slow
 
-  const fatigueReduceOnFailed = sumRolesBargainSkillValue(roles, "afterFailedLessFatigue");
+  const bargainRatePerTry = type === "bargain" ? bargainRate : raiseRate;
+
   const successFatigue = 8;
   const failedFatigue = successFatigue - fatigueReduceOnFailed;
 
   const prestigeLevel = prestige[CITY_BELONGS_TO[city] ?? city] ?? 0;
 
+  // make bargain stop when the success rate is more than 20%
+  const maxSuccessTimes = Math.ceil(20 / bargainRatePerTry);
+
   // all possible bargain success & failed combinations
-  const generateCombinations = (n: number, current: boolean[] = [], combinations: boolean[][] = []): boolean[][] => {
-    if (current.length === n) {
+  const generateCombinations = (
+    n: number,
+    current: boolean[] = [],
+    combinations: boolean[][] = [],
+    successCount: number = 0
+  ): boolean[][] => {
+    if (current.length === n || successCount === maxSuccessTimes) {
       combinations.push(current);
     } else {
-      generateCombinations(n, [...current, true], combinations); // success
-      generateCombinations(n, [...current, false], combinations); // failure
+      generateCombinations(n, [...current, true], combinations, successCount + 1); // success
+      generateCombinations(n, [...current, false], combinations, successCount); // failure
     }
     return combinations;
   };
 
   let bargainResults: boolean[][] = generateCombinations(maxTimes, [], []);
-
-  // make bargain stop when the success rate is more than 20%
-  const maxSuccessTimes = Math.ceil(20 / bargainRatePerTry);
   for (let i = 0; i < bargainResults.length; i++) {
     const combination = bargainResults[i];
     let successTimes = 0;
@@ -122,18 +141,15 @@ export const doBargain = (
       successRate += prestigeLevel * 0.5;
 
       // add role resonance skill success rate
-      const successRateSkillName = type === "bargain" ? "bargainSuccessRate" : "raiseSuccessRate";
-      successRate += sumRolesBargainSkillValue(roles, successRateSkillName);
+      successRate += type === "bargain" ? skillBargainSuccessRate : skillRaiseSuccessRate;
 
       // check if can apply firstTrySuccessRate by finding any successful bargain before
-      const firstTrySuccessRate = sumRolesBargainSkillValue(roles, "firstTrySuccessRate");
       const previousSuccess = bargainResult.slice(0, i).find((success) => success);
       if (!previousSuccess) {
         successRate += firstTrySuccessRate;
       }
 
       // check if can apply afterFailedSuccessRate by finding if last bargain failed
-      const afterFailedSuccessRate = sumRolesBargainSkillValue(roles, "afterFailedSuccessRate");
       const previousFailed = bargainResult.slice(0, i).find((success) => !success);
       if (previousFailed) {
         successRate += afterFailedSuccessRate;
@@ -182,19 +198,7 @@ export const doBargain = (
   };
 };
 
-export const getBargainSummary = (
-  roles: PlayerConfigRoles,
-  prestige: PlayerConfigPrestige,
-  tradeLevel: number
-): BargainSummary => {
-  // for (const city of CITIES) {
-  //   const bargainMaxTimes = getBargainMaxTimes(roles, prestige, city, "bargain");
-  //   const raiseMaxTimes = getBargainMaxTimes(roles, prestige, city, "raise");
-  // }
-
-  const bargainRate = getBargainRate(roles, tradeLevel, "bargain");
-  const raiseRate = getBargainRate(roles, tradeLevel, "raise");
-
+export const getBargainSummary = (roles: PlayerConfigRoles, tradeLevel: number): BargainSummary => {
   const skillBargainCount = sumRolesBargainSkillValue(roles, "bargainCount");
   const skillRaiseCount = sumRolesBargainSkillValue(roles, "raiseCount");
   const skillBargainRate = sumRolesBargainSkillValue(roles, "bargainRate");
@@ -204,6 +208,9 @@ export const getBargainSummary = (
   const skillAfterFailedLessFatigue = sumRolesBargainSkillValue(roles, "afterFailedLessFatigue");
   const skillFirstTrySuccessRate = sumRolesBargainSkillValue(roles, "firstTrySuccessRate");
   const skillAfterFailedSuccessRate = sumRolesBargainSkillValue(roles, "afterFailedSuccessRate");
+
+  const bargainRate = getBargainRate(skillBargainRate, skillRaiseRate, tradeLevel, "bargain");
+  const raiseRate = getBargainRate(skillBargainRate, skillRaiseRate, tradeLevel, "raise");
 
   return {
     bargainRate,
@@ -221,7 +228,8 @@ export const getBargainSummary = (
 };
 
 const getBargainMaxTimes = (
-  roles: PlayerConfigRoles,
+  skillBargainCount: number,
+  skillRaiseCount: number,
   prestige: PlayerConfigPrestige,
   city: CityName,
   type: BargainType
@@ -242,13 +250,12 @@ const getBargainMaxTimes = (
   }
 
   // role resonance skill
-  const skillName = type === "bargain" ? "bargainCount" : "raiseCount";
-  times += sumRolesBargainSkillValue(roles, skillName);
+  times += type === "bargain" ? skillBargainCount : skillRaiseCount;
 
   return times;
 };
 
-const getBargainRate = (roles: PlayerConfigRoles, tradeLevel: number, type: BargainType) => {
+const getBargainRate = (skillBargainRate: number, skillRaiseRate: number, tradeLevel: number, type: BargainType) => {
   // base rate
   let rate = type === "bargain" ? 3 : 2;
 
@@ -256,8 +263,7 @@ const getBargainRate = (roles: PlayerConfigRoles, tradeLevel: number, type: Barg
   rate += tradeLevel * 0.1;
 
   // role resonance skill
-  const skillName = type === "bargain" ? "bargainRate" : "raiseRate";
-  rate += sumRolesBargainSkillValue(roles, skillName);
+  rate += type === "bargain" ? skillBargainRate : skillRaiseRate;
 
   return rate;
 };
