@@ -5,6 +5,7 @@ import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { PlayerConfigPrestige, PlayerConfigProductUnlockStatus, PlayerConfigRoles } from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
+import { doBargain } from "./bargain-utils";
 import {
   GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT,
   calculateGeneralProfitIndex,
@@ -61,12 +62,6 @@ interface FindRouteFunctions {
 }
 
 interface RouteCycleInputs {
-  bargainRate: number;
-  bargainSuccessRate: number;
-  bargainOnceFatigue: number;
-  raiseRate: number;
-  raiseSuccessRate: number;
-  raiseOnceFatigue: number;
   maxBargainCount: number;
   maxRaiseCount: number;
   maxRestockCount: number;
@@ -75,6 +70,7 @@ interface RouteCycleInputs {
 export const calculateRouteCycleV2 = (
   prices: GetPricesProducts,
   maxLot: number,
+  tradeLevel: number,
   roles: PlayerConfigRoles,
   prestige: PlayerConfigPrestige,
   productUnlockStatus: PlayerConfigProductUnlockStatus,
@@ -82,31 +78,7 @@ export const calculateRouteCycleV2 = (
 ) => {
   const start = performance.now();
 
-  // TODO: user input
-  // const bargainRate = 9.5;
-  // const bargainSuccessRate = 80;
-  // const bargainOnceFatigue = 8;
-  // const raiseRate = 8.5;
-  // const raiseSuccessRate = 70;
-  // const raiseOnceFatigue = 8;
-  // const maxBargainCount = 1;
-  // const maxRaiseCount = 1;
-  // const maxRestockCount = 2;
-
-  const {
-    bargainRate,
-    bargainSuccessRate,
-    bargainOnceFatigue,
-    raiseRate,
-    raiseSuccessRate,
-    raiseOnceFatigue,
-    maxBargainCount,
-    maxRaiseCount,
-    maxRestockCount,
-  } = routeCycleInputs;
-
-  const bargainExpectedRate = (bargainRate * bargainSuccessRate) / 10000;
-  const raiseExpectedRate = (raiseRate * raiseSuccessRate) / 10000;
+  const { maxBargainCount, maxRaiseCount, maxRestockCount } = routeCycleInputs;
 
   const graph: Graph = {};
 
@@ -134,6 +106,14 @@ export const calculateRouteCycleV2 = (
         console.warn(`Prestige configurtation not found for ${toCityMaster} level ${prestige[toCityMaster]}`);
         continue;
       }
+
+      // calculate bargain expected rate & fatigue
+      const bargainResults = [...Array(maxBargainCount + 1).keys()].map((bargainCount) =>
+        doBargain(roles, prestige, tradeLevel, fromCity, "bargain", bargainCount)
+      );
+      const raiseResults = [...Array(maxRaiseCount + 1).keys()].map((raiseCount) =>
+        doBargain(roles, prestige, tradeLevel, toCity, "raise", raiseCount)
+      );
 
       // get profit for each product
       const productsBuyPossibilities: {
@@ -169,19 +149,19 @@ export const calculateRouteCycleV2 = (
               // get prestiged sell tax to profit
               const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
 
-              // calculate bargain rate, cap at 20%
-              let finalBargainRate = bargainExpectedRate * bargainCount;
-              finalBargainRate = 1 - Math.min(finalBargainRate, 0.2);
+              // calculate bargain rate
+              let bargainRate = bargainResults[bargainCount].expectedRate;
+              bargainRate = 1 - Math.min(bargainRate, 0.2);
 
               // apply bargain to buy price
-              const bargainedBuyPrice = buyPrice * finalBargainRate;
+              const bargainedBuyPrice = buyPrice * bargainRate;
 
-              // calculate raise rate, cap at 20%
-              let finalRaiseRate = raiseExpectedRate * raiseCount;
-              finalRaiseRate = 1 + Math.min(finalRaiseRate, 0.2);
+              // calculate raise rate
+              let raiseRate = raiseResults[raiseCount].expectedRate;
+              raiseRate = 1 + Math.min(raiseRate, 0.2);
 
               // apply raise to sell price
-              const raisedSellPrice = sellPrice * finalRaiseRate;
+              const raisedSellPrice = sellPrice * raiseRate;
 
               let singleProfit = raisedSellPrice - bargainedBuyPrice;
               singleProfit -= singleProfit * sellTaxRate; // Tax when selling
@@ -269,11 +249,14 @@ export const calculateRouteCycleV2 = (
         for (let bargainCount = 0; bargainCount <= maxBargainCount; bargainCount++) {
           for (let raiseCount = 0; raiseCount <= maxRaiseCount; raiseCount++) {
             const { profit, buys } = doBuy(restock, bargainCount, raiseCount);
-            const bargainTotalFagigue = bargainCount * bargainOnceFatigue;
-            const raiseTotalFatigue = raiseCount * raiseOnceFatigue;
+            // const bargainTotalFagigue = bargainCount * bargainOnceFatigue;
+            // const raiseTotalFatigue = raiseCount * raiseOnceFatigue;
+            const bargainTotalFagigue = bargainResults[bargainCount].expectedFatigue;
+            const raiseTotalFatigue = raiseResults[raiseCount].expectedFatigue;
             const totalFatigue = routeFatigue + bargainTotalFagigue + raiseTotalFatigue;
-            const profitPerFatigue = Math.round(profit / totalFatigue);
-            const generalProfitIndex = calculateGeneralProfitIndex(profit, totalFatigue, restock);
+            const profitPerFatigue = totalFatigue > 0 ? Math.round(profit / totalFatigue) : 0;
+            const generalProfitIndex =
+              totalFatigue > 0 ? calculateGeneralProfitIndex(profit, totalFatigue, restock) : 0;
 
             possibleGraphItems.push({
               restock,
@@ -468,10 +451,8 @@ export const calculateRouteCycleV2 = (
     return routes;
   };
 
-  // console.log("profit index");
   // findRoutes(profitIndex);
 
-  console.log("general profit index");
   const results = findRoutes(byGeneralProfitIndex);
 
   console.debug(`Calculate route cycle took ${performance.now() - start}ms`);
