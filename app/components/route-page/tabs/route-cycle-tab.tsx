@@ -30,15 +30,21 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
     };
   }, [maxBargainCount, maxRaiseCount, maxRestockCount]);
 
+  /* calculation */
+  const bargainSummery = useMemo(
+    () => getBargainSummary(playerConfig.roles, playerConfig.tradeLevel),
+    [playerConfig.roles, playerConfig.tradeLevel]
+  );
+
   const routeCycleV2 = useMemo(() => {
     try {
       return calculateRouteCycleV2(
         prices,
         playerConfig.maxLot,
-        playerConfig.tradeLevel,
         playerConfig.roles,
         playerConfig.prestige,
         playerConfig.productUnlockStatus,
+        bargainSummery,
         routeCycleInputs
       );
     } catch (e) {
@@ -48,10 +54,10 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
   }, [
     prices,
     playerConfig.maxLot,
-    playerConfig.tradeLevel,
     playerConfig.roles,
     playerConfig.prestige,
     playerConfig.productUnlockStatus,
+    bargainSummery,
     routeCycleInputs,
   ]);
 
@@ -81,11 +87,6 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
       generalProfitIndex,
     };
   }, [routeCycleV2]);
-
-  const bargainSummery = useMemo(
-    () => getBargainSummary(playerConfig.roles, playerConfig.prestige, playerConfig.tradeLevel),
-    [playerConfig.roles, playerConfig.prestige, playerConfig.tradeLevel]
-  );
 
   const nb = (number: number) => Number(number.toFixed(2));
 

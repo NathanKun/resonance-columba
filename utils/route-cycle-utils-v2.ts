@@ -5,7 +5,7 @@ import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
 import { PlayerConfigPrestige, PlayerConfigProductUnlockStatus, PlayerConfigRoles } from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
-import { doBargain } from "./bargain-utils";
+import { BargainSummary, simulateBargain } from "./bargain-utils";
 import {
   GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT,
   calculateGeneralProfitIndex,
@@ -70,10 +70,10 @@ interface RouteCycleInputs {
 export const calculateRouteCycleV2 = (
   prices: GetPricesProducts,
   maxLot: number,
-  tradeLevel: number,
   roles: PlayerConfigRoles,
   prestige: PlayerConfigPrestige,
   productUnlockStatus: PlayerConfigProductUnlockStatus,
+  bargainSummery: BargainSummary,
   routeCycleInputs: RouteCycleInputs
 ) => {
   const start = performance.now();
@@ -109,10 +109,10 @@ export const calculateRouteCycleV2 = (
 
       // calculate bargain expected rate & fatigue
       const bargainResults = [...Array(maxBargainCount + 1).keys()].map((bargainCount) =>
-        doBargain(roles, prestige, tradeLevel, fromCity, "bargain", bargainCount)
+        simulateBargain(prestige, bargainSummery, fromCity, "bargain", bargainCount)
       );
       const raiseResults = [...Array(maxRaiseCount + 1).keys()].map((raiseCount) =>
-        doBargain(roles, prestige, tradeLevel, toCity, "raise", raiseCount)
+        simulateBargain(prestige, bargainSummery, toCity, "raise", raiseCount)
       );
 
       // get profit for each product
