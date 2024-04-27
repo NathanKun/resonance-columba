@@ -556,6 +556,38 @@ export const ROLE_RESONANCE_SKILLS: {
       },
     },
   },
+  苔妮: {
+    1: {
+      buyMore: {
+        product: {
+          蜂窝放热烧蚀材料: 20,
+          钛矿石: 20,
+        },
+      },
+    },
+    4: {
+      bargain: {
+        raiseSuccessRate: 1,
+      },
+      buyMore: {
+        product: {
+          蜂窝放热烧蚀材料: 20,
+          钛矿石: 20,
+        },
+      },
+    },
+    5: {
+      bargain: {
+        raiseSuccessRate: 1,
+      },
+      buyMore: {
+        product: {
+          蜂窝放热烧蚀材料: 50,
+          钛矿石: 50,
+        },
+      },
+    },
+  },
 };
 
 /*
