@@ -4,6 +4,7 @@ import {
   OneGraphRouteDialogData,
   OnegraphBuyCombinationStats,
   OnegraphRecommendations,
+  OnegraphTopProfit,
   OnegraphTopProfitItem,
 } from "@/interfaces/route-page";
 import {
@@ -11,6 +12,7 @@ import {
   calculateOneGraphBuyCombinations,
   getOneGraphRecommendation,
 } from "@/utils/route-page-utils";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import Looks3Icon from "@mui/icons-material/Looks3";
@@ -47,6 +49,7 @@ import TableRow from "@mui/material/TableRow";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useContext, useMemo, useState } from "react";
 import { PriceContext } from "../../../price-provider";
+import StatedIconButton from "../StatedIconButton";
 import BargainInputs from "../bargain-inputs";
 import NumberInput from "../number-input";
 import OneGraphRouteDialog from "../onegraph-route-dialog";
@@ -114,6 +117,9 @@ export default function OnegraphTab(props: OnegraphTabProps) {
   };
   const [onegraphRouteDialogData, setOnegraphRouteDialogData] = useState<OneGraphRouteDialogData>();
   const [onegraphRouteDialogOpen, setOnegraphRouteDialogOpen] = useState(false);
+  const [onegraphListModeSortedBy, setOnegraphListModeSortedBy] = useState<
+    "byProfit" | "byProfitPerFatigue" | "byGeneralProfitIndex"
+  >("byProfit");
 
   /* onegraph route calculations */
   // no brain brute force aller-retour calculation :)
@@ -213,10 +219,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
     return results;
   }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
 
-  const topProfits: {
-    go: OnegraphTopProfitItem[];
-    goAndReturn: OnegraphTopProfitItem[];
-  } = useMemo(() => {
+  const topProfits: OnegraphTopProfit = useMemo(() => {
     let goProfits: OnegraphTopProfitItem[] = [];
     let goAndReturnProfits: OnegraphTopProfitItem[] = [];
     for (const fromCity in onegraphRecommendations) {
@@ -225,6 +228,8 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         if (!reco || !reco.simpleGo || reco.goAndReturn?.length !== 2) continue;
         goProfits.push({
           profit: reco.simpleGo.profit,
+          profitPerFatigue: reco.simpleGo.profitPerFatigue,
+          generalProfitIndex: reco.simpleGo.generalProfitIndex,
           reco,
           fromCity,
           toCity,
@@ -232,6 +237,8 @@ export default function OnegraphTab(props: OnegraphTabProps) {
 
         goAndReturnProfits.push({
           profit: reco.goAndReturnTotal.profit,
+          profitPerFatigue: reco.goAndReturnTotal.profitPerFatigue,
+          generalProfitIndex: reco.goAndReturnTotal.generalProfitIndex,
           reco,
           fromCity,
           toCity,
@@ -256,7 +263,23 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       return !reverseItem;
     });
 
-    return { go: goProfits, goAndReturn: goAndReturnProfits };
+    const byProfit = { go: [...goProfits], goAndReturn: [...goAndReturnProfits] };
+
+    const byProfitPerFatigue = {
+      go: [...goProfits].sort((a, b) => b.profitPerFatigue - a.profitPerFatigue),
+      goAndReturn: [...goAndReturnProfits].sort((a, b) => b.profitPerFatigue - a.profitPerFatigue),
+    };
+
+    const byGeneralProfitIndex = {
+      go: [...goProfits].sort((a, b) => b.generalProfitIndex - a.generalProfitIndex),
+      goAndReturn: [...goAndReturnProfits].sort((a, b) => b.generalProfitIndex - a.generalProfitIndex),
+    };
+
+    return {
+      byProfit,
+      byProfitPerFatigue,
+      byGeneralProfitIndex,
+    };
   }, [onegraphRecommendations]);
 
   /* onegraph dialog */
@@ -535,7 +558,9 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                         ? goAndRtStats.generalProfitIndex
                         : reco.simpleGo.generalProfitIndex;
 
-                      const topProfitsLocal = onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go;
+                      const topProfitsLocal = onegraphGoAndReturn
+                        ? topProfits.byProfit.goAndReturn
+                        : topProfits.byProfit.go;
                       const maxProfitOfAll = topProfitsLocal[0].profit;
                       const percentageToMax = Math.round((profit / maxProfitOfAll) * 100);
                       let RankIcon, textClass;
@@ -597,44 +622,112 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         {/* list view */}
         {onegraphDisplayMode === "list" && (
           <List className="w-full">
-            {(onegraphGoAndReturn ? topProfits.goAndReturn : topProfits.go).slice(0, 10).map((item, index) => {
-              const { fromCity, toCity, reco } = item;
-              const stats = onegraphGoAndReturn ? reco.goAndReturnTotal : reco.simpleGo;
-              const { profit, profitPerFatigue, generalProfitIndex } = stats;
-              const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
-              return (
-                <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center py-3">
-                  <ListItemAvatar>
-                    <Avatar>{index + 1}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
-                    primary={
-                      <>
-                        {fromCity} <RouteOutlinedIcon className="px-2 text-4xl" /> {toCity}
-                      </>
+            {/* sort by buttons */}
+            <ListItem className="sm:flex-nowrap flex-wrap justify-center p-0 sm:h-0">
+              <ListItemAvatar></ListItemAvatar>
+              <ListItemText
+                className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
+                primaryTypographyProps={{ className: "flex items-center" }}
+              />
+              {/* desktop sort buttons */}
+              <ListItemText
+                className="sm:basis-1/5 sm:grow basis-1/4 sm:relative sm:-top-6 sm:block grow-0 hidden"
+                primary={
+                  <StatedIconButton
+                    Icon={<ArrowDownwardIcon />}
+                    state={onegraphListModeSortedBy}
+                    setState={setOnegraphListModeSortedBy}
+                    buttonState="byProfit"
+                  />
+                }
+              />
+              <ListItemText
+                className="sm:basis-1/5 sm:grow basis-1/4 sm:relative sm:-top-6 sm:block grow-0 hidden"
+                primary={
+                  <StatedIconButton
+                    Icon={<ArrowDownwardIcon />}
+                    state={onegraphListModeSortedBy}
+                    setState={setOnegraphListModeSortedBy}
+                    buttonState="byProfitPerFatigue"
+                  />
+                }
+              />
+              <ListItemText
+                className="sm:basis-1/5 sm:grow basis-1/4 sm:relative sm:-top-6 sm:block grow-0 hidden"
+                primary={
+                  <StatedIconButton
+                    Icon={<ArrowDownwardIcon />}
+                    state={onegraphListModeSortedBy}
+                    setState={setOnegraphListModeSortedBy}
+                    buttonState="byGeneralProfitIndex"
+                  />
+                }
+              />
+              {/* placeholder */}
+              <Box className="sm:px-8 sm:py-1"></Box>
+              {/* mobile sort buttons */}
+              <Box className="sm:hidden">
+                <Typography className="inline-block">排序：</Typography>
+                <ToggleButtonGroup
+                  value={onegraphListModeSortedBy}
+                  exclusive
+                  onChange={(event, newValue) => {
+                    if (newValue) {
+                      setOnegraphListModeSortedBy(newValue);
                     }
-                    primaryTypographyProps={{ className: "flex items-center" }}
-                  />
-                  <ListItemText
-                    className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
-                    primary={displayProfit}
-                    secondary="总利润"
-                  />
-                  <ListItemText
-                    className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
-                    primary={profitPerFatigue}
-                    secondary="利润 / 疲劳"
-                  />
-                  <ListItemText
-                    className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
-                    primary={generalProfitIndex}
-                    secondary="综合参考利润"
-                  />
-                  <Button onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>详情</Button>
-                </ListItem>
-              );
-            })}
+                  }}
+                  aria-label="onegraph display mode"
+                >
+                  <ToggleButton value="byProfit">利润</ToggleButton>
+                  <ToggleButton value="byProfitPerFatigue">单位疲劳利润</ToggleButton>
+                  <ToggleButton value="byGeneralProfitIndex">综合参考利润</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+            </ListItem>
+
+            {(onegraphGoAndReturn
+              ? topProfits[onegraphListModeSortedBy].goAndReturn
+              : topProfits[onegraphListModeSortedBy].go
+            )
+              .slice(0, 10)
+              .map((item, index) => {
+                const { fromCity, toCity, reco } = item;
+                const stats = onegraphGoAndReturn ? reco.goAndReturnTotal : reco.simpleGo;
+                const { profit, profitPerFatigue, generalProfitIndex } = stats;
+                const displayProfit = profit > 10000 ? (profit / 10000).toFixed(0) + "万" : profit;
+                return (
+                  <ListItem key={`topprofit-${index}`} className="sm:flex-nowrap flex-wrap justify-center py-3">
+                    <ListItemAvatar>
+                      <Avatar>{index + 1}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      className="flex basis-3/4 justify-center sm:basis-2/5 sm:justify-start"
+                      primary={
+                        <>
+                          {fromCity} <RouteOutlinedIcon className="px-2 text-4xl" /> {toCity}
+                        </>
+                      }
+                      primaryTypographyProps={{ className: "flex items-center" }}
+                    />
+                    <ListItemText
+                      className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                      primary={displayProfit}
+                      secondary="总利润"
+                    />
+                    <ListItemText
+                      className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                      primary={profitPerFatigue}
+                      secondary="利润 / 疲劳"
+                    />
+                    <ListItemText
+                      className="sm:basis-1/5 sm:grow basis-1/4 grow-0"
+                      primary={generalProfitIndex}
+                      secondary="综合参考利润"
+                    />
+                    <Button onClick={() => showOneGraphRouteDialog(fromCity, toCity)}>详情</Button>
+                  </ListItem>
+                );
+              })}
           </List>
         )}
       </Paper>
