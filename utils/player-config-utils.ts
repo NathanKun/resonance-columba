@@ -231,6 +231,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     曼德矿场: 8,
     澄明数据中心: 8,
     七号自由港: 8,
+    阿妮塔发射中心: 1,
   },
   roles: {},
   onegraph: {
