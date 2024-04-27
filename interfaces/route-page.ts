@@ -114,5 +114,18 @@ export interface OnegraphTopProfitItem {
   fromCity: CityName;
   toCity: CityName;
   profit: number;
+  profitPerFatigue: number;
+  generalProfitIndex: number;
   reco: OnegraphBuyCombinationTwoWayStats;
+}
+
+export interface OnegraphTopProfitSortedBy {
+  go: OnegraphTopProfitItem[];
+  goAndReturn: OnegraphTopProfitItem[];
+}
+
+export interface OnegraphTopProfit {
+  byProfit: OnegraphTopProfitSortedBy;
+  byProfitPerFatigue: OnegraphTopProfitSortedBy;
+  byGeneralProfitIndex: OnegraphTopProfitSortedBy;
 }
