@@ -80,7 +80,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         </Typography>
         <NumberInput
           label="修格里城"
-          min={8}
+          min={1}
           max={20}
           defaultValue={8}
           type="integer"
@@ -89,7 +89,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         />
         <NumberInput
           label="曼德矿场"
-          min={8}
+          min={1}
           max={20}
           defaultValue={8}
           type="integer"
@@ -98,7 +98,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         />
         <NumberInput
           label="澄明数据中心"
-          min={8}
+          min={1}
           max={20}
           defaultValue={8}
           type="integer"
@@ -107,12 +107,21 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         />
         <NumberInput
           label="七号自由港"
-          min={8}
+          min={1}
           max={20}
           defaultValue={8}
           type="integer"
           value={playerConfig.prestige["七号自由港"]}
           setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
+        />
+        <NumberInput
+          label="阿妮塔发射中心"
+          min={1}
+          max={20}
+          defaultValue={1}
+          type="integer"
+          value={playerConfig.prestige["阿妮塔发射中心"]}
+          setValue={(newValue) => onPrestigeChange("阿妮塔发射中心", newValue)}
         />
       </Box>
 

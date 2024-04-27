@@ -38,6 +38,15 @@ const FATIGUES: Fatigue[] = [
   { cities: ["阿妮塔战备工厂", "淘金乐园"], fatigue: 37 },
   { cities: ["阿妮塔战备工厂", "铁盟哨站"], fatigue: 27 },
   { cities: ["阿妮塔战备工厂", "修格里城"], fatigue: 24 },
+  { cities: ["阿妮塔发射中心", "曼德矿场"], fatigue: 45 },
+  { cities: ["阿妮塔发射中心", "澄明数据中心"], fatigue: 34 },
+  { cities: ["阿妮塔发射中心", "阿妮塔能源研究所"], fatigue: 24 },
+  { cities: ["阿妮塔发射中心", "荒原站"], fatigue: 44 },
+  { cities: ["阿妮塔发射中心", "七号自由港"], fatigue: 28 },
+  { cities: ["阿妮塔发射中心", "淘金乐园"], fatigue: 49 },
+  { cities: ["阿妮塔发射中心", "铁盟哨站"], fatigue: 40 },
+  { cities: ["阿妮塔发射中心", "修格里城"], fatigue: 37 },
+  { cities: ["阿妮塔发射中心", "阿妮塔战备工厂"], fatigue: 28 },
 ];
 
 export const findFatigue = (fromCity: string, toCity: string, playerConfigRoles: PlayerConfigRoles): number => {
