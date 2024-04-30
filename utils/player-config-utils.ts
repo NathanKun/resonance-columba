@@ -107,6 +107,7 @@ export const isValidPlayerConfig = (config: any) => {
             "showFatigue",
             "showProfitPerRestock",
             "showGeneralProfitIndex",
+            "enableMultiConfig",
             "displayMode",
           ].includes(key)
       ).length > 0
@@ -137,6 +138,10 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (onegraph.showGeneralProfitIndex !== undefined && typeof onegraph.showGeneralProfitIndex !== "boolean") {
+      return false;
+    }
+
+    if (onegraph.enableMultiConfig !== undefined && typeof onegraph.enableMultiConfig !== "boolean") {
       return false;
     }
 
@@ -240,6 +245,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     showFatigue: false,
     showProfitPerRestock: false,
     showGeneralProfitIndex: false,
+    enableMultiConfig: false,
     displayMode: "table",
   },
   productUnlockStatus: {},

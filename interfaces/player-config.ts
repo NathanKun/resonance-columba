@@ -39,6 +39,7 @@ export interface PlayerConfigOnegraph {
    */
   showProfitPerRestock: boolean;
   showGeneralProfitIndex: boolean;
+  enableMultiConfig: boolean;
   displayMode: "table" | "list";
 }
 
