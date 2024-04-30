@@ -38,5 +38,13 @@ export default function useSelectedCities(props: { localStorageKey: string }) {
     setSelectedCities(newSelectedCities);
   }, [selectedCities, setSelectedCities]);
 
-  return { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities };
+  const copySourceToTargetCities = useCallback(() => {
+    const newSelectedCities = {
+      sourceCities: selectedCities.sourceCities,
+      targetCities: selectedCities.sourceCities,
+    };
+    setSelectedCities(newSelectedCities);
+  }, [selectedCities, setSelectedCities]);
+
+  return { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities, copySourceToTargetCities };
 }

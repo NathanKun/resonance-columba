@@ -9,6 +9,7 @@ import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/price-utils";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { IconButton, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
   MRT_Cell,
@@ -30,9 +31,10 @@ import VariationInput from "./variation-input";
 
 export default function PricesTable() {
   const { prices, setPrice } = useContext(PriceContext);
-  const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities } = useSelectedCities({
-    localStorageKey: "selectedCities",
-  });
+  const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities, copySourceToTargetCities } =
+    useSelectedCities({
+      localStorageKey: "selectedCities",
+    });
   const theme = useTheme();
 
   const baseBackgroundColor =
@@ -436,6 +438,9 @@ export default function PricesTable() {
         <IconButton onClick={switchSourceAndTargetCities} size="small">
           <SyncAltIcon />
         </IconButton>
+        <IconButton onClick={copySourceToTargetCities} size="small">
+          <ArrowRightAltIcon />
+        </IconButton>
         <IconButton onClick={onTrendCellColorButtonClick} size="small">
           <PaletteIcon />
         </IconButton>
@@ -448,6 +453,7 @@ export default function PricesTable() {
     setSourceCities,
     setTargetCities,
     switchSourceAndTargetCities,
+    copySourceToTargetCities,
   ]);
 
   const table = useMaterialReactTable({
