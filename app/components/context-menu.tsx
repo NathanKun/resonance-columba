@@ -49,6 +49,7 @@ export default forwardRef<ContextMenuRef, ContextMenuProps>(function ContextMenu
       onClose={handleClose}
       anchorReference="anchorPosition"
       anchorPosition={position ?? undefined}
+      autoFocus={false}
       onClick={handleMenuClick}
       onContextMenu={(e) => e.preventDefault()}
     >
