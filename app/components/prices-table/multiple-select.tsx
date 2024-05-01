@@ -10,12 +10,9 @@ export default function MultipleSelect(props: any) {
   const internalHandleChange = (event: any) => {
     const selected = event.target.value;
     if (selected.includes("allBtn")) {
-      const allSelectedBeforeChange = allOptions.length === selectedOptions.length;
-      if (allSelectedBeforeChange) {
-        handleChange([]);
-      } else {
-        handleChange(allOptions);
-      }
+      handleChange(allOptions);
+    } else if (selected.includes("noneBtn")) {
+      handleChange([]);
     } else {
       handleChange(selected);
     }
@@ -59,8 +56,11 @@ export default function MultipleSelect(props: any) {
             {option}
           </MenuItem>
         ))}
-        <MenuItem key="allBtn" value="allBtn">
-          {allOptions.length === selectedOptions.length ? "全取消" : "全选"}
+        <MenuItem key="noneBtn" value="noneBtn" disabled={!selectedOptions.length}>
+          全取消
+        </MenuItem>
+        <MenuItem key="allBtn" value="allBtn" disabled={allOptions.length === selectedOptions.length}>
+          全选
         </MenuItem>
       </Select>
     </FormControl>

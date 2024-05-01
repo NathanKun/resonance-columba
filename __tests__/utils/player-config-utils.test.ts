@@ -93,6 +93,7 @@ const validConfig1 = {
     showFatigue: true,
     showProfitPerRestock: true,
     showGeneralProfitIndex: true,
+    enableMultiConfig: true,
     displayMode: "table",
   },
   returnBargain: {

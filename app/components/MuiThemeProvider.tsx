@@ -1,6 +1,6 @@
 "use client";
 
-import { PaletteMode, ThemeProvider, createTheme } from "@mui/material";
+import { PaletteMode, ThemeProvider, createTheme, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export default function MuiThemeProvider({ children }: { children: React.ReactNode }) {
@@ -16,17 +16,12 @@ export default function MuiThemeProvider({ children }: { children: React.ReactNo
 
   const [theme, setTheme] = useState(buildTheme("light"));
 
+  // https://mui.com/material-ui/customization/dark-mode/#system-preference
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
   useEffect(() => {
-    const query = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => setTheme(buildTheme(query.matches ? "dark" : "light"));
-    query.addEventListener("change", onChange);
+    setTheme(buildTheme(prefersDarkMode ? "dark" : "light"));
+  }, [prefersDarkMode]);
 
-    setTheme(buildTheme(query.matches ? "dark" : "light"));
-
-    // remove the listener
-    return () => {
-      query.removeEventListener("change", onChange);
-    };
-  }, []);
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
