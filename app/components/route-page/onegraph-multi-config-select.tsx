@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   ButtonGroup,
@@ -26,6 +26,8 @@ export default function OnegraphMultiConfigSelect({
   playerConfig,
   onPlayerConfigChange,
 }: OnegraphMultiConfigSelectProps) {
+  const IS_IOS = useMemo(() => /iPad|iPhone|iPod/.test(navigator.platform), []);
+
   const menuRef = useRef<ContextMenuRef>(null);
   const menuActiveConfig = useRef<OnegraphMultiConfigItem>();
   const longPressTimer = useRef<NodeJS.Timeout>();
@@ -46,14 +48,23 @@ export default function OnegraphMultiConfigSelect({
 
   const handleStartLongPress = (e: React.TouchEvent, config: OnegraphMultiConfigItem) => {
     e.preventDefault();
+    if (longPressTimer.current) return;
     longPressTimer.current = setTimeout(() => {
+      longPressTimer.current = undefined;
       handleContextMenu(e.touches[0], config);
     }, 400);
   };
 
-  const handleEndLongPress = () => {
-    clearTimeout(longPressTimer.current);
-    longPressTimer.current = undefined;
+  const handleEndLongPress = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = undefined;
+    }
+  };
+
+  const handlePreventTouchEvent = (e: React.TouchEvent) => {
+    e.preventDefault();
   };
 
   const handleRemoveConfig = () => {
@@ -81,18 +92,32 @@ export default function OnegraphMultiConfigSelect({
     setOpenHelp(true);
   };
 
+  const getButtonContextmenuListener = (
+    config: OnegraphMultiConfigItem
+  ): Pick<ComponentProps<"button">, "onContextMenu" | `onTouch${"Start" | "Move" | "End" | "Cancel"}`> =>
+    IS_IOS
+      ? // iOS won't dispatch contextmenu event
+        {
+          onTouchStart: (e) => handleStartLongPress(e, config),
+          onTouchMove: handlePreventTouchEvent,
+          onTouchEnd: handleEndLongPress,
+          onTouchCancel: handleEndLongPress,
+        }
+      : // PC right click or Android long press will dispatch
+        {
+          onContextMenu: (e) => handleContextMenu(e, config),
+        };
+
   return (
     <>
+      <div className="sm:hidden w-full"></div>
       <ButtonGroup className="overflow-x-auto max-sm:mx-4" variant="outlined">
         {multiConfig.map((config) => (
           <Button
             className="whitespace-nowrap shrink-0"
             key={config.id}
             onClick={() => applyMultiConfig(config)}
-            onContextMenu={(e) => handleContextMenu(e, config)}
-            onTouchStart={(e) => handleStartLongPress(e, config)}
-            onTouchCancel={handleEndLongPress}
-            onTouchEnd={handleEndLongPress}
+            {...getButtonContextmenuListener(config)}
             sx={{ textTransform: "none" }}
           >
             {config.name}
