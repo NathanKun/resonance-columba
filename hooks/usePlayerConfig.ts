@@ -1,44 +1,14 @@
 import { PlayerConfig } from "@/interfaces/player-config";
 import { INITIAL_PLAYER_CONFIG, mergePlayerConfigs } from "@/utils/player-config-utils";
-import { SetStateAction, useEffect, useState } from "react";
-const isServer = typeof window === "undefined";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function usePlayerConfig() {
-  const localStorageKey = "playerConfig";
-
-  const [playerConfig, setPlayerConfig] = useState<PlayerConfig>(INITIAL_PLAYER_CONFIG);
-
-  const initialize = () => {
-    if (isServer) {
-      return INITIAL_PLAYER_CONFIG;
-    }
-    try {
-      const str = localStorage.getItem(localStorageKey);
-      const config = str ? JSON.parse(str) : INITIAL_PLAYER_CONFIG;
-      return mergePlayerConfigs(config);
-    } catch (e) {
-      console.error(e);
-      return INITIAL_PLAYER_CONFIG;
-    }
-  };
-
-  const internalSetPlayerConfig = (updater: SetStateAction<PlayerConfig>): void => {
-    setPlayerConfig((oldVal) => {
-      let newVal;
-      if (typeof updater === "function") {
-        newVal = updater(oldVal);
-      } else {
-        newVal = updater;
-      }
-      if (!isServer) {
-        localStorage.setItem(localStorageKey, JSON.stringify(newVal));
-      }
-      return newVal;
-    });
-  };
+  const [playerConfig, setPlayerConfig] = useLocalStorage<PlayerConfig>("playerConfig", INITIAL_PLAYER_CONFIG, {
+    initializeWithValue: false,
+  });
 
   const setRoleResonance = (role: string, resonance: number) => {
-    internalSetPlayerConfig((oldConfig) => {
+    setPlayerConfig((oldConfig) => {
       return {
         ...oldConfig,
         roles: {
@@ -55,7 +25,7 @@ export default function usePlayerConfig() {
   const setProductUnlock = (newConfig: {
     [pdtName: string]: boolean; // product name to unlock status
   }) => {
-    internalSetPlayerConfig((oldConfig) => {
+    setPlayerConfig((oldConfig) => {
       return {
         ...oldConfig,
         productUnlockStatus: {
@@ -116,7 +86,7 @@ export default function usePlayerConfig() {
         // deep merge it with initial config to avoid missing fields,
         // merge all sub-objects to avoid missing fields in sub-objects
         const mergedConfig = mergePlayerConfigs(data.data);
-        internalSetPlayerConfig(mergedConfig);
+        setPlayerConfig(mergedConfig);
         return true;
       } else {
         return false;
@@ -127,17 +97,9 @@ export default function usePlayerConfig() {
     }
   };
 
-  /* prevents hydration error so that state is only initialized after server is defined */
-  useEffect(() => {
-    if (!isServer) {
-      setPlayerConfig(initialize());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return {
     playerConfig,
-    setPlayerConfig: internalSetPlayerConfig,
+    setPlayerConfig,
     setRoleResonance,
     setProductUnlock,
     uploadPlayerConfig,

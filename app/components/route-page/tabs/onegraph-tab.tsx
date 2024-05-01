@@ -53,6 +53,7 @@ import StatedIconButton from "../StatedIconButton";
 import BargainInputs from "../bargain-inputs";
 import NumberInput from "../number-input";
 import OneGraphRouteDialog from "../onegraph-route-dialog";
+import OnegraphMultiConfigSelect from "../onegraph-multi-config-select";
 
 interface OnegraphTabProps {
   playerConfig: PlayerConfig;
@@ -72,6 +73,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
     maxRestock: onegraphMaxRestock,
     showFatigue: onegraphShowFatigue,
     showGeneralProfitIndex: onegraphShowGeneralProfitIndex,
+    enableMultiConfig: onegraphEnableMultiConfig,
     displayMode: onegraphDisplayMode,
   } = playerConfig.onegraph;
 
@@ -107,6 +109,8 @@ export default function OnegraphTab(props: OnegraphTabProps) {
 
   const setOnegraphShowGeneralProfitIndex = (value: boolean) =>
     oneOnegraphPlayerConfigChange("showGeneralProfitIndex", value);
+
+  const setOnegraphEnableMultiConfig = (value: boolean) => oneOnegraphPlayerConfigChange("enableMultiConfig", value);
 
   const setOnegraphDisplayMode = (value: "table" | "list") => oneOnegraphPlayerConfigChange("displayMode", value);
 
@@ -408,6 +412,19 @@ export default function OnegraphTab(props: OnegraphTabProps) {
             }
             label={<Typography>显示综合参考利润</Typography>}
           />
+
+          <FormControlLabel
+            className="w-30"
+            control={
+              <Switch
+                checked={onegraphEnableMultiConfig}
+                onChange={(e) => {
+                  setOnegraphEnableMultiConfig(e.target.checked);
+                }}
+              />
+            }
+            label={<Typography>启用多配置</Typography>}
+          />
         </Box>
 
         <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
@@ -452,6 +469,14 @@ export default function OnegraphTab(props: OnegraphTabProps) {
           />
         </Box>
       </Box>
+
+      {onegraphEnableMultiConfig ? (
+        <Box alignItems="center" className="mb-2 flex justify-center flex-wrap">
+          <Typography className="m-4 grow sm:grow-0 -order-2 whitespace-nowrap">配置</Typography>
+          <OnegraphMultiConfigSelect playerConfig={playerConfig} onPlayerConfigChange={onPlayerConfigChange} />
+        </Box>
+      ) : null}
+
       <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-6xl mx-auto my-4 dark:bg-neutral-900 ">
         {/* display mode toggle & disable cell color btn */}
         <Box className="flex justify-between items-center">
