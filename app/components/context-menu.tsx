@@ -1,5 +1,5 @@
 import { Menu } from "@mui/material";
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { useState, forwardRef, useImperativeHandle, ComponentProps } from "react";
 
 export interface ContextMenuRef {
   open: (event: React.MouseEvent | Pick<React.MouseEvent, "clientX" | "clientY">) => void;
@@ -7,6 +7,7 @@ export interface ContextMenuRef {
 
 interface ContextMenuProps {
   children?: React.ReactNode;
+  transformOrigin?: ComponentProps<typeof Menu>["transformOrigin"];
   handleClose?: () => void;
 }
 
@@ -49,6 +50,7 @@ export default forwardRef<ContextMenuRef, ContextMenuProps>(function ContextMenu
       onClose={handleClose}
       anchorReference="anchorPosition"
       anchorPosition={position ?? undefined}
+      transformOrigin={props.transformOrigin}
       autoFocus={false}
       onClick={handleMenuClick}
       onContextMenu={(e) => e.preventDefault()}

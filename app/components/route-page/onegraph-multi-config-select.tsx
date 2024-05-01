@@ -40,6 +40,11 @@ export default function OnegraphMultiConfigSelect({
   const [renameOldName, setRenameOldName] = useState<string | null>(null);
   const [openHelp, setOpenHelp] = useState(false);
   const [helpAnchorEl, setHelpAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [isTouch, setIsTouch] = useState(false);
+
+  const markIsTouch = () => {
+    if (!isTouch) setIsTouch(true);
+  };
 
   const handleContextMenu = (e: Parameters<ContextMenuRef["open"]>["0"], config: OnegraphMultiConfigItem) => {
     menuActiveConfig.current = config;
@@ -47,8 +52,8 @@ export default function OnegraphMultiConfigSelect({
   };
 
   const handleStartLongPress = (e: React.TouchEvent, config: OnegraphMultiConfigItem) => {
-    e.preventDefault();
     if (longPressTimer.current) return;
+    markIsTouch();
     longPressTimer.current = setTimeout(() => {
       longPressTimer.current = undefined;
       handleContextMenu(e.touches[0], config);
@@ -56,7 +61,6 @@ export default function OnegraphMultiConfigSelect({
   };
 
   const handleEndLongPress = (e: React.TouchEvent) => {
-    e.preventDefault();
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = undefined;
@@ -92,9 +96,7 @@ export default function OnegraphMultiConfigSelect({
     setOpenHelp(true);
   };
 
-  const getButtonContextmenuListener = (
-    config: OnegraphMultiConfigItem
-  ): Pick<ComponentProps<"button">, "onContextMenu" | `onTouch${"Start" | "Move" | "End" | "Cancel"}`> =>
+  const getButtonContextmenuListener = (config: OnegraphMultiConfigItem): ComponentProps<typeof Button> =>
     IS_IOS
       ? // iOS won't dispatch contextmenu event
         {
@@ -106,6 +108,7 @@ export default function OnegraphMultiConfigSelect({
       : // PC right click or Android long press will dispatch
         {
           onContextMenu: (e) => handleContextMenu(e, config),
+          onTouchStart: markIsTouch,
         };
 
   return (
@@ -132,7 +135,7 @@ export default function OnegraphMultiConfigSelect({
           <HelpOutlineIcon />
         </IconButton>
       </div>
-      <ContextMenu ref={menuRef}>
+      <ContextMenu ref={menuRef} transformOrigin={isTouch ? { vertical: "top", horizontal: "right" } : undefined}>
         <MenuItem onClick={handleUpdateConfig}>更新</MenuItem>
         <MenuItem onClick={handleOpenRenameDialog}>重命名</MenuItem>
         <MenuItem onClick={handleRemoveConfig}>删除</MenuItem>
