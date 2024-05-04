@@ -5,6 +5,15 @@ import { useLocalStorage } from "usehooks-ts";
 export default function usePlayerConfig() {
   const [playerConfig, setPlayerConfig] = useLocalStorage<PlayerConfig>("playerConfig", INITIAL_PLAYER_CONFIG, {
     initializeWithValue: false,
+    deserializer: (value) => {
+      try {
+        const config = value ? JSON.parse(value) : INITIAL_PLAYER_CONFIG;
+        return mergePlayerConfigs(config);
+      } catch (e) {
+        console.error(e);
+        return INITIAL_PLAYER_CONFIG;
+      }
+    },
   });
 
   const setRoleResonance = (role: string, resonance: number) => {
