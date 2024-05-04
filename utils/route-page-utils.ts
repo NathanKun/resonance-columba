@@ -596,7 +596,7 @@ export const calculateOneGraphBuyCombinations = (
     }
   }
 
-  console.debug("calculateOneGraphBuyCombinations", performance.now() - start);
+  // console.debug("calculateOneGraphBuyCombinations", performance.now() - start);
 
   return buyCombinations;
 };

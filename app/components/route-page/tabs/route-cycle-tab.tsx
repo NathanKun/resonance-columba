@@ -181,6 +181,8 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
                 restock,
                 routeFatigue,
                 totalFatigue,
+                bargainExpectedRate,
+                raiseExpectedRate,
               } = graphItem;
 
               return (
@@ -197,10 +199,10 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
                   <Typography>综合参考利润：{generalProfitIndex}</Typography>
                   <Typography>进货次数：{restock}</Typography>
                   <Typography>
-                    砍价次数：{bargainCount} (疲劳：{nb(bargainTotalFagigue)})
+                    砍价次数：{bargainCount} (疲劳：{nb(bargainTotalFagigue)}) (期望: {nb(bargainExpectedRate * 100)}%)
                   </Typography>
                   <Typography>
-                    抬价次数：{raiseCount} (疲劳：{nb(raiseTotalFatigue)})
+                    抬价次数：{raiseCount} (疲劳：{nb(raiseTotalFatigue)}) (期望: {nb(raiseExpectedRate * 100)}%)
                   </Typography>
                   <Typography>
                     购买: &nbsp;
