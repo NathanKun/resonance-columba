@@ -560,7 +560,7 @@ export const ROLE_RESONANCE_SKILLS: {
     1: {
       buyMore: {
         product: {
-          蜂窝放热烧蚀材料: 20,
+          蜂窝防热烧蚀材料: 20,
           钛矿石: 20,
         },
       },
@@ -571,7 +571,7 @@ export const ROLE_RESONANCE_SKILLS: {
       },
       buyMore: {
         product: {
-          蜂窝放热烧蚀材料: 20,
+          蜂窝防热烧蚀材料: 20,
           钛矿石: 20,
         },
       },
@@ -582,7 +582,7 @@ export const ROLE_RESONANCE_SKILLS: {
       },
       buyMore: {
         product: {
-          蜂窝放热烧蚀材料: 50,
+          蜂窝防热烧蚀材料: 50,
           钛矿石: 50,
         },
       },
