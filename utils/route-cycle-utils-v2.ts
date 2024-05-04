@@ -25,6 +25,8 @@ interface GraphItem {
   restock: number;
   bargainCount: number;
   raiseCount: number;
+  bargainExpectedRate: number;
+  raiseExpectedRate: number;
 
   routeFatigue: number;
   bargainTotalFagigue: number;
@@ -253,6 +255,8 @@ export const calculateRouteCycleV2 = (
             // const raiseTotalFatigue = raiseCount * raiseOnceFatigue;
             const bargainTotalFagigue = bargainResults[bargainCount].expectedFatigue;
             const raiseTotalFatigue = raiseResults[raiseCount].expectedFatigue;
+            const bargainExpectedRate = bargainResults[bargainCount].expectedRate;
+            const raiseExpectedRate = raiseResults[raiseCount].expectedRate;
             const totalFatigue = routeFatigue + bargainTotalFagigue + raiseTotalFatigue;
             const profitPerFatigue = totalFatigue > 0 ? Math.round(profit / totalFatigue) : 0;
             const generalProfitIndex =
@@ -262,6 +266,8 @@ export const calculateRouteCycleV2 = (
               restock,
               bargainCount,
               raiseCount,
+              bargainExpectedRate,
+              raiseExpectedRate,
               routeFatigue,
               bargainTotalFagigue,
               raiseTotalFatigue,
