@@ -588,6 +588,31 @@ export const ROLE_RESONANCE_SKILLS: {
       },
     },
   },
+  海因里希: {
+    4: {
+      buyMore: {
+        city: {
+          修格里城: 20,
+        },
+      },
+    },
+  },
+  多萝西: {
+    4: {
+      buyMore: {
+        product: {
+          弹丸加速装置: 20,
+        },
+      },
+    },
+    5: {
+      buyMore: {
+        product: {
+          弹丸加速装置: 30,
+        },
+      },
+    },
+  },
 };
 
 /*
