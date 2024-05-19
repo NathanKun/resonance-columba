@@ -614,38 +614,3 @@ export const ROLE_RESONANCE_SKILLS: {
     },
   },
 };
-
-/*
-
-data validation:
-
-
-allP = new Set()
-allC = new Set()
-for (const rName in roles) {
-    const skill = roles[rName]
-    const pNames = Object.keys(skill.buyMore.product)
-    if (pNames.length) allP.add(...pNames)
-    const cNames = Object.keys(skill.buyMore.city)
-    if (cNames.length) allC.add(...cNames)
-}
-allPs = [...allP]
-allCs = [...allC]
-missingP = []
-missingC = []
-for (const n of allPs) {
-    const found = dataPdts.find(p => p.name === n)
-    if (!found) missingP.push(n)
-}
-for (const n of allCs) {
-    const found = dataCities.find(c => c === n)
-    if (!found) missingC.push(n)
-}
-
-console.warn('missingP', missingP)
-console.warn('missingC', missingC)
-
-TODO:
-missingP (9) ['大龙虾', '毛绒玩具', '拼装模型', '香水', '学会书籍', '刀具', '金箔酒', '医疗药品', '折扇']
-missingC (2) ['贡露城', '海角城']
-*/
