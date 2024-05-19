@@ -6,6 +6,8 @@ export interface ResonanceSkill {
     city?: {
       [cityName: string]: number;
     };
+    // TODO: 雷比斯 may have buy more for all products skill, implement it later
+    all?: number; // + buy more for all products
   };
   bargain?: {
     firstTrySuccessRate?: number; // + success rate for first bargain try
@@ -17,6 +19,12 @@ export interface ResonanceSkill {
     raiseSuccessRate?: number; // + success rate for raise
     raiseRate?: number; // + raise rate
     afterFailedLessFatigue?: number; // - fatigue after failed bargain
+  };
+  // TODO: 隼 may have taxCut skill, implement it later
+  taxCut?: {
+    city?: {
+      [cityName: string]: number;
+    };
   };
   other?: {
     driveLessFatigue?: number; // - fatigue for driving
