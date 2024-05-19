@@ -15,6 +15,9 @@ export default function usePlayerConfig() {
         const roles = merged.roles;
         Object.keys(roles).forEach((role) => {
           const selectedLevel = roles[role].resonance;
+          if (selectedLevel === 0) {
+            return;
+          }
           // check if the selected level is valid
           const availableLevels = Object.keys(ROLE_RESONANCE_SKILLS[role]).map((level) => parseInt(level));
           // if not, set it to the previous level
@@ -23,7 +26,9 @@ export default function usePlayerConfig() {
               .filter((level) => level <= selectedLevel)
               .sort()
               .reverse()[0];
-            roles[role].resonance = previousLevel;
+            if (!isNaN(previousLevel)) {
+              roles[role].resonance = previousLevel;
+            }
           }
         });
 
