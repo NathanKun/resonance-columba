@@ -22,7 +22,8 @@ export const calculateProfit = (
   isBuyableCity: boolean,
   prices: GetPricesProducts
 ) => {
-  if (isBuyableCity) {
+  // not calculating profit of products in thier buyable city, except for craftable products
+  if (isBuyableCity && product.type !== "Craft") {
     return 0;
   }
 
