@@ -527,7 +527,6 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                 },
                 "& .sticky-cell": {
                   position: "sticky",
-                  backgroundColor: prefersDarkMode ? "#171717" : "#fff",
                   zIndex: 2,
                 },
                 "& th.sticky-cell": {
@@ -587,7 +586,9 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                     )}
 
                     {/** city name */}
-                    <TableCell className="onegraph-cell-fromcity-cityname sticky-cell min-w-14">{fromCity}</TableCell>
+                    <TableCell className="onegraph-cell-fromcity-cityname sticky-cell min-w-14 dark:bg-neutral-900 bg-white">
+                      {fromCity}
+                    </TableCell>
 
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
