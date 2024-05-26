@@ -525,18 +525,50 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                 "& .onegraph-cell-fromcity-cityname": {
                   width: "7rem",
                 },
+                "& .sticky-cell": {
+                  position: "sticky",
+                  backgroundColor: "#fff",
+                  zIndex: 2,
+                },
+                "& th.sticky-cell": {
+                  top: 0,
+                },
+                "& td.sticky-cell": {
+                  left: 0,
+                },
+                "& .sticky-cell::before": {
+                  content: '""',
+                  display: "block",
+                  position: "absolute",
+                  border: "solid grey",
+                  pointerEvents: "none",
+                },
+                "& th.sticky-cell::before": {
+                  bottom: -1,
+                  left: 0,
+                  right: 0,
+                  height: 0,
+                  borderWidth: "0 0 1px 0",
+                },
+                "& td.sticky-cell::before": {
+                  top: 0,
+                  bottom: 0,
+                  right: -1,
+                  width: 0,
+                  borderWidth: "0 1px 0 0",
+                },
               }}
             >
               <TableHead>
                 {/** header 1 - spanning 终点 cell */}
                 <TableRow>
-                  <TableCell align="center" colSpan={CITIES.length + 2}>
+                  <TableCell colSpan={2} rowSpan={2}></TableCell>
+                  <TableCell align="center" colSpan={CITIES.length}>
                     终点
                   </TableCell>
                 </TableRow>
                 {/** header 2 - city cells */}
                 <TableRow>
-                  <TableCell colSpan={2}></TableCell>
                   {CITIES.map((city) => (
                     <TableCell key={`onegraph-${city}`} align="center">
                       {city}
@@ -549,13 +581,13 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                   <TableRow key={`onegraph-row-${fromCity}`}>
                     {/** spaning 起点 cell */}
                     {index === 0 && (
-                      <TableCell className="onegraph-cell-fromcity-source" rowSpan={CITIES.length}>
+                      <TableCell className="onegraph-cell-fromcity-source text-center" rowSpan={CITIES.length}>
                         起点
                       </TableCell>
                     )}
 
                     {/** city name */}
-                    <TableCell className="onegraph-cell-fromcity-cityname min-w-14">{fromCity}</TableCell>
+                    <TableCell className="onegraph-cell-fromcity-cityname sticky-cell min-w-14">{fromCity}</TableCell>
 
                     {/** profit cells */}
                     {CITIES.map((toCity) => {
