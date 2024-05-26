@@ -7,9 +7,9 @@ import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/price-utils";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { IconButton, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
   MRT_Cell,
@@ -52,14 +52,15 @@ export default function PricesTable() {
     const result: ProductRow[] = [];
 
     PRODUCTS.map((product): void => {
+      const productName = product.name;
       const buyableCities: CityName[] = product.buyPrices ? Object.keys(product.buyPrices) : [];
+      const craftable = isCraftOnlyProduct(productName);
 
       for (const sourceCity of buyableCities) {
         if (!selectedCities.sourceCities.includes(sourceCity)) {
           continue;
         }
 
-        const productName = product.name;
         let source;
         const targetCity: { [key: CityName]: ProductRowCityPrice } = {};
 
@@ -71,9 +72,11 @@ export default function PricesTable() {
 
           const isBuyableCity = sourceCity === currentColumnCity;
 
-          const productPriceFromApi = isBuyableCity
-            ? productPrices.buy?.[currentColumnCity]
-            : productPrices.sell?.[currentColumnCity]; // sell/buy is player's perspective
+          const productPriceFromApi =
+            isBuyableCity && !craftable // in case of cratable, is has no buy price in it's source city but it can be sold in it's source city
+              ? productPrices.buy?.[currentColumnCity]
+              : productPrices.sell?.[currentColumnCity]; // sell/buy is player's perspective
+
           if (!productPriceFromApi) {
             return;
           }
@@ -99,7 +102,7 @@ export default function PricesTable() {
             price: price!,
           };
 
-          if (isBuyableCity) {
+          if (isBuyableCity && !craftable) {
             source = productPriceForTable;
           } else {
             targetCity[currentColumnCity] = productPriceForTable;
@@ -112,7 +115,7 @@ export default function PricesTable() {
           productName,
           source,
           targetCity,
-          craftable: isCraftOnlyProduct(productName),
+          craftable,
         });
       }
     });
@@ -188,8 +191,8 @@ export default function PricesTable() {
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
 
-                // won't sell the product in its buyable city, so no need to edit variation
-                if (buyableCities.includes(city)) {
+                // won't sell the product in its buyable city, so no need to edit variation, except craftable product
+                if (buyableCities.includes(city) && !rowData.craftable) {
                   return null;
                 }
 
@@ -217,8 +220,8 @@ export default function PricesTable() {
                 const rowData = row.original;
                 const { productName, buyableCities } = rowData;
 
-                // won't sell the product in its buyable city, so no need to edit trend
-                if (buyableCities.includes(city)) {
+                // won't sell the product in its buyable city, so no need to edit trend, except craftable product
+                if (buyableCities.includes(city) && !rowData.craftable) {
                   return null;
                 }
 
