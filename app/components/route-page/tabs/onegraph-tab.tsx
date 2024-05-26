@@ -52,8 +52,8 @@ import { PriceContext } from "../../../price-provider";
 import StatedIconButton from "../StatedIconButton";
 import BargainInputs from "../bargain-inputs";
 import NumberInput from "../number-input";
-import OneGraphRouteDialog from "../onegraph-route-dialog";
 import OnegraphMultiConfigSelect from "../onegraph-multi-config-select";
+import OneGraphRouteDialog from "../onegraph-route-dialog";
 
 interface OnegraphTabProps {
   playerConfig: PlayerConfig;
@@ -527,7 +527,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                 },
                 "& .sticky-cell": {
                   position: "sticky",
-                  backgroundColor: "#fff",
+                  backgroundColor: prefersDarkMode ? "#171717" : "#fff",
                   zIndex: 2,
                 },
                 "& th.sticky-cell": {
