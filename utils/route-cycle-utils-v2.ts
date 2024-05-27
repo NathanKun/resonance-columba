@@ -227,7 +227,7 @@ export const calculateRouteCycleV2 = (
 
           const buyLot = Math.min(
             cap,
-            Math.round((product.buyLot![fromCity]! * (restock + 1) * (100 + totalBuyMorePercent)) / 100)
+            Math.round((product.buyLot![fromCity]! * (100 + totalBuyMorePercent)) / 100) * (restock + 1)
           );
 
           profit += pdtProfit * buyLot;
