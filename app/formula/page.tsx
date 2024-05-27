@@ -5,7 +5,7 @@ import { FORMULAS } from "@/data/Formulas";
 import { CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box, Chip, Typography, useTheme } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -32,7 +32,6 @@ interface PriceItemCache {
 export default function FormulaPage() {
   // const playerConfig = usePlayerConfig();
   const { prices } = useContext(PriceContext);
-  const theme = useTheme();
   const formulas = FORMULAS;
   const cores = ["超载核心", "熔炉核心", "冷凝核心", "负能核心", "混响核心"];
 
@@ -76,7 +75,6 @@ export default function FormulaPage() {
 
     const sell = prices[product]?.sell;
     if (!sell) {
-      console.warn(`no sell price for ${product}`);
       return null;
     }
 
@@ -194,13 +192,13 @@ export default function FormulaPage() {
 
   return (
     <Box className="m-0 md:m-8 xl:m-16">
-      {Object.entries(formulas).map(([name, formula]) => {
-        const sell = findSellPrice(name);
+      {Object.entries(formulas).map(([produceName, formula]) => {
+        const sell = findSellPrice(produceName);
         return (
-          <Accordion key={name}>
+          <Accordion key={produceName}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                {name} - {formula[0].formulaName}
+                {produceName} - {formula[0].formulaName}
               </Typography>
               <Typography sx={{ color: "text.secondary" }}>
                 {sell?.city} {sell?.price}
@@ -208,6 +206,29 @@ export default function FormulaPage() {
             </AccordionSummary>
             <AccordionDetails>
               <Box className="p-2">
+                {sell && (
+                  <Box>
+                    <Box>
+                      <Typography component="span" className="align-middle">
+                        卖出价格：
+                      </Typography>
+                      <Typography component="span" className="mx-1 align-middle">
+                        {sell.city}
+                      </Typography>
+                      <Typography component="span" className="mx-1 align-middle">
+                        {sell.price}
+                      </Typography>
+                      <Chip
+                        label={`${sell.variation}%`}
+                        size="small"
+                        color={getVariationColor(sell.variation)}
+                        className="mx-1"
+                      />
+                    </Box>
+                    <Box>{TheoryHighestSellPriceBlock(produceName, sell.price)}</Box>
+                  </Box>
+                )}
+
                 {formula.map((formulaOfLevel) => {
                   const level = <span className="align-middle pr-4">{formulaOfLevel.formulaLevel}级</span>;
 
@@ -305,7 +326,7 @@ export default function FormulaPage() {
                     );
 
                     // sell price
-                    const { price: sellPrice, city: sellCity, variation: sellVariation } = sell;
+                    const { price: sellPrice } = sell;
 
                     // profit
                     const profit = Math.round(sellPrice * formulaOfLevel.produce.num) - consumesPrimaryPrice;
@@ -322,30 +343,10 @@ export default function FormulaPage() {
                     buySellProfitText = (
                       <Fragment>
                         <Typography>购买原料价格：{consumesPrimaryPrice}</Typography>
-                        <Box>
-                          <Typography component="span" className="align-middle">
-                            卖出价格：
-                          </Typography>
-                          <Typography component="span" className="mx-1 align-middle">
-                            {sellCity}
-                          </Typography>
-                          <Typography component="span" className="mx-1 align-middle">
-                            {sellPrice}
-                          </Typography>
-                          <Chip
-                            label={`${sellVariation}%`}
-                            size="small"
-                            color={getVariationColor(sellVariation)}
-                            className="mx-1"
-                          />
-                        </Box>
-                        <Box>{TheoryHighestSellPriceBlock(formulaOfLevel.produce.product, sellPrice)}</Box>
                         <Box className="my-1">
-                          <Typography>
-                            <Typography>利润：{totalProfit}</Typography>
-                            <Typography className="ml-4">固定产出利润：{profit}</Typography>
-                            <Typography className="ml-4">额外产出期望利润：{extraProducesProfit}</Typography>
-                          </Typography>
+                          <Typography>利润：{totalProfit}</Typography>
+                          <Typography className="ml-4">固定产出利润：{profit}</Typography>
+                          <Typography className="ml-4">额外产出期望利润：{extraProducesProfit}</Typography>
                           <Typography>单件利润：{singleProfit}</Typography>
                           <Typography>额外产出期望利润：{extraProducesProfit}</Typography>
                         </Box>
@@ -354,7 +355,7 @@ export default function FormulaPage() {
                   }
 
                   return (
-                    <Box key={name + formulaOfLevel.formulaLevel} className="p-4">
+                    <Box key={produceName + formulaOfLevel.formulaLevel} className="p-4">
                       <Typography>
                         {level} {fatigue} {unlockCondition}
                       </Typography>
