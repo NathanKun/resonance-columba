@@ -3,13 +3,15 @@
 import { FORMULAS } from "@/data/Formulas";
 // import usePlayerConfig from "@/hooks/usePlayerConfig";
 import { CityName } from "@/data/Cities";
+import { PRODUCTS } from "@/data/Products";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Typography, useTheme } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Image from "next/image";
 import { Fragment, useContext } from "react";
+import FatigueIcon from "../components/icons/FatigueIcon";
 import { PriceContext } from "../price-provider";
 
 interface FormulaProduce {
@@ -17,11 +19,87 @@ interface FormulaProduce {
   num: number;
 }
 
+interface PriceItem {
+  price: number;
+  city: CityName;
+  variation: number;
+}
+
+interface PriceItemCache {
+  [product: string]: PriceItem;
+}
+
 export default function FormulaPage() {
   // const playerConfig = usePlayerConfig();
   const { prices } = useContext(PriceContext);
+  const theme = useTheme();
   const formulas = FORMULAS;
   const cores = ["超载核心", "熔炉核心", "冷凝核心", "负能核心", "混响核心"];
+
+  const sellPrices: PriceItemCache = {};
+  const buyPrices: PriceItemCache = {};
+
+  const findBuyPrice = (product: string) => {
+    if (buyPrices[product]) {
+      return buyPrices[product];
+    }
+
+    const buy = prices[product]?.buy;
+    if (!buy) {
+      return null;
+    }
+
+    const buyableCities = Object.keys(buy);
+    if (buyableCities.length === 0) {
+      return null;
+    }
+
+    const buyableCity = buyableCities[0]; // only consider the first city since most products only have one buyable city
+    const { price, variation } = buy[buyableCity];
+
+    if (!price) {
+      return null;
+    }
+
+    buyPrices[product] = {
+      price,
+      city: buyableCity,
+      variation,
+    };
+    return buyPrices[product];
+  };
+
+  const findSellPrice = (product: string) => {
+    if (sellPrices[product]) {
+      return sellPrices[product];
+    }
+
+    const sell = prices[product]?.sell;
+    if (!sell) {
+      console.warn(`no sell price for ${product}`);
+      return null;
+    }
+
+    const sellableCities = Object.keys(sell);
+    let sellCity = sellableCities[0];
+    let sellVariation = 0;
+    const sellPrice = sellableCities.reduce((acc, city) => {
+      const { price, variation } = sell[city];
+      if (price && price > acc) {
+        sellCity = city;
+        sellVariation = variation;
+        return price;
+      }
+      return acc;
+    }, 0);
+
+    sellPrices[product] = {
+      price: sellPrice,
+      city: sellCity,
+      variation: sellVariation,
+    };
+    return sellPrices[product];
+  };
 
   const toPrimaryMaterial = (item: FormulaProduce): FormulaProduce[] => {
     const { product, num } = item;
@@ -47,63 +125,71 @@ export default function FormulaPage() {
     });
   };
 
-  const sellPrices: {
-    [product: string]: {
-      price: number;
-      city: CityName;
-    };
-  } = {};
-  const buyPrices: { [product: string]: number } = {};
-
-  const findBuyPrice = (product: string) => {
-    if (buyPrices[product]) {
-      return buyPrices[product];
+  const getVariationColor = (variation: number) => {
+    if (variation > 100) {
+      return "variationHigh";
+    } else if (variation === 100) {
+      return "variationMedium";
+    } else {
+      return "variationLow";
     }
-
-    const buy = prices[product]?.buy;
-    if (!buy) {
-      console.warn(`no buy price for ${product}`);
-      return 0;
-    }
-    const buyableCity = Object.keys(buy)[0]; // only consider the first city since most products only have one buyable city
-    const price = buy[buyableCity].price;
-
-    if (!price) {
-      console.warn(`no buy price for ${product} in ${buyableCity}`);
-      return 0;
-    }
-
-    buyPrices[product] = price;
-    return price;
   };
 
-  const findSellPrice = (product: string) => {
-    if (sellPrices[product]) {
-      return sellPrices[product];
+  const MaterialBlock = (item: FormulaProduce, showVariation: boolean) => {
+    const buy = showVariation ? findBuyPrice(item.product) : null;
+    const variation = buy?.variation;
+    return (
+      <Box key={item.product} className="inline-block pr-4">
+        <Typography component="span" className="align-middle">
+          {item.product}
+        </Typography>
+        <Chip label={item.num} size="small" className="mx-1" />
+        {variation && <Chip label={`${variation}%`} size="small" color={getVariationColor(variation)} />}
+      </Box>
+    );
+  };
+
+  const TheoryHighestSellPriceBlock = (product: string, currentHighestPrice: number) => {
+    const pdt = PRODUCTS.find((item) => item.name === product);
+    if (!pdt) {
+      return <></>;
     }
 
-    const sell = prices[product]?.sell;
-    if (!sell) {
-      console.warn(`no sell price for ${product}`);
-      return null;
+    const sellableCities = Object.keys(pdt.sellPrices);
+    if (!sellableCities.length) {
+      return <></>;
     }
 
-    const sellableCities = Object.keys(sell);
-    let sellCity = sellableCities[0];
-    const sellPrice = sellableCities.reduce((acc, city) => {
-      const price = sell[city].price;
-      if (price && price > acc) {
-        sellCity = city;
-        return price;
+    let highestBasePriceCity = null;
+    let highestBasePrice = 0;
+    for (const city of sellableCities) {
+      const price = pdt.sellPrices[city] ?? 0;
+      if (price > highestBasePrice) {
+        highestBasePrice = price;
+        highestBasePriceCity = city;
       }
-      return acc;
-    }, 0);
+    }
 
-    sellPrices[product] = {
-      price: sellPrice,
-      city: sellCity,
-    };
-    return sellPrices[product];
+    if (highestBasePrice === 0) {
+      return <></>;
+    }
+
+    const theoryHighestVariation = 1.2;
+    const theoryHighestPrice = Math.round(highestBasePrice * theoryHighestVariation);
+    const currentPricePercentage = Math.round((currentHighestPrice / theoryHighestPrice) * 100);
+
+    return (
+      <Fragment>
+        <Typography component="span">理论最高价格：</Typography>
+        <Typography component="span" className="mx-1">
+          {highestBasePriceCity}
+        </Typography>
+        <Typography component="span" className="mx-1">
+          {theoryHighestPrice}
+        </Typography>
+        <Typography>当前价格占比：{currentPricePercentage}%</Typography>
+      </Fragment>
+    );
   };
 
   return (
@@ -125,53 +211,11 @@ export default function FormulaPage() {
                 {formula.map((formulaOfLevel) => {
                   const level = <span className="align-middle pr-4">{formulaOfLevel.formulaLevel}级</span>;
 
-                  const fatigue = <Typography>疲劳值：{formulaOfLevel.fatigue}</Typography>;
-
-                  const consumes = formulaOfLevel.consumes;
-                  const consumesText = (
-                    <Box>
-                      <Typography>原料：</Typography>
-                      {consumes.map((item) => {
-                        return (
-                          <Typography key={item.product}>
-                            {item.product} * {item.num}
-                          </Typography>
-                        );
-                      })}
-                    </Box>
-                  );
-
-                  const consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
-
-                  // check if consumes equals consumesPrimary, if not, show consumesPrimaryText
-                  let consumesPrimaryText = <></>;
-                  if (JSON.stringify(consumes) !== JSON.stringify(consumesPrimary)) {
-                    consumesPrimaryText = (
-                      <Box>
-                        <Typography>初级原料：</Typography>
-                        {consumesPrimary.map((item) => {
-                          return (
-                            <Typography key={item.product}>
-                              {item.product} * {item.num}
-                            </Typography>
-                          );
-                        })}
-                      </Box>
-                    );
-                  }
-
-                  const produce = (
-                    <Typography>
-                      产出：{formulaOfLevel.produce.product} * {formulaOfLevel.produce.num}
-                    </Typography>
-                  );
-
-                  const extraProduces = (
-                    <Typography>
-                      额外概率产出：
-                      {formulaOfLevel.extraProduces.product} {formulaOfLevel.extraProduces.min}-
-                      {formulaOfLevel.extraProduces.max} ({formulaOfLevel.extraProduces.chance * 100}%)
-                    </Typography>
+                  const fatigue = (
+                    <span className="align-middle pr-4">
+                      <FatigueIcon className="align-middle mr-1" />
+                      <span className="align-middle">{formulaOfLevel.fatigue}</span>
+                    </span>
                   );
 
                   const unlockCondition = (
@@ -197,43 +241,130 @@ export default function FormulaPage() {
                     </span>
                   );
 
-                  // materials buy price
-                  const consumesPrimaryPrice = consumesPrimary.reduce((acc, item) => {
-                    return acc + findBuyPrice(item.product) * item.num;
-                  }, 0);
+                  const consumes = formulaOfLevel.consumes;
+                  const consumesText = (
+                    <Fragment>
+                      <Typography>原料：</Typography>
+                      {consumes.map((item) => {
+                        return MaterialBlock(item, false);
+                      })}
+                    </Fragment>
+                  );
+
+                  const consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
+                  const consumesPrimaryText = (
+                    <Fragment>
+                      <Typography>初级原料：</Typography>
+                      {consumesPrimary.map((item) => {
+                        return MaterialBlock(item, true);
+                      })}
+                    </Fragment>
+                  );
+
+                  const produce = (
+                    <Fragment>
+                      <Typography>产出：</Typography>
+                      <Typography component="span" className="align-middle">
+                        {formulaOfLevel.produce.product}
+                      </Typography>
+                      <Chip label={formulaOfLevel.produce.num} size="small" className="mx-1" />
+                    </Fragment>
+                  );
+
+                  const extraProduces = (
+                    <Fragment>
+                      <Typography>额外概率产出：</Typography>
+                      <Typography component="span" className="align-middle">
+                        {formulaOfLevel.extraProduces.product}
+                      </Typography>
+                      <Chip
+                        label={`${formulaOfLevel.extraProduces.min}-${formulaOfLevel.extraProduces.max}`}
+                        size="small"
+                        className="mx-1"
+                      />
+                      <Chip label={`${formulaOfLevel.extraProduces.chance * 100}%`} size="small" className="mx-1" />
+                    </Fragment>
+                  );
 
                   // profit
                   let buySellProfitText = <></>;
                   const sell = findSellPrice(formulaOfLevel.produce.product);
                   if (sell) {
-                    const { price: sellPrice, city: sellCity } = sell;
-                    const profit = sellPrice * formulaOfLevel.produce.num - consumesPrimaryPrice;
-                    const singleProfit = profit / formulaOfLevel.produce.num;
+                    // materials buy price
+                    const consumesPrimaryPrice = Math.round(
+                      consumesPrimary.reduce((acc, item) => {
+                        const buy = findBuyPrice(item.product);
+                        if (buy) {
+                          const { price } = buy;
+                          return acc + price * item.num;
+                        } else {
+                          console.warn(`no buy price for ${item.product}`);
+                          return acc;
+                        }
+                      }, 0)
+                    );
+
+                    // sell price
+                    const { price: sellPrice, city: sellCity, variation: sellVariation } = sell;
+
+                    // profit
+                    const profit = Math.round(sellPrice * formulaOfLevel.produce.num) - consumesPrimaryPrice;
+                    const singleProfit = Math.round(profit / formulaOfLevel.produce.num);
+
+                    // extra produces profit
+                    const extraProducesAvg =
+                      (formulaOfLevel.extraProduces.chance *
+                        (formulaOfLevel.extraProduces.max + formulaOfLevel.extraProduces.min)) /
+                      2;
+                    const extraProducesProfit = Math.round(extraProducesAvg * sellPrice);
+                    const totalProfit = profit + extraProducesProfit;
 
                     buySellProfitText = (
-                      <Box>
+                      <Fragment>
                         <Typography>购买原料价格：{consumesPrimaryPrice}</Typography>
-                        <Typography>
-                          卖出价格：{sellPrice} {sellCity}
-                        </Typography>
-                        <Typography>利润：{profit}</Typography>
-                        <Typography>单件利润：{singleProfit}</Typography>
-                      </Box>
+                        <Box>
+                          <Typography component="span" className="align-middle">
+                            卖出价格：
+                          </Typography>
+                          <Typography component="span" className="mx-1 align-middle">
+                            {sellCity}
+                          </Typography>
+                          <Typography component="span" className="mx-1 align-middle">
+                            {sellPrice}
+                          </Typography>
+                          <Chip
+                            label={`${sellVariation}%`}
+                            size="small"
+                            color={getVariationColor(sellVariation)}
+                            className="mx-1"
+                          />
+                        </Box>
+                        <Box>{TheoryHighestSellPriceBlock(formulaOfLevel.produce.product, sellPrice)}</Box>
+                        <Box className="my-1">
+                          <Typography>
+                            <Typography>利润：{totalProfit}</Typography>
+                            <Typography className="ml-4">固定产出利润：{profit}</Typography>
+                            <Typography className="ml-4">额外产出期望利润：{extraProducesProfit}</Typography>
+                          </Typography>
+                          <Typography>单件利润：{singleProfit}</Typography>
+                          <Typography>额外产出期望利润：{extraProducesProfit}</Typography>
+                        </Box>
+                      </Fragment>
                     );
                   }
 
                   return (
                     <Box key={name + formulaOfLevel.formulaLevel} className="p-4">
                       <Typography>
-                        {level} {unlockCondition}
+                        {level} {fatigue} {unlockCondition}
                       </Typography>
-                      {fatigue}
-                      {consumesText}
-                      {consumesPrimaryText}
-                      {produce}
-                      {extraProduces}
-
-                      {buySellProfitText}
+                      <Box className="my-2">{consumesText}</Box>
+                      <Box className="my-2">{consumesPrimaryText}</Box>
+                      <Box className="my-2">
+                        {produce}
+                        {extraProduces}
+                      </Box>
+                      <Box className="my-2">{buySellProfitText}</Box>
                     </Box>
                   );
                 })}
