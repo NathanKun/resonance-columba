@@ -3,6 +3,7 @@ import { INITIAL_PLAYER_CONFIG } from "@/utils/player-config-utils";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 interface SyncPlayerConfigPanelProps {
@@ -63,6 +64,12 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         // TODO: show error message
         openSnackBar("下载失败，请检查ID是否正确。");
       }
+      sendGTMEvent({
+        event: "sync_player_config",
+        category: "player_config",
+        action: "download",
+        label: success ? "success" : "failure",
+      });
     } else {
       setIdError(true);
     }
@@ -85,6 +92,13 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
     } else {
       openSnackBar("上传失败。");
     }
+
+    sendGTMEvent({
+      event: "sync_player_config",
+      category: "player_config",
+      action: "upload",
+      label: success ? "success" : "failure",
+    });
   };
 
   const handleCopy = () => {
@@ -110,7 +124,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         value={id}
         onChange={(e) => setId(e.target.value)}
         onBlur={onIdFieldBlur}
-        error={idError}
+        error={idError && !!id}
         // disabled={playerConfig.nanoid !== undefined}
       />
       <Button className="m-4" disabled={(!!id && idError) || loading} onClick={handleUpload}>
@@ -131,7 +145,7 @@ export default function SyncPlayerConfigPanel(props: SyncPlayerConfigPanelProps)
         清空本地配置
       </Button>
 
-      <Typography className="basis-full">
+      <Typography className="basis-full p-2">
         第一次上传时将ID留空，直接点击上传按钮，系统会自动生成ID。之后将ID填入到需要同步的设备，点击下载即可。
       </Typography>
 

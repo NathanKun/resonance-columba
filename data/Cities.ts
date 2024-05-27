@@ -10,6 +10,7 @@ const cityList = [
   "荒原站",
   "曼德矿场",
   "淘金乐园",
+  "阿妮塔发射中心",
 ];
 
 export type CityName = (typeof cityList)[number];

@@ -57,7 +57,8 @@ test("mergePlayerConfigs", () => {
 });
 
 const validConfig1 = {
-  maxLot: 500,
+  maxLot: 600,
+  tradeLevel: 50,
   bargain: {
     bargainPercent: 10,
     raisePercent: 10,
@@ -70,6 +71,7 @@ const validConfig1 = {
     曼德矿场: 13,
     澄明数据中心: 11,
     七号自由港: 14,
+    阿妮塔发射中心: 16,
   },
   roles: {
     叶珏: {
@@ -90,6 +92,8 @@ const validConfig1 = {
     goAndReturn: true,
     showFatigue: true,
     showProfitPerRestock: true,
+    showGeneralProfitIndex: true,
+    enableMultiConfig: true,
     displayMode: "table",
   },
   returnBargain: {
@@ -114,6 +118,15 @@ const invalidConfigs = [
   },
   {
     maxLot: 12345,
+  },
+  {
+    tradeLevel: 0,
+  },
+  {
+    tradeLevel: 66,
+  },
+  {
+    tradeLevel: "20",
   },
   {
     bargain: {
@@ -278,6 +291,12 @@ const invalidConfigs = [
       showProfitPerRestock: {
         data: "hello",
       },
+    },
+  },
+  {
+    onegraph: {
+      showFatigue: true,
+      showGeneralProfitIndex: "true",
     },
   },
   {

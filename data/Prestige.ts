@@ -2,6 +2,69 @@ import { PrestigeConfig } from "@/interfaces/prestige";
 
 export const PRESTIGES: PrestigeConfig[] = [
   {
+    level: 1,
+    generalTax: 0.1,
+    specialTax: {
+      七号自由港: 0.07,
+      阿妮塔能源研究所: 0.07,
+    },
+    extraBuy: 0.1,
+  },
+  {
+    level: 2,
+    generalTax: 0.095,
+    specialTax: {
+      七号自由港: 0.065,
+      阿妮塔能源研究所: 0.065,
+    },
+    extraBuy: 0.2,
+  },
+  {
+    level: 3,
+    generalTax: 0.095,
+    specialTax: {
+      七号自由港: 0.065,
+      阿妮塔能源研究所: 0.065,
+    },
+    extraBuy: 0.3,
+  },
+  {
+    level: 4,
+    generalTax: 0.09,
+    specialTax: {
+      七号自由港: 0.06,
+      阿妮塔能源研究所: 0.06,
+    },
+    extraBuy: 0.4,
+  },
+  {
+    level: 5,
+    generalTax: 0.09,
+    specialTax: {
+      七号自由港: 0.06,
+      阿妮塔能源研究所: 0.06,
+    },
+    extraBuy: 0.5,
+  },
+  {
+    level: 6,
+    generalTax: 0.085,
+    specialTax: {
+      七号自由港: 0.055,
+      阿妮塔能源研究所: 0.055,
+    },
+    extraBuy: 0.6,
+  },
+  {
+    level: 7,
+    generalTax: 0.085,
+    specialTax: {
+      七号自由港: 0.055,
+      阿妮塔能源研究所: 0.055,
+    },
+    extraBuy: 0.7,
+  },
+  {
     level: 8,
     generalTax: 0.08,
     specialTax: {

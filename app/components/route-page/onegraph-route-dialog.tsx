@@ -2,7 +2,7 @@ import { CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import { OneGraphRouteDialogProps, OnegraphBuyCombinationStats } from "@/interfaces/route-page";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
-import { Box } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -15,11 +15,11 @@ interface DisplayData {
   profit: number;
   fatigue: number;
   profitPerFatigue: number;
-  buyProducts: string;
-  profitOrder: string;
+  buyProducts: React.JSX.Element[];
+  profitOrder: React.JSX.Element[];
   usedLot: number;
   restockCount: number;
-  profitPerRestock: number;
+  generalProfitIndex: number;
   isWastingRestock: boolean;
   lastNotWastingRestock: number;
 }
@@ -42,7 +42,11 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
 
   const buildDisplayData = (stats: OnegraphBuyCombinationStats, city: CityName): DisplayData => {
     // display products ordered base on profit
-    const profitOrder = stats.combinations.map((c) => c.name).join(", ");
+    const profitOrder = stats.combinations.map((c) => (
+      <span key={`profitorder-${c.name}`} className="mx-1">
+        {c.name}
+      </span>
+    ));
 
     // display products orderd base on in-game order
     const buyProducts = stats.combinations
@@ -59,19 +63,21 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
       // map to name for display
       .map((c) => {
         const { name, buyLot, availableLot } = c;
+        const chipText = buyLot < availableLot ? `(买${buyLot} / 总${availableLot})` : buyLot;
+        const BuyNumberChip = <Chip label={chipText} size="small" className="mx-1" />;
 
-        if (buyLot < availableLot) {
-          return `${name} (买${buyLot} / 总${availableLot})`;
-        }
-
-        return `${name}`;
-      })
-      .join(", ");
+        return (
+          <span key={`buyproducts-${name}`} className="mx-1 inline-flex items-center">
+            {name}
+            {BuyNumberChip}
+          </span>
+        );
+      });
     return {
       profit: stats.profit,
       fatigue: stats.fatigue,
       profitPerFatigue: stats.profitPerFatigue,
-      profitPerRestock: stats.profitPerRestock,
+      generalProfitIndex: stats.generalProfitIndex,
       buyProducts,
       profitOrder,
       usedLot: stats.usedLot,
@@ -87,12 +93,12 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
     if (!goAndReturn) {
       return undefined;
     }
-    const { profit, fatigue, profitPerFatigue, profitPerRestock, restock } = goAndReturnTotalData;
+    const { profit, fatigue, profitPerFatigue, generalProfitIndex, restock } = goAndReturnTotalData;
     return {
       profit,
       fatigue,
       profitPerFatigue,
-      profitPerRestock,
+      generalProfitIndex,
       restockCount: restock,
     };
   })();
@@ -116,7 +122,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 进货过多！会浪费进货书。使用超过{goDisplayData.lastNotWastingRestock}本进货书后不会再产生收益。
               </DialogContentText>
             )}
-            <DialogContentText>需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
+            <DialogContentText component="div">需要购买的产品：{goDisplayData.buyProducts}</DialogContentText>
             <DialogContentText>产品利润顺位：{goDisplayData.profitOrder}</DialogContentText>
             <DialogContentText>所需舱位：{goDisplayData.usedLot}</DialogContentText>
             <DialogContentText>
@@ -125,7 +131,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
             </DialogContentText>
             <DialogContentText>利润/疲劳：{goDisplayData.profitPerFatigue}</DialogContentText>
             {goDisplayData.restockCount > 0 && (
-              <DialogContentText>利润/进货书：{goDisplayData.profitPerRestock}</DialogContentText>
+              <DialogContentText>综合参考利润：{goDisplayData.generalProfitIndex}</DialogContentText>
             )}
           </Box>
           {goAndReturn && returnDisplayData && (
@@ -139,7 +145,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                     本进货书后不会再产生收益。
                   </DialogContentText>
                 )}
-                <DialogContentText>需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
+                <DialogContentText component="div">需要购买的产品：{returnDisplayData.buyProducts}</DialogContentText>
                 <DialogContentText>产品利润顺位：{returnDisplayData.profitOrder}</DialogContentText>
                 <DialogContentText>所需舱位：{returnDisplayData.usedLot}</DialogContentText>
                 <DialogContentText>
@@ -148,7 +154,7 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                 </DialogContentText>
                 <DialogContentText>回程利润/疲劳：{returnDisplayData.profitPerFatigue}</DialogContentText>
                 {returnDisplayData.restockCount > 0 && (
-                  <DialogContentText>回程利润/进货书：{returnDisplayData.profitPerRestock}</DialogContentText>
+                  <DialogContentText>回程综合参考利润：{returnDisplayData.generalProfitIndex}</DialogContentText>
                 )}
               </Box>
               <Box className="m-8">
@@ -162,10 +168,10 @@ export default function OneGraphRouteDialog(props: OneGraphRouteDialogProps) {
                   总利润/总疲劳：
                   {totalDisplayData!.profitPerFatigue}
                 </DialogContentText>
-                {totalDisplayData!.profitPerRestock > 0 && (
+                {totalDisplayData!.generalProfitIndex > 0 && (
                   <DialogContentText>
-                    总利润/总进货书：
-                    {totalDisplayData!.profitPerRestock}
+                    总综合参考利润：
+                    {totalDisplayData!.generalProfitIndex}
                   </DialogContentText>
                 )}
               </Box>

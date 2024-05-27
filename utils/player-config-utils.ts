@@ -21,6 +21,7 @@ export const isValidPlayerConfig = (config: any) => {
       (key) =>
         ![
           "maxLot",
+          "tradeLevel",
           "bargain",
           "returnBargain",
           "prestige",
@@ -34,7 +35,20 @@ export const isValidPlayerConfig = (config: any) => {
     return false;
   }
 
-  if (config.maxLot && (isNaN(config.maxLot) || config.maxLot < 0 || config.maxLot > 5000)) {
+  if (
+    config.maxLot !== undefined &&
+    (typeof config.maxLot === "string" || isNaN(config.maxLot) || config.maxLot < 0 || config.maxLot > 5000)
+  ) {
+    return false;
+  }
+
+  if (
+    config.tradeLevel !== undefined &&
+    (typeof config.tradeLevel === "string" ||
+      isNaN(config.tradeLevel) ||
+      config.tradeLevel < 1 ||
+      config.tradeLevel > 65)
+  ) {
     return false;
   }
 
@@ -86,13 +100,28 @@ export const isValidPlayerConfig = (config: any) => {
     const onegraph = config.onegraph;
     if (
       Object.keys(onegraph).filter(
-        (key) => !["maxRestock", "goAndReturn", "showFatigue", "showProfitPerRestock", "displayMode"].includes(key)
+        (key) =>
+          ![
+            "maxRestock",
+            "goAndReturn",
+            "showFatigue",
+            "showProfitPerRestock",
+            "showGeneralProfitIndex",
+            "enableMultiConfig",
+            "displayMode",
+          ].includes(key)
       ).length > 0
     ) {
       return false;
     }
 
-    if (isNaN(onegraph.maxRestock) || onegraph.maxRestock < 0 || onegraph.maxRestock > 100) {
+    if (
+      onegraph.maxRestock !== undefined &&
+      (typeof onegraph.maxRestock === "string" ||
+        isNaN(onegraph.maxRestock) ||
+        onegraph.maxRestock < 0 ||
+        onegraph.maxRestock > 100)
+    ) {
       return false;
     }
 
@@ -105,6 +134,14 @@ export const isValidPlayerConfig = (config: any) => {
     }
 
     if (onegraph.showProfitPerRestock !== undefined && typeof onegraph.showProfitPerRestock !== "boolean") {
+      return false;
+    }
+
+    if (onegraph.showGeneralProfitIndex !== undefined && typeof onegraph.showGeneralProfitIndex !== "boolean") {
+      return false;
+    }
+
+    if (onegraph.enableMultiConfig !== undefined && typeof onegraph.enableMultiConfig !== "boolean") {
       return false;
     }
 
@@ -179,6 +216,7 @@ export const mergePlayerConfigs = (newConfig: any): PlayerConfig => {
 
 export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
   maxLot: 500,
+  tradeLevel: 20,
   bargain: {
     bargainPercent: 0,
     raisePercent: 0,
@@ -198,6 +236,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     曼德矿场: 8,
     澄明数据中心: 8,
     七号自由港: 8,
+    阿妮塔发射中心: 1,
   },
   roles: {},
   onegraph: {
@@ -205,6 +244,8 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     goAndReturn: false,
     showFatigue: false,
     showProfitPerRestock: false,
+    showGeneralProfitIndex: false,
+    enableMultiConfig: false,
     displayMode: "table",
   },
   productUnlockStatus: {},

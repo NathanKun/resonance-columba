@@ -85,7 +85,7 @@ export interface OnegraphBuyCombinationStats {
   restock: number;
   fatigue: number;
   profitPerFatigue: number;
-  profitPerRestock: number;
+  generalProfitIndex: number;
   usedLot: number;
   lastNotWastingRestock: number; // if not wasting, this equals to restock, otherwise it is the last restock count that is not wasting
 }
@@ -114,5 +114,18 @@ export interface OnegraphTopProfitItem {
   fromCity: CityName;
   toCity: CityName;
   profit: number;
+  profitPerFatigue: number;
+  generalProfitIndex: number;
   reco: OnegraphBuyCombinationTwoWayStats;
+}
+
+export interface OnegraphTopProfitSortedBy {
+  go: OnegraphTopProfitItem[];
+  goAndReturn: OnegraphTopProfitItem[];
+}
+
+export interface OnegraphTopProfit {
+  byProfit: OnegraphTopProfitSortedBy;
+  byProfitPerFatigue: OnegraphTopProfitSortedBy;
+  byGeneralProfitIndex: OnegraphTopProfitSortedBy;
 }

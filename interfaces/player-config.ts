@@ -2,6 +2,7 @@ import { CityName } from "@/data/Cities";
 
 export interface PlayerConfig {
   maxLot: number;
+  tradeLevel: number;
   bargain: PlayerConfigBargain;
   returnBargain: PlayerConfigBargain;
   prestige: PlayerConfigPrestige;
@@ -33,7 +34,12 @@ export interface PlayerConfigOnegraph {
   maxRestock: number;
   goAndReturn: boolean;
   showFatigue: boolean; // actually is showProfitPerFatigue
+  /**
+   * @deprecated
+   */
   showProfitPerRestock: boolean;
+  showGeneralProfitIndex: boolean;
+  enableMultiConfig: boolean;
   displayMode: "table" | "list";
 }
 
