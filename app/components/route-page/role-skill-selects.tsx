@@ -84,7 +84,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
       }
 
       if (raiseRate) {
-        texts.push(block("roleskilltext-raiseRate", `抬价幅度外+${raiseRate}%`));
+        texts.push(block("roleskilltext-raiseRate", `抬价幅度+${raiseRate}%`));
       }
 
       if (afterFailedLessFatigue) {

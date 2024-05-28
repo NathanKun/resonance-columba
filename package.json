@@ -37,7 +37,7 @@
     "postcss": "8.4.38",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "resonance-data-columba": "^1.2.11",
+    "resonance-data-columba": "^1.2.12",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5",
     "usehooks-ts": "^3.1.0"
@@ -47,7 +47,7 @@
     "@tsuk1ko/rsns-unpack": "^2.0.0",
     "@types/ms": "^0.7.34",
     "@vitejs/plugin-react": "^4.3.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^24.1.0",
     "serwist": "^9.0.2",
     "ts-node": "^10.9.2",
     "turbo": "^1.13.3",

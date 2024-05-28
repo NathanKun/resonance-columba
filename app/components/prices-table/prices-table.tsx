@@ -137,17 +137,23 @@ export default function PricesTable() {
       let background = "";
       if (Number.isInteger(value)) {
         if ((value as number) > 100) {
-          background = theme.palette.mode === "dark" ? "darkgreen" : "lightgreen";
+          background = theme.palette.variationHigh[theme.palette.mode];
         } else if (value === 100) {
-          background = theme.palette.mode === "dark" ? "darkgrey" : "lightgrey";
+          background = theme.palette.variationMedium[theme.palette.mode];
         } else {
-          background = theme.palette.mode === "dark" ? "darkred" : "lightcoral";
+          background = theme.palette.variationLow[theme.palette.mode];
         }
       }
 
       return background;
     },
-    [theme.palette.mode, trendCellColorDisabled]
+    [
+      theme.palette.mode,
+      theme.palette.variationHigh,
+      theme.palette.variationLow,
+      theme.palette.variationMedium,
+      trendCellColorDisabled,
+    ]
   );
 
   const getVariationCellMuiProps = useCallback(

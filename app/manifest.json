@@ -12,6 +12,10 @@
       "url": "/prices"
     },
     {
+      "name": "制造",
+      "url": "/formula"
+    },
+    {
       "name": "讨论",
       "url": "/discussion"
     }
