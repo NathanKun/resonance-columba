@@ -26,6 +26,8 @@ declare module "@mui/material/Chip" {
   }
 }
 
+export type VariationColor = "variationLow" | "variationHigh" | "variationMedium";
+
 export default function MuiThemeProvider({ children }: { children: React.ReactNode }) {
   const buildTheme = (mode: PaletteMode) => {
     let theme = createTheme({
