@@ -121,62 +121,72 @@ export default function FormulaPage() {
   };
 
   return (
-    <Box className="m-0 md:m-8 xl:m-16">
-      {Object.entries(formulas).map(([produceName, formula]) => {
-        const sell = findSellPrice(produceName);
-        return (
-          <Accordion key={produceName}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                {produceName} - {formula[0].formulaName}
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                {sell?.city} {sell?.price}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Box className="p-2">
-                {sell && <SellInfo product={produceName} sell={sell} getVariationColor={getVariationColor} />}
+    <>
+      <div className="bg-white dark:bg-gray-800 p-6 shadow-xl ring-1 ring-gray-900/5 rounded-lg backdrop-blur-lg max-w-2xl mx-auto my-4 w-full box-border">
+        <div className="flex flex-col">
+          <Typography className="py-1">开发中。欢迎建议与纠错。</Typography>
+          <Typography className="py-1">仅包含所有初级原材料都可购买的制造品。</Typography>
+          <Typography className="py-1">原料买入价格与产品卖出价格均为当前时间点的价格。</Typography>
+          <Typography className="py-1">利润为买入卖出价的简单减法，不含议价与税收。</Typography>
+        </div>
+      </div>
+      <Box className="m-0 md:m-8 xl:m-16">
+        {Object.entries(formulas).map(([produceName, formula]) => {
+          const sell = findSellPrice(produceName);
+          return (
+            <Accordion key={produceName}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                  {produceName} - {formula[0].formulaName}
+                </Typography>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {sell?.city} {sell?.price}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box className="p-2">
+                  {sell && <SellInfo product={produceName} sell={sell} getVariationColor={getVariationColor} />}
 
-                {formula.map((formulaOfLevel, formulaOfLevelIndex) => {
-                  const consumes = formulaOfLevel.consumes;
-                  const consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
+                  {formula.map((formulaOfLevel, formulaOfLevelIndex) => {
+                    const consumes = formulaOfLevel.consumes;
+                    const consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
 
-                  return (
-                    <Box key={produceName + formulaOfLevel.formulaLevel} className="p-4">
-                      <FormulaOfLevelHead
-                        formulaOfLevel={formulaOfLevel}
-                        formulaOfLevelIndex={formulaOfLevelIndex}
-                        produceName={produceName}
-                      />
-                      <ConsumesInfo
-                        consumes={consumes}
-                        consumesPrimary={consumesPrimary}
-                        formulaOfLevelIndex={formulaOfLevelIndex}
-                        produceName={produceName}
-                        findBuyPrice={findBuyPrice}
-                        getVariationColor={getVariationColor}
-                      />
-                      <ProduceInfo
-                        formulaOfLevel={formulaOfLevel}
-                        consumesPrimary={consumesPrimary}
-                        findBuyPrice={findBuyPrice}
-                        findSellPrice={findSellPrice}
-                      />
-                      <ProfitInfo
-                        formulaOfLevel={formulaOfLevel}
-                        consumesPrimary={consumesPrimary}
-                        findBuyPrice={findBuyPrice}
-                        findSellPrice={findSellPrice}
-                      />
-                    </Box>
-                  );
-                })}
-              </Box>
-            </AccordionDetails>
-          </Accordion>
-        );
-      })}
-    </Box>
+                    return (
+                      <Box key={produceName + formulaOfLevel.formulaLevel} className="p-4">
+                        <FormulaOfLevelHead
+                          formulaOfLevel={formulaOfLevel}
+                          formulaOfLevelIndex={formulaOfLevelIndex}
+                          produceName={produceName}
+                        />
+                        <ConsumesInfo
+                          consumes={consumes}
+                          consumesPrimary={consumesPrimary}
+                          formulaOfLevelIndex={formulaOfLevelIndex}
+                          produceName={produceName}
+                          findBuyPrice={findBuyPrice}
+                          getVariationColor={getVariationColor}
+                        />
+                        <ProduceInfo
+                          formulaOfLevel={formulaOfLevel}
+                          consumesPrimary={consumesPrimary}
+                          findBuyPrice={findBuyPrice}
+                          findSellPrice={findSellPrice}
+                        />
+                        <ProfitInfo
+                          formulaOfLevel={formulaOfLevel}
+                          consumesPrimary={consumesPrimary}
+                          findBuyPrice={findBuyPrice}
+                          findSellPrice={findSellPrice}
+                        />
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+      </Box>
+    </>
   );
 }
