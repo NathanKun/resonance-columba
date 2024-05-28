@@ -5,19 +5,43 @@
   "shortcuts": [
     {
       "name": "路线",
-      "url": "/route"
+      "url": "/route",
+      "icons": [
+        {
+          "src": "/shortcut-icons/route_48dp.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "数据",
-      "url": "/prices"
+      "url": "/prices",
+      "icons": [
+        {
+          "src": "/shortcut-icons/table_view_48dp.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "制造",
-      "url": "/formula"
+      "url": "/formula",
+      "icons": [
+        {
+          "src": "/shortcut-icons/precision_manufacturing_48dp.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "讨论",
-      "url": "/discussion"
+      "url": "/discussion",
+      "icons": [
+        {
+          "src": "/shortcut-icons/chat_bubble_outline_48dp.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ],
   "icons": [
