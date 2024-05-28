@@ -24,15 +24,16 @@ export default function FormulaOfLevelHead(props: FormulaOfLevelHeadProps) {
       <span>
         {cores.map((core) => {
           const condition = (formulaOfLevel.unlockCondition as any)[core] as number;
+          const key = `${produceName}-${formulaOfLevelIndex}-core-${core}`;
           if (condition > 1) {
             return (
-              <Fragment key={`${produceName}-${formulaOfLevelIndex}-core-${core}`}>
+              <Fragment key={key}>
                 <Image src={`/engine-cores/${core}.png`} alt={core} width={24} height={24} className="align-middle" />
                 <span className="align-middle pl-1 pr-2">Lv{condition}</span>
               </Fragment>
             );
           }
-          return <></>;
+          return <Fragment key={key}></Fragment>;
         })}
       </span>
     </Typography>
