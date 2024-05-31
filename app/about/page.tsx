@@ -10,6 +10,12 @@ export default function AboutPage() {
         </div>
       </div>
       <div className="flex flex-col space-y-4">
+        <div>
+          <p className="text-gray-600 dark:text-gray-300 mt-2 mb-0 italic">
+            哇，要是商会也有这个，交流各地交易所的情报岂不是超级方便？！
+          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-2 mt-0 text-end italic">—— 某列车长</p>
+        </div>
         <p className="text-gray-600 dark:text-gray-300">
           项目的目标是代替传统的共享Excel文件，为雷索纳斯的玩家提供一个商品价格共享平台，以便玩家们可以更好的规划跑商。
         </p>
