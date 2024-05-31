@@ -672,6 +672,9 @@ export const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, produc
 
     const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
     resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
+
+    const allBuyMorePercent = buyMore?.all ?? 0;
+    resonanceSkillBuyMorePercent += allBuyMorePercent;
   }
 
   return resonanceSkillBuyMorePercent;

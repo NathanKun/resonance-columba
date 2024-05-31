@@ -41,6 +41,11 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
       });
     }
 
+    const allSkill = roleSkill?.buyMore?.all;
+    if (allSkill) {
+      texts.push(block("roleskilltext-all", `所有交易品+${allSkill}%`));
+    }
+
     const bargainSkills = roleSkill?.bargain;
     if (bargainSkills) {
       const {

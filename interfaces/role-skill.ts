@@ -6,7 +6,6 @@ export interface ResonanceSkill {
     city?: {
       [cityName: string]: number;
     };
-    // TODO: 雷比斯 may have buy more for all products skill, implement it later
     all?: number; // + buy more for all products
   };
   bargain?: {
