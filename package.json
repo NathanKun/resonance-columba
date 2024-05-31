@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@giscus/react": "^3.0.0",
-    "@mui/icons-material": "^5.15.18",
-    "@mui/material": "^5.15.18",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/material": "^5.15.19",
     "@mui/material-nextjs": "^5.15.11",
     "@next/bundle-analyzer": "^14.2.3",
     "@next/third-parties": "^14.2.3",
@@ -37,14 +37,14 @@
     "postcss": "8.4.38",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "resonance-data-columba": "^1.2.12",
+    "resonance-data-columba": "^1.2.15",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
     "@testing-library/react": "^15.0.7",
-    "@tsuk1ko/rsns-unpack": "^2.0.0",
+    "@tsuk1ko/rsns-unpack": "^2.1.0",
     "@types/ms": "^0.7.34",
     "@vitejs/plugin-react": "^4.3.0",
     "jsdom": "^24.1.0",
