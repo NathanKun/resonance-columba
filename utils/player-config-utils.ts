@@ -47,7 +47,7 @@ export const isValidPlayerConfig = (config: any) => {
     (typeof config.tradeLevel === "string" ||
       isNaN(config.tradeLevel) ||
       config.tradeLevel < 1 ||
-      config.tradeLevel > 65)
+      config.tradeLevel > 70)
   ) {
     return false;
   }
