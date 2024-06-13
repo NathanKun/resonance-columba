@@ -2,10 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["FIREBASE_PROJECT_ID", "FIREBASE_PRIVATE_KEY", "FIREBASE_CLIENT_EMAIL", "FIREBASE_COLLECTION_NAME"]
     },
     "lint": {}
   }
