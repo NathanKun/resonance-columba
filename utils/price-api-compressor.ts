@@ -23,13 +23,13 @@ const CITY_NAME_MAPPING: { [key: number]: string } = (() => {
   return mapping;
 })();
 
-const productNameToId = (name: string): number | string => {
+const productNameToId = (name: string): number | null => {
   for (const id in PRODUCT_NAME_MAPPING) {
     if (PRODUCT_NAME_MAPPING[id] === name) {
       return parseInt(id);
     }
   }
-  return name;
+  return null;
 };
 
 const productIdToName = (id: number | string): string => {
@@ -63,6 +63,12 @@ export const lowBandwidthResponse = (data: GetPricesProducts): LbGetPricesProduc
   const lbData: LbGetPricesProducts = {};
   for (const pdtName in data) {
     const pdtId = productNameToId(pdtName);
+
+    // ignore null (product name returned from firebase does not exist in PRODUCTS list)
+    if (pdtId === null) {
+      continue;
+    }
+
     lbData[pdtId] = {};
     for (const type in data[pdtName]) {
       const lbType = type === "buy" ? "b" : "s";
