@@ -27,7 +27,7 @@
     "autoprefixer": "10.4.19",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
-    "firebase-admin": "^12.1.1",
+    "firebase-admin": "^12.2.0",
     "lru-cache": "^10.2.2",
     "material-react-table": "^2.13.0",
     "nanoid": "^5.0.7",
@@ -35,13 +35,13 @@
     "postcss": "8.4.38",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "resonance-data-columba": "^1.2.25",
+    "resonance-data-columba": "^1.2.31",
     "tailwindcss": "3.4.4",
-    "typescript": "5.4.5",
+    "typescript": "5.5.2",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
-    "@testing-library/dom": "^10.1.0",
+    "@testing-library/dom": "^10.2.0",
     "@testing-library/react": "^16.0.0",
     "@tsuk1ko/rsns-unpack": "^2.1.0",
     "@types/ms": "^0.7.34",
@@ -49,7 +49,7 @@
     "jsdom": "^24.1.0",
     "serwist": "^9.0.3",
     "ts-node": "^10.9.2",
-    "turbo": "^2.0.3",
+    "turbo": "^2.0.5",
     "vitest": "^1.6.0"
   },
   "packageManager": "pnpm@9.3.0"
