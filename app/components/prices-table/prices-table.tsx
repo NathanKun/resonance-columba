@@ -480,6 +480,11 @@ export default function PricesTable() {
     editDisplayMode: "cell",
     positionToolbarAlertBanner: "none",
     renderTopToolbarCustomActions: renderCitySelects,
+    muiTopToolbarProps: {
+      sx: {
+        marginTop: "10px",
+      },
+    },
     initialState: {
       expanded: true,
       grouping: ["source-city"],
@@ -528,7 +533,7 @@ export default function PricesTable() {
     },
     muiTableContainerProps: {
       sx: {
-        maxHeight: "clamp(350px, calc(100vh - 64px - 52px), 9999px)", // minus extra 52px for website header
+        maxHeight: "clamp(350px, calc(100vh - 66px - 52px), 9999px)", // 52px website header, 66px table toolbar + margin
       },
     },
     localization: MRT_Localization_ZH_HANS,
