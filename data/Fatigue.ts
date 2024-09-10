@@ -1,6 +1,7 @@
 import { Fatigue } from "@/interfaces/fatigue";
 import { PlayerConfigRoles } from "@/interfaces/player-config";
 
+// 200KM内24疲劳，之后每增加20KM增加1疲劳，向上取整
 const FATIGUES: Fatigue[] = [
   { cities: ["七号自由港", "阿妮塔能源研究所"], fatigue: 24 },
   { cities: ["澄明数据中心", "阿妮塔能源研究所"], fatigue: 29 },
