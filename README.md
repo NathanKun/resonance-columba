@@ -64,7 +64,7 @@ Firebase项目已配置了使用位于香港的服务器。
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/arises"><img src="https://avatars.githubusercontent.com/u/19305811?v=4?s=100" width="100px;" alt="arises"/><br /><sub><b>arises</b></sub></a><br /><a href="#bug-arises" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/EEEExciting"><img src="https://avatars.githubusercontent.com/u/23447813?v=4?s=100" width="100px;" alt="EEEExciting"/><br /><sub><b>EEEExciting</b></sub></a><br /><a href="#bug-EEEExciting" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/cls1997"><img src="https://avatars.githubusercontent.com/u/6021683?v=4?s=100" width="100px;" alt="ChenLingshu"/><br /><sub><b>ChenLingshu</b></sub></a><br /><a href="#ideas-cls1997" title="Ideas, Planning, & Feedback">🤔</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DaiMao204"><img src="https://avatars.githubusercontent.com/u/64579140?v=4?s=100" width="100px;" alt="DaiMao"/><br /><sub><b>DaiMao</b></sub></a><br /><a href="#data-DaiMao204" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DaiMao204"><img src="https://avatars.githubusercontent.com/u/64579140?v=4?s=100" width="100px;" alt="DaiMao"/><br /><sub><b>DaiMao</b></sub></a><br /><a href="#data-DaiMao204" title="Data">🔣</a> <a href="#code-DaiMao204" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
