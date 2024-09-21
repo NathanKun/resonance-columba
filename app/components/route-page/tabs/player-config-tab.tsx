@@ -66,7 +66,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         <NumberInput
           label="贸易等级"
           min={1}
-          max={70}
+          max={99}
           defaultValue={10}
           type="integer"
           value={playerConfig.tradeLevel}
