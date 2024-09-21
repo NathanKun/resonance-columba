@@ -124,7 +124,7 @@ const invalidConfigs = [
     tradeLevel: 0,
   },
   {
-    tradeLevel: 71,
+    tradeLevel: 100,
   },
   {
     tradeLevel: "20",
