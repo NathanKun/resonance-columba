@@ -14,6 +14,10 @@ export async function GET(request: Request) {
       throw new Error("no data");
     }
 
+    //这应该能临时清除单晶硅和蕾丝连衣裙数据
+    data['单晶硅']['buy'] = {}
+    data['蕾丝连衣裙']['buy'] = {}
+
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
 
     const lbResponseData: LbGetPricesProducts = lowBandwidthResponse(responseData);
