@@ -9,6 +9,8 @@ database: Firebase Cloud Firestore
 
 # 雷索纳斯 科伦巴商会 数据分享站
 
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/NathanKun)
+
 ## 网站地址
 
 https://www.resonance-columba.com/
