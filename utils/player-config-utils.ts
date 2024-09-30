@@ -232,12 +232,13 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     disabled: false,
   },
   prestige: {
-    修格里城: 8,
-    曼德矿场: 8,
-    澄明数据中心: 8,
-    七号自由港: 8,
+    修格里城: 1,
+    曼德矿场: 1,
+    澄明数据中心: 1,
+    七号自由港: 1,
     阿妮塔发射中心: 1,
     海角城: 1,
+    铁山城: 1,
   },
   roles: {},
   onegraph: {
