@@ -68,7 +68,7 @@ export const isValidPlayerConfig = (config: any) => {
 
   if (config.prestige) {
     const prestige = config.prestige;
-    if (Object.keys(prestige).filter((key) => !CITIES.includes(key)).length > 0) {
+    if (Object.keys(prestige).filter((key) => !CITIES.includes(key) && key !== "铁山城").length > 0) {
       return false;
     }
 
