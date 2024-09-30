@@ -58,7 +58,27 @@ const FATIGUES: Fatigue[] = [
   { cities: ["海角城", "曼德矿场"], fatigue: 49 },
   { cities: ["海角城", "淘金乐园"], fatigue: 54 },
   { cities: ["海角城", "阿妮塔发射中心"], fatigue: 32 },
+  { cities: ["云岫桥基地", "修格里城"], fatigue: 28 },
+  { cities: ["云岫桥基地", "铁盟哨站"], fatigue: 25 },
+  { cities: ["云岫桥基地", "七号自由港"], fatigue: 41 },
+  { cities: ["云岫桥基地", "澄明数据中心"], fatigue: 34 },
+  { cities: ["云岫桥基地", "阿妮塔战备工厂"], fatigue: 38 },
+  { cities: ["云岫桥基地", "阿妮塔能源研究所"], fatigue: 46 },
+  { cities: ["云岫桥基地", "荒原站"], fatigue: 24 },
+  { cities: ["云岫桥基地", "曼德矿场"], fatigue: 27 },
+  { cities: ["云岫桥基地", "淘金乐园"], fatigue: 32 },
+  { cities: ["云岫桥基地", "阿妮塔发射中心"], fatigue: 51 },
+  { cities: ["云岫桥基地", "海角城"], fatigue: 55 },
 ];
+
+// 200KM内24疲劳，之后每增加20KM增加1疲劳，向上取整
+const calculateFatigue = (distance: number): number => {
+  if (distance <= 200) {
+    return 24;
+  }
+
+  return 24 + Math.ceil((distance - 200) / 20);
+};
 
 export const findFatigue = (fromCity: string, toCity: string, playerConfigRoles: PlayerConfigRoles): number => {
   let fatigue = FATIGUES.find((f) => f.cities.includes(fromCity) && f.cities.includes(toCity))?.fatigue ?? 0;

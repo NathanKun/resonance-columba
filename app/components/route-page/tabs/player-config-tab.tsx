@@ -132,6 +132,15 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
           value={playerConfig.prestige["海角城"]}
           setValue={(newValue) => onPrestigeChange("海角城", newValue)}
         />
+        <NumberInput
+          label="铁山城"
+          min={1}
+          max={20}
+          defaultValue={1}
+          type="integer"
+          value={playerConfig.prestige["铁山城"]}
+          setValue={(newValue) => onPrestigeChange("铁山城", newValue)}
+        />
       </Box>
 
       <Box className="m-4">
