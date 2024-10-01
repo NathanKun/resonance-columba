@@ -18,7 +18,6 @@ export async function GET(request: Request) {
     data["单晶硅"]["buy"] = {};
     data["蕾丝连衣裙"]["buy"] = {};
     data["法兰绒"]["buy"] = {};
-    data["亚麻"]["buy"] = {};
 
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
 
