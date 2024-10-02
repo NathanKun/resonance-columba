@@ -149,7 +149,20 @@ export default function FormulaPage() {
 
                   {formula.map((formulaOfLevel, formulaOfLevelIndex) => {
                     const consumes = formulaOfLevel.consumes;
-                    const consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
+                    let consumesPrimary = consumes.flatMap((item) => toPrimaryMaterial(item));
+
+                    // there may be duplicate primary material, so we need to sum them up
+                    const primaryMaterialMap = consumesPrimary.reduce((acc, item) => {
+                      const { product, num } = item;
+                      if (acc[product]) {
+                        acc[product].num += num;
+                      } else {
+                        acc[product] = { product, num };
+                      }
+                      return acc;
+                    }, {} as Record<string, FormulaProduce>);
+
+                    consumesPrimary = Object.values(primaryMaterialMap);
 
                     return (
                       <Box key={produceName + formulaOfLevel.formulaLevel} className="p-4">
