@@ -15,7 +15,6 @@ export async function GET(request: Request) {
     }
 
     //这应该能临时清除单晶硅和蕾丝连衣裙数据
-    data["蕾丝连衣裙"]["buy"] = {};
     data["法兰绒"]["buy"] = {};
 
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
