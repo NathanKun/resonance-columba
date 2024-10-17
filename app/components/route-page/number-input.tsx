@@ -142,7 +142,7 @@ export default function NumberInput(props: Props) {
   };
 
   return (
-    <TextField
+    (<TextField
       className={`${hideSpinButton ? "hide-spin-button " : ""}${className ?? ""}`}
       type="number"
       size="small"
@@ -153,8 +153,9 @@ export default function NumberInput(props: Props) {
       onFocus={onFocus}
       onBlur={onBlur}
       onChange={onChange}
-      InputProps={InputProps}
-      inputProps={{ ...inputProps, step }}
-    />
+      slotProps={{
+        input: InputProps,
+        htmlInput: { ...inputProps, step }
+      }} />)
   );
 }
