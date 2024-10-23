@@ -13,6 +13,7 @@ const cityList = [
   "阿妮塔发射中心",
   "海角城",
   "云岫桥基地",
+  "汇流塔",
 ];
 
 export type CityName = (typeof cityList)[number];

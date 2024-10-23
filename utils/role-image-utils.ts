@@ -58,6 +58,7 @@ import 安菲娅 from "/public/roles/head/安菲娅.png";
 import 静流·逐夏 from "/public/roles/head/静流·逐夏.png";
 import 伊索斯 from "/public/roles/head/伊索斯.png";
 import 雅莱 from "/public/roles/head/雅莱.png";
+import 帕拉笛 from "/public/roles/head/帕拉笛.png";
 
 // import end
 
@@ -116,6 +117,7 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   安菲娅,
   静流·逐夏,
   伊索斯,
-  雅莱
+  雅莱,
+  帕拉笛
   // export role images end
 };
