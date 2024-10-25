@@ -1,0 +1,54 @@
+name: Update Data Package
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch: # on button click
+
+jobs:
+  update-data-package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.token }}
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          registry-url: https://npm.pkg.github.com/
+      - name: git config
+        run: |
+
+          git config user.name "NathanKun"
+          git config user.email "nathanhejunyang@gmail.com"
+      - name: pnpm install
+        run: pnpm install
+
+      - name: pnpm updatedata
+        run: pnpm updatedata
+
+      - name: commit changes
+        id: commit
+        run: |
+
+          # if changes, commit
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Has changes, will commit."
+
+            # show changes
+            git status
+
+            # commit build result
+            git add .
+            git commit -m "chore: update data package"
+
+            # push changes
+            git push
+          fi
