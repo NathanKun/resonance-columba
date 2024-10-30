@@ -2,7 +2,7 @@ name: Update Data Package
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "5 */2 * * *"
   workflow_dispatch: # on button click
 
 jobs:
