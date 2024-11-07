@@ -34,6 +34,9 @@ jobs:
       - name: pnpm updatedata
         run: pnpm updatedata
 
+      - name: pnpm download-assets
+        run: pnpm download-assets
+
       - name: commit changes
         id: commit
         run: |
