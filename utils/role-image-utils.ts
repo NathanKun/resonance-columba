@@ -60,6 +60,7 @@ import 伊索斯 from "/public/roles/head/伊索斯.png";
 import 雅莱 from "/public/roles/head/雅莱.png";
 import 帕拉笛 from "/public/roles/head/帕拉笛.png";
 
+import 隼 from "/public/roles/head/隼.png";
 // import end
 
 export const roleImages: { [roleName: string]: StaticImageData } = {
@@ -119,5 +120,6 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   伊索斯,
   雅莱,
   帕拉笛
+  隼,
   // export role images end
 };
