@@ -23,3 +23,7 @@ export interface SelectedCities {
   sourceCities: CityName[];
   targetCities: CityName[];
 }
+
+export interface PricesTableHiddenProducts {
+  [city: CityName]: String[];
+}

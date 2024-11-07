@@ -1,6 +1,6 @@
 import { CITIES, CityName } from "@/data/Cities";
 import { SelectedCities } from "@/interfaces/prices-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
 export default function useSelectedCities(props: { localStorageKey: string }) {
