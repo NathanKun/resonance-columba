@@ -62,6 +62,7 @@ const updateRoleImageUtilsFile = async (role: string) => {
 
 const main = async () => {
   const unpacker = new RsnsUnpacker();
+  console.log("Latest version:", await unpacker.getLatestVersion());
 
   const missingHeads = await getMissingHeads();
 
