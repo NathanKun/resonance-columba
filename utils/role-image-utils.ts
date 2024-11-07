@@ -6,6 +6,7 @@ import { StaticImageData } from "next/image";
 import 亚莉奈 from "/public/roles/head/亚莉奈.png";
 import 伊尔 from "/public/roles/head/伊尔.png";
 import 伊洛娜 from "/public/roles/head/伊洛娜.png";
+import 伊索斯 from "/public/roles/head/伊索斯.png";
 import 伽罗尔 from "/public/roles/head/伽罗尔.png";
 import 冯·里奈 from "/public/roles/head/冯·里奈.png";
 import 卡塔斯 from "/public/roles/head/卡塔斯.png";
@@ -15,12 +16,15 @@ import 卡莲 from "/public/roles/head/卡莲.png";
 import 叶珏 from "/public/roles/head/叶珏.png";
 import 塔拉 from "/public/roles/head/塔拉.png";
 import 塞西尔 from "/public/roles/head/塞西尔.png";
+import 夏尔 from "/public/roles/head/夏尔.png";
 import 夏洛蒂 from "/public/roles/head/夏洛蒂.png";
 import 多萝西 from "/public/roles/head/多萝西.png";
 import 奈弥 from "/public/roles/head/奈弥.png";
 import 妮蔻拉 from "/public/roles/head/妮蔻拉.png";
+import 安菲娅 from "/public/roles/head/安菲娅.png";
 import 宵月 from "/public/roles/head/宵月.png";
 import 山岚 from "/public/roles/head/山岚.png";
+import 帕拉笛 from "/public/roles/head/帕拉笛.png";
 import 弗兰 from "/public/roles/head/弗兰.png";
 import 星花 from "/public/roles/head/星花.png";
 import 晃 from "/public/roles/head/晃.png";
@@ -47,20 +51,15 @@ import 那由他 from "/public/roles/head/那由他.png";
 import 闻笙 from "/public/roles/head/闻笙.png";
 import 阿尔喀娜 from "/public/roles/head/阿尔喀娜.png";
 import 阿知波 from "/public/roles/head/阿知波.png";
+import 隼 from "/public/roles/head/隼.png";
+import 雅莱 from "/public/roles/head/雅莱.png";
 import 雷火 from "/public/roles/head/雷火.png";
 import 霖 from "/public/roles/head/霖.png";
 import 静流 from "/public/roles/head/静流.png";
+import 静流·逐夏 from "/public/roles/head/静流·逐夏.png";
 import 马吉拉 from "/public/roles/head/马吉拉.png";
 import 魇 from "/public/roles/head/魇.png";
 import 黛丝莉 from "/public/roles/head/黛丝莉.png";
-import 夏尔 from "/public/roles/head/夏尔.png";
-import 安菲娅 from "/public/roles/head/安菲娅.png";
-import 静流·逐夏 from "/public/roles/head/静流·逐夏.png";
-import 伊索斯 from "/public/roles/head/伊索斯.png";
-import 雅莱 from "/public/roles/head/雅莱.png";
-import 帕拉笛 from "/public/roles/head/帕拉笛.png";
-
-import 隼 from "/public/roles/head/隼.png";
 // import end
 
 export const roleImages: { [roleName: string]: StaticImageData } = {
@@ -119,7 +118,7 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   静流·逐夏,
   伊索斯,
   雅莱,
-  帕拉笛
+  帕拉笛,
   隼,
   // export role images end
 };
