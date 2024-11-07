@@ -3,6 +3,7 @@
 import { CITIES, CityName } from "@/data/Cities";
 import { PRODUCTS } from "@/data/Products";
 import useColumnVisibilityOverride from "@/hooks/useColumnVisibilityOverride";
+import usePricesTableHiddenProducts from "@/hooks/usePricesTableHiddenProducts";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
 import { Trend } from "@/interfaces/trend";
@@ -10,6 +11,8 @@ import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import PaletteIcon from "@mui/icons-material/Palette";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { IconButton, alpha, darken, lighten, useTheme } from "@mui/material";
 import {
   MRT_Cell,
@@ -24,6 +27,7 @@ import { MRT_Localization_ZH_HANS } from "material-react-table/locales/zh-Hans";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { PriceContext } from "../../price-provider";
 import MultipleSelect from "./multiple-select";
+import ProductNameCell from "./product-name-cell";
 import TrendCell, { getTrendIcon } from "./trend-cell";
 import TrendInput from "./trend-input";
 import VariationCell from "./variation-cell";
@@ -35,6 +39,11 @@ export default function PricesTable() {
     useSelectedCities({
       localStorageKey: "selectedCities",
     });
+  const { pricesTableHiddenProducts, setPricesTableHiddenProducts } = usePricesTableHiddenProducts();
+  const [pricesTableHiddenProductsConfiguring, setPricesTableHiddenProductsConfiguring] = useState(false);
+  const onPricesTableHiddenProductsConfigureButtonClick = useCallback(() => {
+    setPricesTableHiddenProductsConfiguring(!pricesTableHiddenProductsConfiguring);
+  }, [pricesTableHiddenProductsConfiguring]);
   const theme = useTheme();
 
   const baseBackgroundColor =
@@ -58,6 +67,10 @@ export default function PricesTable() {
 
       for (const sourceCity of buyableCities) {
         if (!selectedCities.sourceCities.includes(sourceCity)) {
+          continue;
+        }
+
+        if (!pricesTableHiddenProductsConfiguring && pricesTableHiddenProducts[sourceCity]?.includes(productName)) {
           continue;
         }
 
@@ -121,7 +134,7 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [selectedCities.sourceCities, prices]);
+  }, [selectedCities.sourceCities, pricesTableHiddenProductsConfiguring, pricesTableHiddenProducts, prices]);
 
   const getVariationCellColor = useCallback(
     (cell: MRT_Cell<ProductRow, unknown>) => {
@@ -338,6 +351,11 @@ export default function PricesTable() {
           enableSorting: false,
           size: 50,
           enableEditing: false,
+          Cell: ProductNameCell(
+            pricesTableHiddenProductsConfiguring,
+            pricesTableHiddenProducts,
+            setPricesTableHiddenProducts
+          ),
         },
         {
           id: "source-variation",
@@ -423,7 +441,13 @@ export default function PricesTable() {
     });
 
     return result;
-  }, [getVariationCellMuiProps, setPrice]);
+  }, [
+    getVariationCellMuiProps,
+    pricesTableHiddenProducts,
+    pricesTableHiddenProductsConfiguring,
+    setPrice,
+    setPricesTableHiddenProducts,
+  ]);
 
   const { columnVisibility, onColumnVisibilityChange } = useColumnVisibilityOverride(selectedCities.targetCities);
 
@@ -453,6 +477,9 @@ export default function PricesTable() {
         <IconButton onClick={onTrendCellColorButtonClick} size="small">
           <PaletteIcon />
         </IconButton>
+        <IconButton onClick={onPricesTableHiddenProductsConfigureButtonClick} size="small">
+          {pricesTableHiddenProductsConfiguring ? <Visibility /> : <VisibilityOff />}
+        </IconButton>
       </div>
     );
   }, [
@@ -463,6 +490,7 @@ export default function PricesTable() {
     setTargetCities,
     switchSourceAndTargetCities,
     copySourceToTargetCities,
+    onPricesTableHiddenProductsConfigureButtonClick,
   ]);
 
   const table = useMaterialReactTable({
