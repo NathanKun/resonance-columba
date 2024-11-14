@@ -64,6 +64,10 @@ export const calculateExchanges = (
       );
       continue;
     }
+
+    // get resonance skill tax cut percent of this city
+    const resonanceSkillTaxCutPercent = getResonanceSkillTaxCutPercent(playerConfig.roles, fromCity);
+
     const buys: Buy[] = availableProducts
       // group routes by fromCity and toCity
       .flatMap<Buy>((product) => {
@@ -133,7 +137,7 @@ export const calculateExchanges = (
         const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
 
         // sum all tax variation
-        tax += eventTaxVariation;
+        tax += eventTaxVariation + resonanceSkillTaxCutPercent;
 
         // don't apply tax to buy price yet, tax should be deducted from profit later
 
@@ -197,13 +201,16 @@ export const calculateExchanges = (
         let singleProfit = sellPrice - buy.buyPrice;
 
         // get prestiged tax to profit
-        const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+        let sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+
+        // sum all tax variation
+        sellTaxRate += resonanceSkillTaxCutPercent;
 
         // deduct sell tax, it applies to (sell price - buy price before buy tax)
         singleProfit -= singleProfit * sellTaxRate;
 
         // deduct buy tax from profit
-        singleProfit -= buy.buyPrice * buy.buyTaxRate;
+        singleProfit -= buy.buyPrice * (buy.buyTaxRate + resonanceSkillTaxCutPercent);
 
         // lot profit
         const lotProfit = Math.round(singleProfit * buy.buyLot);
@@ -406,6 +413,9 @@ export const calculateOneGraphBuyCombinations = (
         continue;
       }
 
+      // get resonance skill tax cut percent of this city
+      const resonanceSkillTaxCutPercent = getResonanceSkillTaxCutPercent(roles, fromCity);
+
       // calculate buy price and buy lot
       let pdtPrices: OnegraphPriceDataItem[] = availableProducts.flatMap((product) => {
         if (product.type === "Craft") {
@@ -440,7 +450,7 @@ export const calculateOneGraphBuyCombinations = (
         const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
 
         // sum all tax variation
-        tax += eventTaxVariation;
+        tax += eventTaxVariation + resonanceSkillTaxCutPercent;
 
         // don't apply tax to buy price yet, tax should be deducted from profit later
 
@@ -499,13 +509,16 @@ export const calculateOneGraphBuyCombinations = (
           let singleProfit = sellPrice - buyPrice;
 
           // get prestiged tax
-          const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+          let sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+
+          // sum all tax variation
+          sellTaxRate += resonanceSkillTaxCutPercent;
 
           // deduct sell tax, it applies to (sell price - buy price before buy tax)
           singleProfit -= singleProfit * sellTaxRate;
 
           // deduct buy tax from profit
-          singleProfit -= buyPrice * it.buyTaxRate;
+          singleProfit -= buyPrice * (it.buyTaxRate + resonanceSkillTaxCutPercent);
 
           // round
           singleProfit = Math.round(singleProfit);
@@ -702,4 +715,31 @@ export const getGameEventTaxVariation = (product: Product, fromCity: CityName) =
     eventTaxVariation += currentCityTaxVariation;
   }
   return eventTaxVariation;
+};
+
+export const getResonanceSkillTaxCutPercent = (roles: PlayerConfigRoles, fromCity: CityName) => {
+  let resonanceSkillTaxCutPercent = 0;
+  for (const roleName in roles) {
+    // player's role's data
+    const playerRole = roles[roleName];
+    const level = playerRole.resonance;
+    if (level === 0) {
+      continue;
+    }
+
+    // get resonance skill for this role and level
+    const rollResonances = ROLE_RESONANCE_SKILLS[roleName];
+    const skill = rollResonances?.[level];
+    if (!skill) {
+      console.warn(`Resonance skill not found for ${roleName} level ${level}`);
+      continue;
+    }
+
+    // get tax cut percent for this city
+    const taxCut = skill.taxCut;
+    const currentCityTaxCutPercent = taxCut?.city?.[fromCity] ?? 0;
+    resonanceSkillTaxCutPercent += currentCityTaxCutPercent;
+  }
+
+  return resonanceSkillTaxCutPercent;
 };

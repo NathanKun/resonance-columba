@@ -98,6 +98,17 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
       }
     }
 
+    const taxCutSkill = roleSkill?.taxCut;
+    if (taxCutSkill) {
+      const cityTaxCut = taxCutSkill.city;
+      if (cityTaxCut) {
+        Object.entries(cityTaxCut).map(([city, percentValue]) => {
+          const percent = percentValue * 100;
+          texts.push(block(`roleskilltext-taxCut-${city}`, `${city}税率${percent}%`));
+        });
+      }
+    }
+
     const otherSkills = roleSkill?.other;
     if (otherSkills) {
       const { driveLessFatigue } = otherSkills;

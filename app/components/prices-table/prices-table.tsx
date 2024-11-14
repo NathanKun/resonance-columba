@@ -483,14 +483,15 @@ export default function PricesTable() {
       </div>
     );
   }, [
-    onTrendCellColorButtonClick,
     selectedCities.sourceCities,
     selectedCities.targetCities,
-    setSourceCities,
-    setTargetCities,
     switchSourceAndTargetCities,
     copySourceToTargetCities,
+    onTrendCellColorButtonClick,
     onPricesTableHiddenProductsConfigureButtonClick,
+    pricesTableHiddenProductsConfiguring,
+    setSourceCities,
+    setTargetCities,
   ]);
 
   const table = useMaterialReactTable({
