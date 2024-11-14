@@ -12,6 +12,7 @@ import {
   getGameEventBuyMorePercent,
   getGameEventTaxVariation,
   getResonanceSkillBuyMorePercent,
+  getResonanceSkillTaxCutPercent,
 } from "./route-page-utils";
 
 interface Buy {
@@ -92,6 +93,9 @@ export const calculateRouteCycleV2 = (
       continue;
     }
 
+    // get resonance skill tax cut percent of this city
+    const resonanceSkillTaxCutPercent = getResonanceSkillTaxCutPercent(roles, fromCity);
+
     const availableProducts = PRODUCTS.filter((product) => product.buyPrices[fromCity])
       // exclude products that are not unlocked,
       // by default all products are unlocked, in productUnlockStatus the product should be set to false if the product is not unlocked
@@ -146,10 +150,13 @@ export const calculateRouteCycleV2 = (
               const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
 
               // sum all buy tax variation
-              buyTaxRate += eventTaxVariation;
+              buyTaxRate += eventTaxVariation + resonanceSkillTaxCutPercent;
 
               // get prestiged sell tax to profit
-              const sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+              let sellTaxRate = sellPrestige.specialTax[toCityMaster] ?? sellPrestige.generalTax;
+
+              // sum all sell tax variation
+              sellTaxRate += resonanceSkillTaxCutPercent;
 
               // calculate bargain rate
               let bargainRate = bargainResults[bargainCount].expectedRate;

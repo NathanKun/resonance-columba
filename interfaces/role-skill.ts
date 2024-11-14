@@ -19,7 +19,6 @@ export interface ResonanceSkill {
     raiseRate?: number; // + raise rate
     afterFailedLessFatigue?: number; // - fatigue after failed bargain
   };
-  // TODO: 隼 may have taxCut skill, implement it later
   taxCut?: {
     city?: {
       [cityName: string]: number;
