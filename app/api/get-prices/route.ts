@@ -3,6 +3,7 @@ import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices"
 import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 
+export const dynamic = "force-static";
 export const revalidate = 60;
 
 export async function GET(request: Request) {
