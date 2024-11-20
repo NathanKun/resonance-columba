@@ -9,10 +9,22 @@ export const revalidate = 60;
 let cache: LbGetPricesProducts | null = null;
 let cacheTime = 0;
 
-export async function GET(request: Request) {
+const buildResponse = (data: LbGetPricesProducts) => {
+  return new Response(JSON.stringify({ data }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": `public, s-max-age=${revalidate}`,
+      "CDN-Cache-Control": `public, s-max-age=${revalidate}`,
+      "Vercel-CDN-Cache-Control": `public, s-max-age=${revalidate}`,
+    },
+  });
+};
+
+export async function GET() {
   if (cache && Date.now() - cacheTime < revalidate * 1000) {
     console.log("Returning cached data cached at " + cacheTime);
-    return Response.json({ data: cache });
+    return buildResponse(cache);
   }
 
   try {
@@ -36,7 +48,8 @@ export async function GET(request: Request) {
     cacheTime = Date.now();
     console.log("Cached at " + cacheTime);
 
-    return Response.json({ data: lbResponseData });
+    // return Response.json({ data: lbResponseData });
+    return buildResponse(lbResponseData);
   } catch (e) {
     console.error(e);
     return Response.json({ error: "failed to load data" }); // todo: status code and interface
