@@ -3,7 +3,7 @@ import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices"
 import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 let cache: LbGetPricesProducts | null = null;
@@ -15,8 +15,8 @@ const buildResponse = (data: LbGetPricesProducts) => {
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": `public, s-max-age=${revalidate}`,
-      "CDN-Cache-Control": `public, s-max-age=${revalidate}`,
-      "Vercel-CDN-Cache-Control": `public, s-max-age=${revalidate}`,
+      "CDN-Cache-Control": `public, s-max-age=${revalidate}, stale-while-revalidate=0`,
+      "Vercel-CDN-Cache-Control": `public, s-max-age=${revalidate}, stale-while-revalidate=0`,
     },
   });
 };
