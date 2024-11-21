@@ -17,9 +17,9 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@giscus/react": "^3.0.0",
-    "@mui/icons-material": "^6.1.7",
-    "@mui/material": "^6.1.7",
-    "@mui/material-nextjs": "^6.1.7",
+    "@mui/icons-material": "^6.1.8",
+    "@mui/material": "^6.1.8",
+    "@mui/material-nextjs": "^6.1.8",
     "@mui/x-date-pickers": "^7.22.2",
     "@next/bundle-analyzer": "^14.2.18",
     "@next/third-parties": "^14.2.18",
@@ -48,14 +48,14 @@
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.1",
-    "@tsuk1ko/rsns-unpack": "^2.1.3",
+    "@tsuk1ko/rsns-unpack": "^2.1.4",
     "@types/ms": "^0.7.34",
     "@vitejs/plugin-react": "^4.3.3",
     "jsdom": "^24.1.1",
     "serwist": "^9.0.10",
     "ts-node": "^10.9.2",
-    "turbo": "^2.3.0",
+    "turbo": "^2.3.1",
     "vitest": "^2.1.5"
   },
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
 }
