@@ -8,6 +8,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import { SetStateAction } from "react";
 import BargainInputs from "../bargain-inputs";
+import GameEventConfigPanel from "../game-event-config-panel";
 import NumberInput from "../number-input";
 import ProductUnlockSelect from "../product-unlock-select";
 import RoleSkillSelects from "../role-skill-selects";
@@ -22,6 +23,7 @@ interface PlayerConfigTabProps {
   uploadPlayerConfig: (config: PlayerConfig) => Promise<boolean>;
   downloadPlayerConfig: (nanoid: string) => Promise<boolean>;
   onGoBargainChange: (field: string, value: number) => void;
+  setGameEvent: (eventName: string, activated: boolean) => void;
 }
 
 export default function PlayerConfigTab(props: PlayerConfigTabProps) {
@@ -34,6 +36,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
     setProductUnlock,
     downloadPlayerConfig,
     uploadPlayerConfig,
+    setGameEvent,
   } = props;
 
   const onPrestigeChange = (city: CityName, value: number) => {
@@ -164,6 +167,16 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
           <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
           <AccordionDetails className="p-0">
             <ProductUnlockSelect playerConfig={playerConfig} setProductUnlock={setProductUnlock} />
+          </AccordionDetails>
+        </Accordion>
+      </Box>
+
+      <Box className="m-4">
+        <Typography className="p-2">常驻活动</Typography>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}></AccordionSummary>
+          <AccordionDetails className="p-0">
+            <GameEventConfigPanel playerConfig={playerConfig} setGameEvent={setGameEvent} />
           </AccordionDetails>
         </Accordion>
       </Box>

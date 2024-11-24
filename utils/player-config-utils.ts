@@ -1,4 +1,5 @@
 import { CITIES } from "@/data/Cities";
+import { EVENTS } from "@/data/Event";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
@@ -29,6 +30,7 @@ export const isValidPlayerConfig = (config: any) => {
           "onegraph",
           "nanoid",
           "productUnlockStatus",
+          "events",
         ].includes(key)
     ).length > 0
   ) {
@@ -174,6 +176,12 @@ export const isValidPlayerConfig = (config: any) => {
     }
   }
 
+  if (config.events) {
+    if (!isEventConfig(config.events)) {
+      return false;
+    }
+  }
+
   return true;
 };
 
@@ -193,6 +201,27 @@ const isBargainConfig = (bargain: any) => {
 
   if (typeof bargain.disabled !== "boolean") {
     return false;
+  }
+
+  return true;
+};
+
+const isEventConfig = (events: any) => {
+  const configEventNames = Object.keys(events);
+  const allEventNames = EVENTS.map((event) => event.name);
+  if (configEventNames.filter((name) => !allEventNames.includes(name)).length > 0) {
+    return false;
+  }
+
+  for (const eventName of configEventNames) {
+    const event = events[eventName];
+    if (Object.keys(event).filter((key) => !["activated"].includes(key)).length > 0) {
+      return false;
+    }
+
+    if (typeof event.activated !== "boolean") {
+      return false;
+    }
   }
 
   return true;
@@ -251,4 +280,5 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     displayMode: "table",
   },
   productUnlockStatus: {},
+  events: {},
 };

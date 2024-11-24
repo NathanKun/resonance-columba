@@ -3,7 +3,7 @@ import { findFatigue } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
-import { PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
+import { PlayerConfigEvents, PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
 import {
   calculateGeneralProfitIndex,
@@ -16,7 +16,8 @@ export const calculateRouteCycle = (
   prices: GetPricesProducts,
   maxLot: number,
   playerConfigRoles: PlayerConfigRoles,
-  playerConfigPrestige: PlayerConfigPrestige
+  playerConfigPrestige: PlayerConfigPrestige,
+  playerConfigEvents: PlayerConfigEvents
 ) => {
   const start = performance.now();
 
@@ -92,7 +93,7 @@ export const calculateRouteCycle = (
           let buyTax = buyPrestige.specialTax[fromCityMaster] ?? buyPrestige.generalTax;
 
           // get game event buy tax variation
-          const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+          const eventTaxVariation = getGameEventTaxVariation(product, fromCity, playerConfigEvents);
 
           // sum all buy tax variation
           buyTax += eventTaxVariation;
@@ -124,7 +125,7 @@ export const calculateRouteCycle = (
             const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
             // get game event buy more percent
-            const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+            const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfigEvents);
 
             // sum all buy more percent
             const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;

@@ -9,7 +9,14 @@ export interface PlayerConfig {
   roles: PlayerConfigRoles;
   onegraph: PlayerConfigOnegraph;
   productUnlockStatus: PlayerConfigProductUnlockStatus;
+  events: PlayerConfigEvents;
   nanoid?: string;
+}
+
+export interface PlayerConfigEvents {
+  [eventName: string]: {
+    activated: boolean;
+  };
 }
 
 export interface PlayerConfigBargain {
