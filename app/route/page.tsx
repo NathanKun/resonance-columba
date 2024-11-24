@@ -2,7 +2,7 @@
 
 import usePlayerConfig from "@/hooks/usePlayerConfig";
 import useRouteCalculation from "@/hooks/useRouteCalculation";
-import { Box, ThemeProvider, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -31,6 +31,7 @@ export default function RoutePage() {
     setPlayerConfig,
     setRoleResonance,
     setProductUnlock,
+    setGameEvent,
     downloadPlayerConfig,
     uploadPlayerConfig,
   } = usePlayerConfig();
@@ -96,6 +97,7 @@ export default function RoutePage() {
           uploadPlayerConfig={uploadPlayerConfig}
           downloadPlayerConfig={downloadPlayerConfig}
           onGoBargainChange={onGoBargainChange}
+          setGameEvent={setGameEvent}
         />
       </div>
 

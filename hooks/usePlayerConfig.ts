@@ -69,6 +69,20 @@ export default function usePlayerConfig() {
     });
   };
 
+  const setGameEvent = (eventName: string, activated: boolean) => {
+    setPlayerConfig((oldConfig) => {
+      return {
+        ...oldConfig,
+        events: {
+          ...oldConfig.events,
+          [eventName]: {
+            activated,
+          },
+        },
+      };
+    });
+  };
+
   const uploadPlayerConfig = async (config: PlayerConfig): Promise<boolean> => {
     if (!config.nanoid) {
       return false;
@@ -135,6 +149,7 @@ export default function usePlayerConfig() {
     setPlayerConfig,
     setRoleResonance,
     setProductUnlock,
+    setGameEvent,
     uploadPlayerConfig,
     downloadPlayerConfig,
   };

@@ -135,7 +135,8 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.bargain,
         playerConfig.prestige,
         playerConfig.roles,
-        playerConfig.productUnlockStatus
+        playerConfig.productUnlockStatus,
+        playerConfig.events
       ),
     [
       prices,
@@ -144,6 +145,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.prestige,
       playerConfig.roles,
       playerConfig.productUnlockStatus,
+      playerConfig.events,
     ]
   );
 
@@ -155,7 +157,8 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.returnBargain,
         playerConfig.prestige,
         playerConfig.roles,
-        playerConfig.productUnlockStatus
+        playerConfig.productUnlockStatus,
+        playerConfig.events
       ),
     [
       prices,
@@ -164,6 +167,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.prestige,
       playerConfig.roles,
       playerConfig.productUnlockStatus,
+      playerConfig.events,
     ]
   );
 

@@ -109,6 +109,11 @@ const validConfig1 = {
     琥珀: true,
     防弹背心: false,
   },
+  events: {
+    红茶战争: {
+      activated: true,
+    },
+  },
 };
 
 const invalidConfigs = [
@@ -374,6 +379,27 @@ const invalidConfigs = [
   {
     productUnlockStatus: {
       琥珀: 0,
+    },
+  },
+  {
+    events: {
+      战战争争: {
+        activated: true,
+      },
+    },
+  },
+  {
+    events: {
+      红茶战争: {
+        activated: 1,
+      },
+    },
+  },
+  {
+    events: {
+      红茶战争: {
+        hey: "you",
+      },
     },
   },
 ];

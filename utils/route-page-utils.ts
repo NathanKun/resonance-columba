@@ -8,6 +8,7 @@ import { GetPricesProducts } from "@/interfaces/get-prices";
 import {
   PlayerConfig,
   PlayerConfigBargain,
+  PlayerConfigEvents,
   PlayerConfigPrestige,
   PlayerConfigProductUnlockStatus,
   PlayerConfigRoles,
@@ -90,7 +91,7 @@ export const calculateExchanges = (
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
         // get game event buy more percent
-        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfig.events);
 
         // sum all buy more percent
         const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
@@ -134,7 +135,7 @@ export const calculateExchanges = (
         let tax = buyPrestige.specialTax[fromCityMaster] ?? buyPrestige.generalTax;
 
         // get game event tax variation
-        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity, playerConfig.events);
 
         // sum all tax variation
         tax += eventTaxVariation + resonanceSkillTaxCutPercent;
@@ -378,7 +379,8 @@ export const calculateOneGraphBuyCombinations = (
   bargain: PlayerConfigBargain,
   prestige: PlayerConfigPrestige,
   roles: PlayerConfigRoles,
-  productUnlockStatus: PlayerConfigProductUnlockStatus
+  productUnlockStatus: PlayerConfigProductUnlockStatus,
+  playerConfigEvents: PlayerConfigEvents
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -447,7 +449,7 @@ export const calculateOneGraphBuyCombinations = (
         let tax = buyPrestige.specialTax[fromCityMaster] ?? buyPrestige.generalTax;
 
         // get game event tax variation
-        const eventTaxVariation = getGameEventTaxVariation(product, fromCity);
+        const eventTaxVariation = getGameEventTaxVariation(product, fromCity, playerConfigEvents);
 
         // sum all tax variation
         tax += eventTaxVariation + resonanceSkillTaxCutPercent;
@@ -461,7 +463,7 @@ export const calculateOneGraphBuyCombinations = (
         const prestigeBuyMorePercent = buyPrestige.extraBuy * 100;
 
         // get game event buy more percent
-        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity);
+        const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfigEvents);
 
         // sum all buy more percent
         const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
@@ -693,26 +695,32 @@ export const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, produc
   return resonanceSkillBuyMorePercent;
 };
 
-export const getGameEventBuyMorePercent = (product: Product, fromCity: CityName) => {
+export const getGameEventBuyMorePercent = (product: Product, fromCity: CityName, eventsConfig: PlayerConfigEvents) => {
   let eventBuyMorePercent = 0;
   for (const event of EVENTS) {
-    const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
-    eventBuyMorePercent += currentProductBuyMorePercent;
+    // if event not player configuable, take it as activated
+    // if event is player configuable, check player's config, if activated, then take it as activated
+    if (!event.playConfigurable || eventsConfig[event.name]?.activated) {
+      const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
+      eventBuyMorePercent += currentProductBuyMorePercent;
 
-    const currentCityBuyMorePercent = product.type === "Special" ? event.buyMore?.city?.[fromCity] ?? 0 : 0;
-    eventBuyMorePercent += currentCityBuyMorePercent;
+      const currentCityBuyMorePercent = product.type === "Special" ? event.buyMore?.city?.[fromCity] ?? 0 : 0;
+      eventBuyMorePercent += currentCityBuyMorePercent;
+    }
   }
   return eventBuyMorePercent;
 };
 
-export const getGameEventTaxVariation = (product: Product, fromCity: CityName) => {
+export const getGameEventTaxVariation = (product: Product, fromCity: CityName, eventsConfig: PlayerConfigEvents) => {
   let eventTaxVariation = 0;
   for (const event of EVENTS) {
-    const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;
-    eventTaxVariation += currentProductTaxVariation;
+    if (!event.playConfigurable || eventsConfig[event.name]?.activated) {
+      const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;
+      eventTaxVariation += currentProductTaxVariation;
 
-    const currentCityTaxVariation = product.type === "Special" ? event.taxVariation?.city?.[fromCity] ?? 0 : 0;
-    eventTaxVariation += currentCityTaxVariation;
+      const currentCityTaxVariation = product.type === "Special" ? event.taxVariation?.city?.[fromCity] ?? 0 : 0;
+      eventTaxVariation += currentCityTaxVariation;
+    }
   }
   return eventTaxVariation;
 };

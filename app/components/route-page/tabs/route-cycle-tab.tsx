@@ -44,6 +44,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
         playerConfig.roles,
         playerConfig.prestige,
         playerConfig.productUnlockStatus,
+        playerConfig.events,
         bargainSummery,
         routeCycleInputs
       );
@@ -57,6 +58,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
     playerConfig.roles,
     playerConfig.prestige,
     playerConfig.productUnlockStatus,
+    playerConfig.events,
     bargainSummery,
     routeCycleInputs,
   ]);
