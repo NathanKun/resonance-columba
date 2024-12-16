@@ -37,9 +37,6 @@ export async function GET() {
       throw new Error("no data");
     }
 
-    //这应该能临时清除单晶硅和蕾丝连衣裙数据
-    data["法兰绒"]["buy"] = {};
-
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
 
     const lbResponseData: LbGetPricesProducts = lowBandwidthResponse(responseData);
