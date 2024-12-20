@@ -61,6 +61,7 @@ import 马吉拉 from "/public/roles/head/马吉拉.png";
 import 魇 from "/public/roles/head/魇.png";
 import 黛丝莉 from "/public/roles/head/黛丝莉.png";
 import 佩罗塔 from "/public/roles/head/佩罗塔.png";
+import 罗洁尔·定格 from "/public/roles/head/罗洁尔·定格.png";
 // import end
 
 export const roleImages: { [roleName: string]: StaticImageData } = {
@@ -122,5 +123,6 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   帕拉笛,
   隼,
   佩罗塔,
+  罗洁尔·定格,
   // export role images end
 };
