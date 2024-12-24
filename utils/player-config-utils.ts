@@ -1,8 +1,8 @@
-import { CITIES } from "@/data/Cities";
 import { EVENTS } from "@/data/Event";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
+import { CITY_ATTACH_LIST } from "resonance-data-columba/dist/columbabuild";
 
 export const isValidPlayerConfig = (config: any) => {
   if (!config) {
@@ -69,8 +69,9 @@ export const isValidPlayerConfig = (config: any) => {
   }
 
   if (config.prestige) {
+    const cityWithPrestige = Object.values(CITY_ATTACH_LIST);
     const prestige = config.prestige;
-    if (Object.keys(prestige).filter((key) => !CITIES.includes(key) && key !== "铁山城").length > 0) {
+    if (Object.keys(prestige).filter((key) => !cityWithPrestige.includes(key)).length > 0) {
       return false;
     }
 
