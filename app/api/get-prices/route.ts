@@ -4,7 +4,7 @@ import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 60;
+export const revalidate = 90;
 
 let cache: LbGetPricesProducts | null = null;
 let cacheTime = 0;

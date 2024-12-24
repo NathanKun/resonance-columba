@@ -31,7 +31,7 @@ import TrendCell, { getTrendIcon } from "./trend-cell";
 import VariationCell from "./variation-cell";
 
 export default function PricesTable() {
-  const { prices, setPrice } = useContext(PriceContext);
+  const { prices } = useContext(PriceContext);
   const { selectedCities, setSourceCities, setTargetCities, switchSourceAndTargetCities, copySourceToTargetCities } =
     useSelectedCities({
       localStorageKey: "selectedCities",
@@ -442,7 +442,6 @@ export default function PricesTable() {
     getVariationCellMuiProps,
     pricesTableHiddenProducts,
     pricesTableHiddenProductsConfiguring,
-    setPrice,
     setPricesTableHiddenProducts,
   ]);
 
