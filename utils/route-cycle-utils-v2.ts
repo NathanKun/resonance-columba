@@ -134,12 +134,12 @@ export const calculateRouteCycleV2 = (
       for (const product of availableProducts) {
         const pdtName = product.name;
         if (product.buyLot?.[fromCity] ?? 0 > 0) {
-          const buyPrice = prices[pdtName]?.buy[fromCity]?.price ?? 0;
+          const buyPrice = prices[pdtName]?.buy?.[fromCity]?.price ?? 0;
           if (buyPrice <= 0) {
             continue;
           }
 
-          const sellPrice = prices[pdtName]?.sell[toCity]?.price ?? 0;
+          const sellPrice = prices[pdtName]?.sell?.[toCity]?.price ?? 0;
           if (sellPrice <= 0) {
             continue;
           }
