@@ -15,7 +15,7 @@ export default function MaterialBlock(props: MaterialBlockProps) {
   const variation = buy?.variation;
   const numRounded = Number(item.num.toFixed(2));
   return (
-    <Box key={item.product} className="inline-block pr-4">
+    <Box className="inline-block pr-4">
       <Typography component="span" className="align-middle">
         {item.product}
       </Typography>
