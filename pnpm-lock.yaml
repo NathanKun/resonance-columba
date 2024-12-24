@@ -36,8 +36,8 @@ importers:
         specifier: ^14.2.18
         version: 14.2.18(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@serwist/next':
-        specifier: 9.0.10
-        version: 9.0.10(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.7.2)
+        specifier: 9.0.11
+        version: 9.0.11(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.7.2)
       '@types/node':
         specifier: 20.14.9
         version: 20.14.9
@@ -1170,8 +1170,8 @@ packages:
   '@rushstack/eslint-patch@1.7.2':
     resolution: {integrity: sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==}
 
-  '@serwist/build@9.0.10':
-    resolution: {integrity: sha512-7txmKhDw65CZZilT4lcV8A47/DD/Tdx4VUBlINSdECCx/pUNSLlRAwmKgb4DLqwQ9+Ert+FGEonPn1j4ZiAFUA==}
+  '@serwist/build@9.0.11':
+    resolution: {integrity: sha512-mYBBpm6hWN40J/Sj2aNncVgl/o7Ch/CfyHHl3XvEecbowRuJNv8BfIch+Tvwlfd1cqBqNc65kCYvCL2XJms8DA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
@@ -1179,8 +1179,8 @@ packages:
       typescript:
         optional: true
 
-  '@serwist/next@9.0.10':
-    resolution: {integrity: sha512-E5gpZTwyQesubn8rASs3oNj+RmQd7whBlcWqEVD5aGxQntgpAJeUVGgALkL1aUfUD/CvgWHKyLJ4Ih6akKKZUw==}
+  '@serwist/next@9.0.11':
+    resolution: {integrity: sha512-Aa26qgJxnaxbGK8JYAWqAPeDcyfu0xjYUPpvSfc3d9GrIl9G9cdflkcsvcbmJGnOb3Oc4tHN4wncYO6cIKb2wQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       next: '>=14.0.0'
@@ -1189,8 +1189,8 @@ packages:
       typescript:
         optional: true
 
-  '@serwist/webpack-plugin@9.0.10':
-    resolution: {integrity: sha512-9DGkOjqeIrn6yulyP0VEt/F7EXrYKBSa9jOFFJdmeEXL0SdR5cbzEixTaxTWB1IBHnNduWvFavubxv8dtjyMOg==}
+  '@serwist/webpack-plugin@9.0.11':
+    resolution: {integrity: sha512-ZTxVJqv7nKlPWmhC3oMt7tZc0ssnd7SYr6L8zZLLF7ltJUub9TMyh1K1zL5TJtsr8DyfALNFPwPA/s2yjYSk+w==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
@@ -1201,8 +1201,8 @@ packages:
       webpack:
         optional: true
 
-  '@serwist/window@9.0.10':
-    resolution: {integrity: sha512-M3VRAyLR8UEZcRYFRZrRF6zvZXJkk1hDtU7MVrDmqtoZ6rvB+PCWWoNacEFi4Rk/7ydmt7Vl8IGx8IanxIakYA==}
+  '@serwist/window@9.0.11':
+    resolution: {integrity: sha512-hUJVNxZbqfnJbUTfuJew7SR3f1KBIv/4nwmP1YRxjR6EMthUfN4bVSLzWLW8/u3h5bNaVh7sOhopUVC8m1HTCQ==}
     peerDependencies:
       typescript: '>=5.0.0'
     peerDependenciesMeta:
@@ -3431,14 +3431,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  serwist@9.0.10:
-    resolution: {integrity: sha512-r6DiPmR99ZqfSo1T0SePgyUnQz0QmbVF6XywjWtCk1Qgk4EBAdrYRr9Y4Ul8Xge/jAnpEMyrmdSX9N1vgxWVgA==}
-    peerDependencies:
-      typescript: '>=5.0.0'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   serwist@9.0.11:
     resolution: {integrity: sha512-oUuyOuIFZoj+ZYdwWnPYVsndOw5CoGsTy106mHJ2wxjnz01TrDhg2l26yrsoJek1qT/Doi0pzknYLLXTIFs5og==}
     peerDependencies:
@@ -5167,7 +5159,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.7.2': {}
 
-  '@serwist/build@9.0.10(typescript@5.7.2)':
+  '@serwist/build@9.0.11(typescript@5.7.2)':
     dependencies:
       common-tags: 1.8.2
       glob: 10.4.5
@@ -5177,33 +5169,33 @@ snapshots:
     optionalDependencies:
       typescript: 5.7.2
 
-  '@serwist/next@9.0.10(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.7.2)':
+  '@serwist/next@9.0.11(next@14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.7.2)':
     dependencies:
-      '@serwist/build': 9.0.10(typescript@5.7.2)
-      '@serwist/webpack-plugin': 9.0.10(typescript@5.7.2)
-      '@serwist/window': 9.0.10(typescript@5.7.2)
+      '@serwist/build': 9.0.11(typescript@5.7.2)
+      '@serwist/webpack-plugin': 9.0.11(typescript@5.7.2)
+      '@serwist/window': 9.0.11(typescript@5.7.2)
       chalk: 5.3.0
       glob: 10.4.5
       next: 14.2.18(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      serwist: 9.0.10(typescript@5.7.2)
+      serwist: 9.0.11(typescript@5.7.2)
       zod: 3.23.8
     optionalDependencies:
       typescript: 5.7.2
     transitivePeerDependencies:
       - webpack
 
-  '@serwist/webpack-plugin@9.0.10(typescript@5.7.2)':
+  '@serwist/webpack-plugin@9.0.11(typescript@5.7.2)':
     dependencies:
-      '@serwist/build': 9.0.10(typescript@5.7.2)
+      '@serwist/build': 9.0.11(typescript@5.7.2)
       pretty-bytes: 6.1.1
       zod: 3.23.8
     optionalDependencies:
       typescript: 5.7.2
 
-  '@serwist/window@9.0.10(typescript@5.7.2)':
+  '@serwist/window@9.0.11(typescript@5.7.2)':
     dependencies:
       '@types/trusted-types': 2.0.7
-      serwist: 9.0.10(typescript@5.7.2)
+      serwist: 9.0.11(typescript@5.7.2)
     optionalDependencies:
       typescript: 5.7.2
 
@@ -7803,12 +7795,6 @@ snapshots:
   semver@7.6.0:
     dependencies:
       lru-cache: 6.0.0
-
-  serwist@9.0.10(typescript@5.7.2):
-    dependencies:
-      idb: 8.0.0
-    optionalDependencies:
-      typescript: 5.7.2
 
   serwist@9.0.11(typescript@5.7.2):
     dependencies:
