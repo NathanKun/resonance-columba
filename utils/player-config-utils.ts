@@ -1,8 +1,8 @@
+import { CITY_WITH_PRESTIGE } from "@/data/Cities";
 import { EVENTS } from "@/data/Event";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { PlayerConfig } from "@/interfaces/player-config";
-import { CITY_ATTACH_LIST } from "resonance-data-columba/dist/columbabuild";
 
 export const isValidPlayerConfig = (config: any) => {
   if (!config) {
@@ -69,9 +69,8 @@ export const isValidPlayerConfig = (config: any) => {
   }
 
   if (config.prestige) {
-    const cityWithPrestige = Object.values(CITY_ATTACH_LIST);
     const prestige = config.prestige;
-    if (Object.keys(prestige).filter((key) => !cityWithPrestige.includes(key)).length > 0) {
+    if (Object.keys(prestige).filter((key) => !CITY_WITH_PRESTIGE.includes(key)).length > 0) {
       return false;
     }
 
@@ -269,6 +268,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     阿妮塔发射中心: 1,
     海角城: 1,
     铁山城: 1,
+    贡露城: 1,
   },
   roles: {},
   onegraph: {

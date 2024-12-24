@@ -1,4 +1,4 @@
-import { CityName } from "@/data/Cities";
+import { CITY_WITH_PRESTIGE, CityName } from "@/data/Cities";
 import { PlayerConfig } from "@/interfaces/player-config";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Typography } from "@mui/material";
@@ -7,7 +7,6 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import { SetStateAction } from "react";
-import { CITY_ATTACH_LIST } from "resonance-data-columba/dist/columbabuild";
 import BargainInputs from "../bargain-inputs";
 import GameEventConfigPanel from "../game-event-config-panel";
 import NumberInput from "../number-input";
@@ -46,8 +45,6 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
     }
   };
 
-  const cityList = Object.values(CITY_ATTACH_LIST);
-
   return (
     <Paper
       className="p-6 max-sm:px-0 max-w-4xl mx-auto my-4 w-full box-border"
@@ -84,7 +81,7 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         <Typography className="p-2">
           声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。
         </Typography>
-        {cityList.map((city) => (
+        {CITY_WITH_PRESTIGE.map((city) => (
           <NumberInput
             key={"prestige-input" + city}
             label={city}
