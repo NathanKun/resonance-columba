@@ -30,7 +30,7 @@ export async function GET() {
   try {
     console.log("Fetching data");
 
-    const docRef = columbaCol.doc("products");
+    const docRef = columbaCol.doc("productsV2");
     const docSnapshot = await docRef.get();
     const data = docSnapshot.data();
     if (!data) {

@@ -6,7 +6,6 @@ import useColumnVisibilityOverride from "@/hooks/useColumnVisibilityOverride";
 import usePricesTableHiddenProducts from "@/hooks/usePricesTableHiddenProducts";
 import useSelectedCities from "@/hooks/useSelectedCities";
 import { ProductRow, ProductRowCityPrice } from "@/interfaces/prices-table";
-import { Trend } from "@/interfaces/trend";
 import { calculateProfit, highestProfitCity, isCraftOnlyProduct } from "@/utils/price-utils";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import PaletteIcon from "@mui/icons-material/Palette";
@@ -29,9 +28,7 @@ import { PriceContext } from "../../price-provider";
 import MultipleSelect from "./multiple-select";
 import ProductNameCell from "./product-name-cell";
 import TrendCell, { getTrendIcon } from "./trend-cell";
-import TrendInput from "./trend-input";
 import VariationCell from "./variation-cell";
-import VariationInput from "./variation-input";
 
 export default function PricesTable() {
   const { prices, setPrice } = useContext(PriceContext);
@@ -203,25 +200,25 @@ export default function PricesTable() {
               size: 50,
               Cell: VariationCell,
               muiTableBodyCellProps: getVariationCellMuiProps,
-              Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
-                const cancel = () => {
-                  table.setEditingCell(null);
-                };
-                const rowData = row.original;
-                const { productName, buyableCities } = rowData;
+              // Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
+              //   const cancel = () => {
+              //     table.setEditingCell(null);
+              //   };
+              //   const rowData = row.original;
+              //   const { productName, buyableCities } = rowData;
 
-                // won't sell the product in its buyable city, so no need to edit variation, except craftable product
-                if (buyableCities.includes(city) && !rowData.craftable) {
-                  return null;
-                }
+              //   // won't sell the product in its buyable city, so no need to edit variation, except craftable product
+              //   if (buyableCities.includes(city) && !rowData.craftable) {
+              //     return null;
+              //   }
 
-                const save = (newVaraition: number) => {
-                  row._valuesCache[column.id] = newVaraition;
-                  setPrice({ product: productName, city, variation: newVaraition, type: "sell" });
-                  table.setEditingCell(null);
-                };
-                return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
-              },
+              //   const save = (newVaraition: number) => {
+              //     row._valuesCache[column.id] = newVaraition;
+              //     setPrice({ product: productName, city, variation: newVaraition, type: "sell" });
+              //     table.setEditingCell(null);
+              //   };
+              //   return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
+              // },
             },
             {
               id: `targetCity-${city}-trend`,
@@ -235,23 +232,23 @@ export default function PricesTable() {
                   textAlign: "center",
                 },
               },
-              Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
-                const rowData = row.original;
-                const { productName, buyableCities } = rowData;
+              // Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
+              //   const rowData = row.original;
+              //   const { productName, buyableCities } = rowData;
 
-                // won't sell the product in its buyable city, so no need to edit trend, except craftable product
-                if (buyableCities.includes(city) && !rowData.craftable) {
-                  return null;
-                }
+              //   // won't sell the product in its buyable city, so no need to edit trend, except craftable product
+              //   if (buyableCities.includes(city) && !rowData.craftable) {
+              //     return null;
+              //   }
 
-                const save = (newTrend: Trend) => {
-                  row._valuesCache[column.id] = newTrend;
-                  setPrice({ product: productName, city, trend: newTrend, type: "sell" });
-                  table.setEditingCell(null);
-                };
+              //   const save = (newTrend: Trend) => {
+              //     row._valuesCache[column.id] = newTrend;
+              //     setPrice({ product: productName, city, trend: newTrend, type: "sell" });
+              //     table.setEditingCell(null);
+              //   };
 
-                return <TrendInput value={cell.getValue()} save={save} />;
-              },
+              //   return <TrendInput value={cell.getValue()} save={save} />;
+              // },
             },
             {
               id: `targetCity-${city}-time`,
@@ -364,25 +361,25 @@ export default function PricesTable() {
           size: 50,
           Cell: VariationCell,
           muiTableBodyCellProps: getVariationCellMuiProps,
-          Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
-            const save = (newVaraition: number) => {
-              row._valuesCache[column.id] = newVaraition;
-              const rowData = row.original;
-              const { productName, sourceCity } = rowData;
-              setPrice({ product: productName, city: sourceCity, variation: newVaraition, type: "buy" });
-              table.setEditingCell(null);
-            };
-            const cancel = () => {
-              table.setEditingCell(null);
-            };
+          // Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
+          //   const save = (newVaraition: number) => {
+          //     row._valuesCache[column.id] = newVaraition;
+          //     const rowData = row.original;
+          //     const { productName, sourceCity } = rowData;
+          //     setPrice({ product: productName, city: sourceCity, variation: newVaraition, type: "buy" });
+          //     table.setEditingCell(null);
+          //   };
+          //   const cancel = () => {
+          //     table.setEditingCell(null);
+          //   };
 
-            // craftable product don't have variation
-            if (row.original.craftable) {
-              return <>制造</>;
-            }
+          //   // craftable product don't have variation
+          //   if (row.original.craftable) {
+          //     return <>制造</>;
+          //   }
 
-            return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
-          },
+          //   return <VariationInput value={cell.getValue()} save={save} cancel={cancel} />;
+          // },
         },
         {
           id: "source-trend",
@@ -396,22 +393,22 @@ export default function PricesTable() {
               textAlign: "center",
             },
           },
-          Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
-            const save = (newTrend: Trend) => {
-              row._valuesCache[column.id] = newTrend;
-              const rowData = row.original;
-              const { productName, sourceCity } = rowData;
-              setPrice({ product: productName, city: sourceCity, trend: newTrend, type: "buy" });
-              table.setEditingCell(null);
-            };
+          // Edit: ({ cell, column, row, table }: MRT_EditFunctionProps) => {
+          //   const save = (newTrend: Trend) => {
+          //     row._valuesCache[column.id] = newTrend;
+          //     const rowData = row.original;
+          //     const { productName, sourceCity } = rowData;
+          //     setPrice({ product: productName, city: sourceCity, trend: newTrend, type: "buy" });
+          //     table.setEditingCell(null);
+          //   };
 
-            // craftable product don't have trend
-            if (row.original.craftable) {
-              return null;
-            }
+          //   // craftable product don't have trend
+          //   if (row.original.craftable) {
+          //     return null;
+          //   }
 
-            return <TrendInput value={cell.getValue()} save={save} />;
-          },
+          //   return <TrendInput value={cell.getValue()} save={save} />;
+          // },
         },
         {
           id: "source-price",
@@ -505,7 +502,7 @@ export default function PricesTable() {
     enableDensityToggle: false,
     enableStickyHeader: true,
     enableColumnFilters: false,
-    enableEditing: true,
+    enableEditing: false,
     editDisplayMode: "cell",
     positionToolbarAlertBanner: "none",
     renderTopToolbarCustomActions: renderCitySelects,

@@ -14,10 +14,18 @@ const cityList = [
   "海角城",
   "云岫桥基地",
   "汇流塔",
+  "远星大桥",
 ];
+
+const hiddenCityList = ["贡露城", "铁山城"];
 
 export type CityName = (typeof cityList)[number];
 export const CITIES: CityName[] = cityList;
 
 const cityAttachList: { [key: CityName]: CityName } = CITY_ATTACH_LIST;
 export const CITY_BELONGS_TO = cityAttachList;
+
+// const masterCities = [... new Set(Object.values(CITY_BELONGS_TO))];
+const childCities = Object.keys(CITY_BELONGS_TO);
+const cityWithPrestige = [...cityList, ...hiddenCityList].filter((city) => !childCities.includes(city));
+export const CITY_WITH_PRESTIGE: CityName[] = cityWithPrestige;

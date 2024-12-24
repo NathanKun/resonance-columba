@@ -81,6 +81,20 @@ const FATIGUES: Fatigue[] = [
   { cities: ["汇流塔", "阿妮塔发射中心"], fatigue: 36 },
   { cities: ["汇流塔", "海角城"], fatigue: 24 },
   { cities: ["汇流塔", "云岫桥基地"], fatigue: 59 },
+
+  { cities: ["远星大桥", "修格里城"], fatigue: 42 },
+  { cities: ["远星大桥", "铁盟哨站"], fatigue: 48 },
+  { cities: ["远星大桥", "七号自由港"], fatigue: 33 },
+  { cities: ["远星大桥", "澄明数据中心"], fatigue: 39 },
+  { cities: ["远星大桥", "阿妮塔战备工厂"], fatigue: 33 },
+  { cities: ["远星大桥", "阿妮塔能源研究所"], fatigue: 25 },
+  { cities: ["远星大桥", "荒原站"], fatigue: 49 },
+  { cities: ["远星大桥", "曼德矿场"], fatigue: 49 },
+  { cities: ["远星大桥", "淘金乐园"], fatigue: 55 },
+  { cities: ["远星大桥", "阿妮塔发射中心"], fatigue: 33 },
+  { cities: ["远星大桥", "海角城"], fatigue: 25 },
+  { cities: ["远星大桥", "云岫桥基地"], fatigue: 56 },
+  { cities: ["远星大桥", "汇流塔"], fatigue: 29 },
 ];
 
 // 200KM内24疲劳，之后每增加20KM增加1疲劳，向上取整

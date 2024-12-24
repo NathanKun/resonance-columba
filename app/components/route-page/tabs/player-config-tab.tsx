@@ -1,4 +1,4 @@
-import { CityName } from "@/data/Cities";
+import { CITY_WITH_PRESTIGE, CityName } from "@/data/Cities";
 import { PlayerConfig } from "@/interfaces/player-config";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Typography } from "@mui/material";
@@ -81,69 +81,18 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
         <Typography className="p-2">
           声望等级：影响税收与单票商品购入量，目前仅支持8级以上。附属城市声望跟随主城。
         </Typography>
-        <NumberInput
-          label="修格里城"
-          min={1}
-          max={20}
-          defaultValue={8}
-          type="integer"
-          value={playerConfig.prestige["修格里城"]}
-          setValue={(newValue) => onPrestigeChange("修格里城", newValue)}
-        />
-        <NumberInput
-          label="曼德矿场"
-          min={1}
-          max={20}
-          defaultValue={8}
-          type="integer"
-          value={playerConfig.prestige["曼德矿场"]}
-          setValue={(newValue) => onPrestigeChange("曼德矿场", newValue)}
-        />
-        <NumberInput
-          label="澄明数据中心"
-          min={1}
-          max={20}
-          defaultValue={8}
-          type="integer"
-          value={playerConfig.prestige["澄明数据中心"]}
-          setValue={(newValue) => onPrestigeChange("澄明数据中心", newValue)}
-        />
-        <NumberInput
-          label="七号自由港"
-          min={1}
-          max={20}
-          defaultValue={8}
-          type="integer"
-          value={playerConfig.prestige["七号自由港"]}
-          setValue={(newValue) => onPrestigeChange("七号自由港", newValue)}
-        />
-        <NumberInput
-          label="阿妮塔发射中心"
-          min={1}
-          max={20}
-          defaultValue={1}
-          type="integer"
-          value={playerConfig.prestige["阿妮塔发射中心"]}
-          setValue={(newValue) => onPrestigeChange("阿妮塔发射中心", newValue)}
-        />
-        <NumberInput
-          label="海角城"
-          min={1}
-          max={20}
-          defaultValue={1}
-          type="integer"
-          value={playerConfig.prestige["海角城"]}
-          setValue={(newValue) => onPrestigeChange("海角城", newValue)}
-        />
-        <NumberInput
-          label="铁山城"
-          min={1}
-          max={20}
-          defaultValue={1}
-          type="integer"
-          value={playerConfig.prestige["铁山城"]}
-          setValue={(newValue) => onPrestigeChange("铁山城", newValue)}
-        />
+        {CITY_WITH_PRESTIGE.map((city) => (
+          <NumberInput
+            key={"prestige-input" + city}
+            label={city}
+            min={1}
+            max={20}
+            defaultValue={1}
+            type="integer"
+            value={playerConfig.prestige[city]}
+            setValue={(newValue) => onPrestigeChange(city, newValue)}
+          />
+        ))}
       </Box>
 
       <Box className="m-4">

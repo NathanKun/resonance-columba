@@ -15,8 +15,6 @@ export default function GameEventConfigPanel(props: GameEventConfigPanelProps) {
     return EVENTS.filter((event) => event.playConfigurable);
   }, []);
 
-  console.log("GameEventConfigPanel", EVENTS, allConfigurableEvents);
-
   return (
     <Box className="m-4">
       {allConfigurableEvents.map((event) => (
