@@ -29,8 +29,8 @@ export default function OnegraphMultiConfigSelect({
   const IS_IOS = useMemo(() => /iPad|iPhone|iPod/.test(navigator.platform), []);
 
   const menuRef = useRef<ContextMenuRef>(null);
-  const menuActiveConfig = useRef<OnegraphMultiConfigItem>();
-  const longPressTimer = useRef<NodeJS.Timeout>();
+  const menuActiveConfig = useRef<OnegraphMultiConfigItem>(undefined);
+  const longPressTimer = useRef<NodeJS.Timeout>(undefined);
 
   const { multiConfig, addMultiConfig, removeMultiConfig, applyMultiConfig, renameMultiConfig, updateMultiConfig } =
     useOnegraphMultiConfig({

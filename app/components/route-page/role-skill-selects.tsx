@@ -6,6 +6,8 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { Avatar, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Image from "next/image";
 
+import type { JSX } from "react";
+
 interface RoleSkillSelectsProps {
   playerConfig: PlayerConfig;
   setRoleResonance: (role: string, resonance: number) => void;
