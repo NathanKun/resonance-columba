@@ -14,6 +14,8 @@ const cityList = [
   "海角城",
   "云岫桥基地",
   "汇流塔",
+  "远星大桥",
+  // "贡露城",
 ];
 
 export type CityName = (typeof cityList)[number];
