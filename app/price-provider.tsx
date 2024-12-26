@@ -28,7 +28,7 @@ export const PriceContext = createContext({
 } as PriceContextProps);
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
-  const fetchInterval = 1000 * 90; // 90 seconds
+  const fetchInterval = 1000 * 60 * 3; // 3 min
   const [data, setData] = useState<GetPricesProducts>({});
   const [lastFetch, setLastFetch] = useState<number | null>(0);
   const focus = useHasFocus();
