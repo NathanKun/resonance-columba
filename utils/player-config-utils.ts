@@ -269,6 +269,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     海角城: 1,
     铁山城: 1,
     贡露城: 1,
+    岚心城: 1,
   },
   roles: {},
   onegraph: {
