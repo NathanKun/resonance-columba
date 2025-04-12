@@ -65,6 +65,7 @@ import 罗洁尔·定格 from "/public/roles/head/罗洁尔·定格.png";
 import 无名 from "/public/roles/head/无名.png";
 import 乌刹娜 from "/public/roles/head/乌刹娜.png";
 import 罗洁尔 from "/public/roles/head/罗洁尔.png";
+import 涟 from "/public/roles/head/涟.png";
 // import end
 
 export const roleImages: { [roleName: string]: StaticImageData } = {
@@ -130,5 +131,6 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   无名,
   乌刹娜,
   罗洁尔,
+  涟,
   // export role images end
 };
