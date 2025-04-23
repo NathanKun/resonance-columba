@@ -271,6 +271,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     贡露城: 1,
     岚心城: 1,
     塔图站: 1,
+    雪金城: 1,
   },
   roles: {},
   onegraph: {
