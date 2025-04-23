@@ -43,8 +43,8 @@ importers:
         specifier: 9.0.12
         version: 9.0.12(next@15.2.1(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2)
       '@types/node':
-        specifier: 20.17.0
-        version: 20.17.0
+        specifier: 22.14.1
+        version: 22.14.1
       '@types/react':
         specifier: 19.0.2
         version: 19.0.2
@@ -74,7 +74,7 @@ importers:
         version: 11.0.2
       material-react-table:
         specifier: ^3.2.1
-        version: 3.2.1(qb7nymcej4xj623ub7l4nzpwjy)
+        version: 3.2.1(1b6885d8baf78a7620a72e2bbc4fc540)
       nanoid:
         specifier: ^5.1.2
         version: 5.1.2
@@ -91,11 +91,11 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
       resonance-data-columba:
-        specifier: ^1.3.146
-        version: 1.3.146
+        specifier: ^1.3.147
+        version: 1.3.147
       tailwindcss:
         specifier: 3.4.17
-        version: 3.4.17(ts-node@10.9.2(@types/node@20.17.0)(typescript@5.8.2))
+        version: 3.4.17(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.2))
       typescript:
         specifier: 5.8.2
         version: 5.8.2
@@ -120,7 +120,7 @@ importers:
         version: 2.1.4
       '@vitejs/plugin-react':
         specifier: ^4.3.4
-        version: 4.3.4(vite@5.3.3(@types/node@20.17.0))
+        version: 4.3.4(vite@5.3.3(@types/node@22.14.1))
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
@@ -129,13 +129,13 @@ importers:
         version: 9.0.12(typescript@5.8.2)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.17.0)(typescript@5.8.2)
+        version: 10.9.2(@types/node@22.14.1)(typescript@5.8.2)
       turbo:
         specifier: ^2.4.4
         version: 2.4.4
       vitest:
         specifier: ^2.1.8
-        version: 2.1.8(@types/node@20.17.0)(jsdom@26.0.0)
+        version: 2.1.8(@types/node@22.14.1)(jsdom@26.0.0)
 
 packages:
 
@@ -1507,11 +1507,8 @@ packages:
   '@types/node@16.9.1':
     resolution: {integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==}
 
-  '@types/node@20.17.0':
-    resolution: {integrity: sha512-a7zRo0f0eLo9K5X9Wp5cAqTUNGzuFLDG2R7C4HY2BhcMAsxgSPuRvAC1ZB6QkuUQXf0YZAgfOX2ZyrBa2n4nHQ==}
-
-  '@types/node@22.10.2':
-    resolution: {integrity: sha512-Xxr6BBRCAOQixvonOye19wnzyDiUtTeqldOOmj3CkeblonbccA12PFwlufvRdrpjXxqnmUaeiU5EOA+7s5diUQ==}
+  '@types/node@22.14.1':
+    resolution: {integrity: sha512-u0HuPQwe/dHrItgHHpmw3N2fYCR6x4ivMNbPHRkBVP4CvN+kiRrKHWk3i8tXiO/joPwXLMYvF9TTF0eqgHIuOw==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -3529,8 +3526,8 @@ packages:
     resolution: {integrity: sha512-U7WjGVG9sH8tvjW5SmGbQuui75FiyjAX72HX15DwBBwF9dNiQZRQAg9nnPhYy+TUnE0+VcrttuvNI8oSxZcocA==}
     hasBin: true
 
-  resonance-data-columba@1.3.146:
-    resolution: {integrity: sha512-CiJLUC7mqgiqXMoTeX8InrSeUhnow5U79OC6h0DQ8MWjzfnbzh9FLZrojggqx+xZXtMnEFr2C+gfySbgnYOKmQ==}
+  resonance-data-columba@1.3.147:
+    resolution: {integrity: sha512-v1TG6zISQKU87AEz3wOQM7GVg1/ovM7fu557eBwXCRVqoPk1ggsd4wMZE8jHPTqS4IRnMPiXwt8X4IJzMqktew==}
 
   retry-request@7.0.2:
     resolution: {integrity: sha512-dUOvLMJ0/JJYEn8NrpOaGNE7X3vpI5XlZS/u0ANjqtcZVKnIxP7IgCFwrKTxENw29emmwug53awKtaMm4i9g5w==}
@@ -3982,11 +3979,8 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
-  undici-types@6.20.0:
-    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   untildify@4.0.0:
     resolution: {integrity: sha512-KK8xQ1mkzZeg9inewmFVDNkg3l5LUhoq9kN6iWYB/CC9YMG8HA+c1Q8HwDe6dEX7kErrEVNVBO3fWsVq5iDgtw==}
@@ -5593,14 +5587,14 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
 
   '@types/caseless@0.12.5':
     optional: true
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
 
   '@types/estree@1.0.5': {}
 
@@ -5608,7 +5602,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.17.43':
     dependencies:
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       '@types/qs': 6.9.12
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -5628,7 +5622,7 @@ snapshots:
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
 
   '@types/long@4.0.2':
     optional: true
@@ -5639,13 +5633,9 @@ snapshots:
 
   '@types/node@16.9.1': {}
 
-  '@types/node@20.17.0':
+  '@types/node@22.14.1':
     dependencies:
-      undici-types: 6.19.8
-
-  '@types/node@22.10.2':
-    dependencies:
-      undici-types: 6.20.0
+      undici-types: 6.21.0
 
   '@types/parse-json@4.0.2': {}
 
@@ -5670,7 +5660,7 @@ snapshots:
   '@types/request@2.48.12':
     dependencies:
       '@types/caseless': 0.12.5
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       '@types/tough-cookie': 4.0.5
       form-data: 2.5.1
     optional: true
@@ -5678,13 +5668,13 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
 
   '@types/serve-static@1.15.5':
     dependencies:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.4
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
 
   '@types/tough-cookie@4.0.5':
     optional: true
@@ -5768,14 +5758,14 @@ snapshots:
       '@typescript-eslint/types': 8.26.0
       eslint-visitor-keys: 4.2.0
 
-  '@vitejs/plugin-react@4.3.4(vite@5.3.3(@types/node@20.17.0))':
+  '@vitejs/plugin-react@4.3.4(vite@5.3.3(@types/node@22.14.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.3.3(@types/node@20.17.0)
+      vite: 5.3.3(@types/node@22.14.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -5786,13 +5776,13 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.8(vite@5.3.3(@types/node@20.17.0))':
+  '@vitest/mocker@2.1.8(vite@5.3.3(@types/node@22.14.1))':
     dependencies:
       '@vitest/spy': 2.1.8
       estree-walker: 3.0.3
       magic-string: 0.30.13
     optionalDependencies:
-      vite: 5.3.3(@types/node@20.17.0)
+      vite: 5.3.3(@types/node@22.14.1)
 
   '@vitest/pretty-format@2.1.8':
     dependencies:
@@ -6780,7 +6770,7 @@ snapshots:
       '@fastify/busboy': 3.0.0
       '@firebase/database-compat': 2.0.1
       '@firebase/database-types': 1.0.7
-      '@types/node': 22.10.2
+      '@types/node': 22.14.1
       farmhash-modern: 1.1.0
       google-auth-library: 9.15.0
       jsonwebtoken: 9.0.2
@@ -7523,7 +7513,7 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  material-react-table@3.2.1(qb7nymcej4xj623ub7l4nzpwjy):
+  material-react-table@3.2.1(1b6885d8baf78a7620a72e2bbc4fc540):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.2)(react@19.0.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.2)(react@19.0.0))(@types/react@19.0.2)(react@19.0.0)
@@ -7820,13 +7810,13 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.5.3
 
-  postcss-load-config@4.0.2(postcss@8.5.3)(ts-node@10.9.2(@types/node@20.17.0)(typescript@5.8.2)):
+  postcss-load-config@4.0.2(postcss@8.5.3)(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.2)):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.4.0
     optionalDependencies:
       postcss: 8.5.3
-      ts-node: 10.9.2(@types/node@20.17.0)(typescript@5.8.2)
+      ts-node: 10.9.2(@types/node@22.14.1)(typescript@5.8.2)
 
   postcss-nested@6.2.0(postcss@8.5.3):
     dependencies:
@@ -7889,7 +7879,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       long: 5.2.3
     optional: true
 
@@ -7992,7 +7982,7 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  resonance-data-columba@1.3.146:
+  resonance-data-columba@1.3.147:
     dependencies:
       '@tsuk1ko/rsns-unpack': 2.1.4
     transitivePeerDependencies:
@@ -8337,7 +8327,7 @@ snapshots:
       '@pkgr/utils': 2.4.0
       tslib: 2.8.1
 
-  tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.0)(typescript@5.8.2)):
+  tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.2)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -8356,7 +8346,7 @@ snapshots:
       postcss: 8.5.3
       postcss-import: 15.1.0(postcss@8.5.3)
       postcss-js: 4.0.1(postcss@8.5.3)
-      postcss-load-config: 4.0.2(postcss@8.5.3)(ts-node@10.9.2(@types/node@20.17.0)(typescript@5.8.2))
+      postcss-load-config: 4.0.2(postcss@8.5.3)(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.2))
       postcss-nested: 6.2.0(postcss@8.5.3)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.8
@@ -8443,14 +8433,14 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@types/node@20.17.0)(typescript@5.8.2):
+  ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -8543,9 +8533,7 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.19.8: {}
-
-  undici-types@6.20.0: {}
+  undici-types@6.21.0: {}
 
   untildify@4.0.0: {}
 
@@ -8586,13 +8574,13 @@ snapshots:
 
   v8-compile-cache-lib@3.0.1: {}
 
-  vite-node@2.1.8(@types/node@20.17.0):
+  vite-node@2.1.8(@types/node@22.14.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
       es-module-lexer: 1.5.4
       pathe: 1.1.2
-      vite: 5.3.3(@types/node@20.17.0)
+      vite: 5.3.3(@types/node@22.14.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -8603,19 +8591,19 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.3.3(@types/node@20.17.0):
+  vite@5.3.3(@types/node@22.14.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.3
       rollup: 4.18.1
     optionalDependencies:
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       fsevents: 2.3.3
 
-  vitest@2.1.8(@types/node@20.17.0)(jsdom@26.0.0):
+  vitest@2.1.8(@types/node@22.14.1)(jsdom@26.0.0):
     dependencies:
       '@vitest/expect': 2.1.8
-      '@vitest/mocker': 2.1.8(vite@5.3.3(@types/node@20.17.0))
+      '@vitest/mocker': 2.1.8(vite@5.3.3(@types/node@22.14.1))
       '@vitest/pretty-format': 2.1.8
       '@vitest/runner': 2.1.8
       '@vitest/snapshot': 2.1.8
@@ -8631,11 +8619,11 @@ snapshots:
       tinyexec: 0.3.1
       tinypool: 1.0.2
       tinyrainbow: 1.2.0
-      vite: 5.3.3(@types/node@20.17.0)
-      vite-node: 2.1.8(@types/node@20.17.0)
+      vite: 5.3.3(@types/node@22.14.1)
+      vite-node: 2.1.8(@types/node@22.14.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 20.17.0
+      '@types/node': 22.14.1
       jsdom: 26.0.0
     transitivePeerDependencies:
       - less
