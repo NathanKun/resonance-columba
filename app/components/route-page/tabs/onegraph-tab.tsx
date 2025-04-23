@@ -481,7 +481,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         </Box>
       ) : null}
 
-      <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-[90rem] mx-auto my-4 dark:bg-neutral-900 ">
+      <Paper className="w-full shadow-xl rounded-lg backdrop-blur-lg max-w-[95rem] mx-auto my-4 dark:bg-neutral-900 ">
         {/* display mode toggle & disable cell color btn */}
         <Box className="flex justify-between items-center">
           <ToggleButtonGroup
