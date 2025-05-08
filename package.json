@@ -40,7 +40,7 @@
     "postcss": "8.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "resonance-data-columba": "^1.3.160",
+    "resonance-data-columba": "^1.3.161",
     "tailwindcss": "3.4.17",
     "typescript": "5.8.3",
     "usehooks-ts": "^3.1.1"
