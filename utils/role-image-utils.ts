@@ -69,6 +69,7 @@ import 涟 from "/public/roles/head/涟.png";
 import 马吉拉·星仪 from "/public/roles/head/马吉拉·星仪.png";
 import 真咲 from "/public/roles/head/真咲.png";
 import 瑞瓦 from "/public/roles/head/瑞瓦.png";
+import 克洛伊 from "/public/roles/head/克洛伊.png";
 // import end
 
 export const roleImages: { [roleName: string]: StaticImageData } = {
@@ -138,5 +139,6 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   马吉拉·星仪,
   真咲,
   瑞瓦,
+  克洛伊,
   // export role images end
 };
