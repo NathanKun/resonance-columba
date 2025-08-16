@@ -91,8 +91,8 @@ importers:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
       resonance-data-columba:
-        specifier: ^1.3.252
-        version: 1.3.252
+        specifier: ^1.3.253
+        version: 1.3.253
       tailwindcss:
         specifier: 3.4.17
         version: 3.4.17(ts-node@10.9.2(@types/node@22.14.1)(typescript@5.8.3))
@@ -3530,8 +3530,8 @@ packages:
     resolution: {integrity: sha512-U7WjGVG9sH8tvjW5SmGbQuui75FiyjAX72HX15DwBBwF9dNiQZRQAg9nnPhYy+TUnE0+VcrttuvNI8oSxZcocA==}
     hasBin: true
 
-  resonance-data-columba@1.3.252:
-    resolution: {integrity: sha512-QBSqH3kX1KKZfluH1DJfgTeFnzWrErNOKLy/TSrDzd48WTBsXk1Zxt0c7QtTDpnn/H9sQ7wWcXtoGFRrYNVGuQ==}
+  resonance-data-columba@1.3.253:
+    resolution: {integrity: sha512-/+eGOaOz2aMWJhE8J9CNrjGjKxsKl1KuB0QQ1UympSv8aBzCnmJdxqu6Cxnq+zVEQ/M2o80HJXWUqruRavxNhw==}
 
   retry-request@7.0.2:
     resolution: {integrity: sha512-dUOvLMJ0/JJYEn8NrpOaGNE7X3vpI5XlZS/u0ANjqtcZVKnIxP7IgCFwrKTxENw29emmwug53awKtaMm4i9g5w==}
@@ -7985,7 +7985,7 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  resonance-data-columba@1.3.252:
+  resonance-data-columba@1.3.253:
     dependencies:
       '@tsuk1ko/rsns-unpack': 2.1.4
     transitivePeerDependencies:
