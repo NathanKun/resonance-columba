@@ -169,7 +169,6 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
                       <Button
                         startIcon={(playerRoles?.[role]?.resonance ?? 0) === resonanceLevel ? <CheckBoxIcon /> : null}
                         onClick={() => handleResonanceLevelClick(role, resonanceLevel)}
-                        className="h-16"
                       >
                         <Box className="flex-col">{renderSkillText(roleSkills)}</Box>
                       </Button>
