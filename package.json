@@ -20,7 +20,7 @@
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
     "@mui/material-nextjs": "^7.3.0",
-    "@mui/x-date-pickers": "^8.10.0",
+    "@mui/x-date-pickers": "^8.10.2",
     "@next/bundle-analyzer": "15.5.0",
     "@next/third-parties": "15.5.0",
     "@serwist/next": "9.1.1",
@@ -56,7 +56,7 @@
     "serwist": "^9.1.1",
     "ts-node": "^10.9.2",
     "turbo": "^2.5.6",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
   "pnpm": {
