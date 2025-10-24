@@ -109,6 +109,11 @@ export default function FormulaPage() {
       // formula to produce item.product
       const { product: subProduct, num: subNum } = consume;
 
+      // avoid recursive loop
+      if (subProduct === product) {
+        return [item];
+      }
+
       // to produce num of item.product, need subNum * num / produceNum of subProduct
       const realConsume = {
         product: subProduct,
