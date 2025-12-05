@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import SvgIcon from "@mui/material/SvgIcon";
 import Typography from "@mui/material/Typography";
