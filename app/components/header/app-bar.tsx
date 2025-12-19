@@ -58,27 +58,27 @@ export default function HeaderAppBar() {
 
             {/* Desktop Nav Menu */}
             <Box className="grow-0 hidden min-[852px]:flex ">
-              <Link href="/prices" className="ml-2">
+              <Link prefetch={false} href="/prices" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<TableViewIcon />}>
                   数据
                 </Button>
               </Link>
-              <Link href="/route" className="ml-2">
+              <Link prefetch={false} href="/route" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<RouteOutlinedIcon />}>
                   路线
                 </Button>
               </Link>
-              <Link href="/formula" className="ml-2">
+              <Link prefetch={false} href="/formula" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<PrecisionManufacturingIcon />}>
                   制造
                 </Button>
               </Link>
-              <Link href="/discussion" className="ml-2">
+              <Link prefetch={false} href="/discussion" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                   讨论
                 </Button>
               </Link>
-              <Link href="/about" className="ml-2">
+              <Link prefetch={false} href="/about" className="ml-2">
                 <Button variant="text" className=" px-0" startIcon={<InfoOutlinedIcon />}>
                   关于
                 </Button>
@@ -119,35 +119,35 @@ export default function HeaderAppBar() {
                 className="block"
               >
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/prices" className="mx-auto">
+                  <Link prefetch={false} href="/prices" className="mx-auto">
                     <Button variant="text" className="" startIcon={<TableViewIcon />}>
                       数据
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/route" className="mx-auto">
+                  <Link prefetch={false} href="/route" className="mx-auto">
                     <Button variant="text" className="" startIcon={<RouteOutlinedIcon />}>
                       路线
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/formula" className="mx-auto">
+                  <Link prefetch={false} href="/formula" className="mx-auto">
                     <Button variant="text" className="" startIcon={<PrecisionManufacturingIcon />}>
                       制造
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/discussion" className="mx-auto">
+                  <Link prefetch={false} href="/discussion" className="mx-auto">
                     <Button variant="text" className="" startIcon={<ChatBubbleOutlineRoundedIcon />}>
                       讨论
                     </Button>
                   </Link>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Link href="/about" className="mx-auto">
+                  <Link prefetch={false} href="/about" className="mx-auto">
                     <Button variant="text" className="" startIcon={<InfoOutlinedIcon />}>
                       关于
                     </Button>
