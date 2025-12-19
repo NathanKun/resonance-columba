@@ -1,4 +1,6 @@
 import withSerwistInit from "@serwist/next";
+import webpack from "webpack";
+
 const withSerwist = withSerwistInit({
   cacheOnNavigation: true,
   swSrc: "app/sw.ts",
@@ -9,6 +11,16 @@ const withSerwist = withSerwistInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {},
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.plugins.push(
+        new webpack.optimize.LimitChunkCountPlugin({
+          maxChunks: 1,
+        })
+      );
+    }
+    return config;
+  },
 };
 
 export default withSerwist(nextConfig);
