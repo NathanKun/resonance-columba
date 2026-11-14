@@ -18,6 +18,6 @@ test("afterFailedSuccessRate only applies after the immediately previous failed 
 
   const result = simulateBargain({}, summary, "修格里城", "bargain", 3);
 
-  // If the bonus incorrectly stays active after a successful retry, this becomes about 0.16362.
+  // If the bonus incorrectly stays active after a successful retry, this becomes about 0.1819227.
   expect(result.expectedRate).toBeCloseTo(0.1761807, 5);
 });
