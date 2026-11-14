@@ -142,8 +142,12 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
             {Object.entries(ROLE_RESONANCE_SKILLS).map(([role, resonanceSkills]) => (
               <TableRow key={`role-${role}`}>
                 <TableCell scope="row" className="max-sm:p-1">
-                  <Avatar className="mx-auto">
-                    <Image src={roleImages[role]} alt={role} width={40} height={40} />
+                  <Avatar className="mx-auto" alt={role}>
+                    {roleImages[role] ? (
+                      <Image src={roleImages[role]} alt={role} width={40} height={40} />
+                    ) : (
+                      <span>{role.slice(0, 1)}</span>
+                    )}
                   </Avatar>
                   <span className="mx-auto block text-center pt-2">{role}</span>
                 </TableCell>

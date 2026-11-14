@@ -72,9 +72,42 @@ import 瑞瓦 from "/public/roles/head/瑞瓦.png";
 import 克洛伊 from "/public/roles/head/克洛伊.png";
 import 伊卡菈 from "/public/roles/head/伊卡菈.png";
 import 伊利亚德 from "/public/roles/head/伊利亚德.png";
+import 丽桑德拉 from "/public/roles/head/丽桑德拉.png";
+import 亚莉奈·危情 from "/public/roles/head/亚莉奈·危情.png";
+import 伊洛娜·暮光 from "/public/roles/head/伊洛娜·暮光.png";
+import 切茜娅 from "/public/roles/head/切茜娅.png";
+import 卡塔斯·业火 from "/public/roles/head/卡塔斯·业火.png";
+import 嘉尔 from "/public/roles/head/嘉尔.png";
+import 圣剑波克士 from "/public/roles/head/圣剑波克士.png";
+import 夏娜 from "/public/roles/head/夏娜.png";
+import 夏洛蒂·澄心 from "/public/roles/head/夏洛蒂·澄心.png";
+import 多萝西·瑰晨 from "/public/roles/head/多萝西·瑰晨.png";
+import 奥莉薇恩 from "/public/roles/head/奥莉薇恩.png";
+import 婕丝西蒙 from "/public/roles/head/婕丝&西蒙.png";
+import 小麦 from "/public/roles/head/小麦.png";
+import 拉妲 from "/public/roles/head/拉妲.png";
+import 斯洛卡伊 from "/public/roles/head/斯洛卡伊.png";
+import 时萝 from "/public/roles/head/时萝.png";
+import 朱月 from "/public/roles/head/朱月.png";
+import 朵拉弥丝 from "/public/roles/head/朵拉弥丝.png";
+import 沃斯托克 from "/public/roles/head/沃斯托克.png";
+import 海伦娜 from "/public/roles/head/海伦娜.png";
+import 爱弥儿 from "/public/roles/head/爱弥儿.png";
+import 生驹 from "/public/roles/head/生驹.png";
+import 美琪 from "/public/roles/head/美琪.png";
+import 莱卡吉亚 from "/public/roles/head/莱卡吉亚.png";
+import 菲妮娅·烁梦 from "/public/roles/head/菲妮娅·烁梦.png";
+import 蒂丝塔尔 from "/public/roles/head/蒂丝塔尔.png";
+import 蓝鹊儿 from "/public/roles/head/蓝鹊儿.png";
+import 赫卡蒂 from "/public/roles/head/赫卡蒂.png";
+import 达斯廷 from "/public/roles/head/达斯廷.png";
+import 迪妮莎 from "/public/roles/head/迪妮莎.png";
+import 金子小姐 from "/public/roles/head/金子小姐.png";
+import 陈书闲 from "/public/roles/head/陈书闲.png";
+import 露比 from "/public/roles/head/露比.png";
 // import end
 
-export const roleImages: { [roleName: string]: StaticImageData } = {
+export const roleImages: { [roleName: string]: StaticImageData | undefined } = {
   亚莉奈,
   伊尔,
   伊洛娜,
@@ -144,5 +177,38 @@ export const roleImages: { [roleName: string]: StaticImageData } = {
   克洛伊,
   伊卡菈,
   伊利亚德,
+  丽桑德拉,
+  亚莉奈·危情,
+  伊洛娜·暮光,
+  切茜娅,
+  卡塔斯·业火,
+  嘉尔,
+  圣剑波克士,
+  夏娜,
+  夏洛蒂·澄心,
+  多萝西·瑰晨,
+  奥莉薇恩,
+  "婕丝&西蒙": 婕丝西蒙,
+  小麦,
+  拉妲,
+  斯洛卡伊,
+  时萝,
+  朱月,
+  朵拉弥丝,
+  沃斯托克,
+  海伦娜,
+  爱弥儿,
+  生驹,
+  美琪,
+  莱卡吉亚,
+  菲妮娅·烁梦,
+  蒂丝塔尔,
+  蓝鹊儿,
+  赫卡蒂,
+  达斯廷,
+  迪妮莎,
+  金子小姐,
+  陈书闲,
+  露比,
   // export role images end
 };
