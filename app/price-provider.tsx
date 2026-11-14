@@ -27,6 +27,14 @@ export const PriceContext = createContext({
   setPrice: () => {},
 } as PriceContextProps);
 
+const parseJsonResponse = async (response: Response) => {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!response.ok || !contentType.includes("application/json")) {
+    throw new Error(`request failed with ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+};
+
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
   const fetchInterval = 1000 * 60 * 3; // 3 min
   const [data, setData] = useState<GetPricesProducts>({});
@@ -36,12 +44,19 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
   const fetchData = useCallback(() => {
     console.info(new Date(), "fetching data");
     fetch("/api/get-prices")
-      .then((res) => res.json())
-      .then((res) => res.data)
-      .then((res) => revertLowBandwidthData(res))
+      .then(parseJsonResponse)
+      .then((res) => {
+        if (!res?.data) {
+          throw new Error("price data is missing");
+        }
+        return revertLowBandwidthData(res.data);
+      })
       .then((res) => {
         setData(res);
         setLastFetch(Date.now());
+      })
+      .catch((error) => {
+        console.error("failed to fetch prices", error);
       });
   }, []);
 
@@ -74,14 +89,13 @@ export default function PriceProvider({ children }: { children: React.ReactNode 
         type,
       } as SetPriceRequest),
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
+      .then(parseJsonResponse)
+      .then((res) => {
+        if (!res?.data) {
+          throw new Error("price data is missing");
         }
-        throw new Error("set-price failed");
+        return revertLowBandwidthData(res.data);
       })
-      .then((res) => res.data)
-      .then((res) => revertLowBandwidthData(res))
       .then((res) => {
         setData(res);
         setLastFetch(Date.now());

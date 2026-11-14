@@ -1,4 +1,4 @@
-import { columbaCol } from "@/firebase/app";
+import { getColumbaCol, isFirebaseConfigured } from "@/firebase/app";
 import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices";
 import { lowBandwidthResponse } from "@/utils/price-api-compressor";
 import { convertFirebaseDataToGetPricesData } from "@/utils/price-api-utils";
@@ -30,7 +30,11 @@ export async function GET() {
   try {
     console.log("Fetching data");
 
-    const docRef = columbaCol.doc("productsV2");
+    if (!isFirebaseConfigured) {
+      return Response.json({ error: "firebase is not configured" }, { status: 503 });
+    }
+
+    const docRef = getColumbaCol().doc("productsV2");
     const docSnapshot = await docRef.get();
     const data = docSnapshot.data();
     if (!data) {
@@ -38,8 +42,7 @@ export async function GET() {
     }
 
     const responseData: GetPricesProducts = convertFirebaseDataToGetPricesData(data);
-
-    const lbResponseData: LbGetPricesProducts = lowBandwidthResponse(responseData);
+    const lbResponseData = lowBandwidthResponse(responseData);
 
     cache = lbResponseData;
     cacheTime = Date.now();
@@ -49,6 +52,6 @@ export async function GET() {
     return buildResponse(lbResponseData);
   } catch (e) {
     console.error(e);
-    return Response.json({ error: "failed to load data" }); // todo: status code and interface
+    return Response.json({ error: "failed to load data" }, { status: 500 }); // todo: interface
   }
 }

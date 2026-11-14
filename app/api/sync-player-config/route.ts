@@ -1,4 +1,4 @@
-import { playerConfigsCol } from "@/firebase/app";
+import { getPlayerConfigsCol, isFirebaseConfigured } from "@/firebase/app";
 import { isValidPlayerConfig } from "@/utils/player-config-utils";
 import { FieldValue } from "firebase-admin/firestore";
 import rateLimit from "../../../utils/rate-limit";
@@ -16,6 +16,10 @@ export async function POST(request: Request) {
     await limiter.check(100, "CACHE_TOKEN"); // 100 requests per minute
   } catch {
     return Response.json({ error: "rate limit exceeded" }, { status: 429 });
+  }
+
+  if (!isFirebaseConfigured) {
+    return Response.json({ error: "Firebase is not configured" }, { status: 503 });
   }
 
   try {
@@ -47,14 +51,14 @@ export async function POST(request: Request) {
       // add lastUpdated
       config.lastUpdated = FieldValue.serverTimestamp();
 
-      const docRef = playerConfigsCol.doc(config.nanoid);
+      const docRef = getPlayerConfigsCol().doc(config.nanoid);
 
       await docRef.set(config, { merge: true });
       return Response.json({ data: true });
     }
     // get
     else {
-      const docRef = playerConfigsCol.doc(id);
+      const docRef = getPlayerConfigsCol().doc(id);
       const doc = await docRef.get();
       if (!doc.exists) {
         return Response.json({ data: null }, { status: 404 });
