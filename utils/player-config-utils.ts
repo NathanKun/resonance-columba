@@ -194,8 +194,12 @@ export const isValidPlayerConfig = (config: any) => {
     return false;
   }
 
-  if (config.productsBuyMorePercent) {
-    if (typeof config.productsBuyMorePercent !== "object" || Array.isArray(config.productsBuyMorePercent)) {
+  if (config.productsBuyMorePercent !== undefined) {
+    if (
+      config.productsBuyMorePercent === null ||
+      typeof config.productsBuyMorePercent !== "object" ||
+      Array.isArray(config.productsBuyMorePercent)
+    ) {
       return false;
     }
 
