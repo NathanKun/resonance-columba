@@ -30,5 +30,11 @@ const getDb = () => {
   return db;
 };
 
-export const getColumbaCol = () => getDb().collection(env.FIREBASE_COLLECTION_NAME ?? "columba-dev");
+export const getColumbaCol = () => {
+  const collectionName = env.FIREBASE_COLLECTION_NAME;
+  if (!collectionName) {
+    throw new Error("Firebase collection is not configured");
+  }
+  return getDb().collection(collectionName);
+};
 export const getPlayerConfigsCol = () => getDb().collection("playerConfigs");
