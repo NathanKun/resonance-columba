@@ -1,3 +1,4 @@
+import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
 import { Fatigue } from "@/interfaces/fatigue";
 import { PlayerConfigRoles } from "@/interfaces/player-config";
 import { CITY_FATIGUES } from "resonance-data-columba/dist/columbabuild";
@@ -10,10 +11,18 @@ export const findFatigue = (fromCity: string, toCity: string, playerConfigRoles:
     return fatigue;
   }
 
-  // find if player has resonance level 1 波克士
-  if (playerConfigRoles["波克士"]?.resonance === 1) {
-    fatigue -= 1;
+  // sum driveLessFatigue from all selected role resonance skills
+  let fatigueReduction = 0;
+  for (const roleName in playerConfigRoles) {
+    const resonanceLevel = playerConfigRoles[roleName].resonance;
+    if (resonanceLevel === 0) {
+      continue;
+    }
+
+    const roleSkills = ROLE_RESONANCE_SKILLS[roleName];
+    const skill = roleSkills?.[resonanceLevel];
+    fatigueReduction += skill?.other?.driveLessFatigue ?? 0;
   }
 
-  return fatigue;
+  return Math.max(0, fatigue - fatigueReduction);
 };

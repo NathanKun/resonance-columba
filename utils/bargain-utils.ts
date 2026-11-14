@@ -149,8 +149,8 @@ export const simulateBargain = (
         successRate += firstTrySuccessRate;
       }
 
-      // check if can apply afterFailedSuccessRate by finding if last bargain failed
-      const previousFailed = bargainResult.slice(0, i).find((success) => !success);
+      // afterFailedSuccessRate applies only when the immediately previous attempt failed
+      const previousFailed = i > 0 && !bargainResult[i - 1];
       if (previousFailed) {
         successRate += afterFailedSuccessRate;
       }
