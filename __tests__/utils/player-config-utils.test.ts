@@ -54,6 +54,12 @@ test("mergePlayerConfigs", () => {
 
   merged = mergePlayerConfigs({ nanoid: "--2O4IjyEqACb9ZA3LFYS" });
   expect(merged.nanoid).toBe("--2O4IjyEqACb9ZA3LFYS");
+
+  merged = mergePlayerConfigs({ allExchangesBuyMorePercent: 40 });
+  expect(merged.allExchangesBuyMorePercent).toBe(40);
+
+  merged = mergePlayerConfigs({ productsBuyMorePercent: { 琥珀: 25 } });
+  expect(merged.productsBuyMorePercent.琥珀).toBe(25);
 });
 
 const validConfig1 = {
@@ -78,6 +84,7 @@ const validConfig1 = {
     岚心城: 4,
     塔图站: 1,
     雪金城: 2,
+    武林源: 1,
   },
   roles: {
     叶珏: {
@@ -117,6 +124,11 @@ const validConfig1 = {
     红茶战争: {
       activated: true,
     },
+  },
+  allExchangesBuyMorePercent: 20,
+  productsBuyMorePercent: {
+    琥珀: 15,
+    防弹背心: 10,
   },
 };
 
@@ -404,6 +416,41 @@ const invalidConfigs = [
       红茶战争: {
         hey: "you",
       },
+    },
+  },
+  {
+    allExchangesBuyMorePercent: -1,
+  },
+  {
+    allExchangesBuyMorePercent: 61,
+  },
+  {
+    allExchangesBuyMorePercent: 1.5,
+  },
+  {
+    allExchangesBuyMorePercent: "10",
+  },
+  {
+    productsBuyMorePercent: "10",
+  },
+  {
+    productsBuyMorePercent: {
+      不存在商品: 5,
+    },
+  },
+  {
+    productsBuyMorePercent: {
+      琥珀: 3,
+    },
+  },
+  {
+    productsBuyMorePercent: {
+      琥珀: 105,
+    },
+  },
+  {
+    productsBuyMorePercent: {
+      琥珀: "5",
     },
   },
 ];

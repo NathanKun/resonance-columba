@@ -136,7 +136,9 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.prestige,
         playerConfig.roles,
         playerConfig.productUnlockStatus,
-        playerConfig.events
+        playerConfig.allExchangesBuyMorePercent,
+        playerConfig.productsBuyMorePercent,
+        playerConfig.events,
       ),
     [
       prices,
@@ -145,8 +147,10 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.prestige,
       playerConfig.roles,
       playerConfig.productUnlockStatus,
+      playerConfig.allExchangesBuyMorePercent,
+      playerConfig.productsBuyMorePercent,
       playerConfig.events,
-    ]
+    ],
   );
 
   const onegraphBuyCombinationsRt = useMemo(
@@ -158,7 +162,9 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.prestige,
         playerConfig.roles,
         playerConfig.productUnlockStatus,
-        playerConfig.events
+        playerConfig.allExchangesBuyMorePercent,
+        playerConfig.productsBuyMorePercent,
+        playerConfig.events,
       ),
     [
       prices,
@@ -167,8 +173,10 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.prestige,
       playerConfig.roles,
       playerConfig.productUnlockStatus,
+      playerConfig.allExchangesBuyMorePercent,
+      playerConfig.productsBuyMorePercent,
       playerConfig.events,
-    ]
+    ],
   );
 
   const onegraphRecommendations = useMemo(() => {
@@ -187,7 +195,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
           fromCity,
           toCity,
           onegraphBuyCombinationsGo,
-          onegraphBuyCombinationsRt
+          onegraphBuyCombinationsRt,
         );
 
         if (!reco || reco.length !== 2) continue;
@@ -200,7 +208,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         const goAndRtGeneralProfitIndex = calculateGeneralProfitIndex(
           goAndRtProfit,
           goAndRtFatigue,
-          goAndRtRestockCount
+          goAndRtRestockCount,
         );
 
         const goAndReturnTotal: OnegraphBuyCombinationStats = {
@@ -266,7 +274,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       }
 
       const reverseItem = goAndReturnProfits.find(
-        (i) => i.profit === item.profit && i.fromCity === item.toCity && i.toCity === item.fromCity
+        (i) => i.profit === item.profit && i.fromCity === item.toCity && i.toCity === item.fromCity,
       );
       return !reverseItem;
     });

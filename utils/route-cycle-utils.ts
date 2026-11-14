@@ -3,7 +3,12 @@ import { findFatigue } from "@/data/Fatigue";
 import { PRESTIGES } from "@/data/Prestige";
 import { PRODUCTS } from "@/data/Products";
 import { GetPricesProducts } from "@/interfaces/get-prices";
-import { PlayerConfigEvents, PlayerConfigPrestige, PlayerConfigRoles } from "@/interfaces/player-config";
+import {
+  PlayerConfigEvents,
+  PlayerConfigPrestige,
+  PlayerConfigProductBuyMorePercent,
+  PlayerConfigRoles,
+} from "@/interfaces/player-config";
 import { Product } from "@/interfaces/product";
 import {
   calculateGeneralProfitIndex,
@@ -17,7 +22,9 @@ export const calculateRouteCycle = (
   maxLot: number,
   playerConfigRoles: PlayerConfigRoles,
   playerConfigPrestige: PlayerConfigPrestige,
-  playerConfigEvents: PlayerConfigEvents
+  allExchangesBuyMorePercent: number,
+  productsBuyMorePercent: PlayerConfigProductBuyMorePercent,
+  playerConfigEvents: PlayerConfigEvents,
 ) => {
   const start = performance.now();
 
@@ -55,7 +62,7 @@ export const calculateRouteCycle = (
     const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfigPrestige[fromCityMaster]);
     if (!buyPrestige) {
       console.warn(
-        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfigPrestige[fromCityMaster]}`
+        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfigPrestige[fromCityMaster]}`,
       );
       continue;
     }
@@ -72,7 +79,7 @@ export const calculateRouteCycle = (
         const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfigPrestige[toCityMaster]);
         if (!sellPrestige) {
           console.warn(
-            `Prestige configurtation not found for ${toCityMaster} level ${playerConfigPrestige[toCityMaster]}`
+            `Prestige configurtation not found for ${toCityMaster} level ${playerConfigPrestige[toCityMaster]}`,
           );
           continue;
         }
@@ -127,12 +134,20 @@ export const calculateRouteCycle = (
             // get game event buy more percent
             const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfigEvents);
 
+            // get product investment buy more percent
+            const productBuyMorePercent = productsBuyMorePercent?.[product.name] ?? 0;
+
             // sum all buy more percent
-            const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
+            const totalBuyMorePercent =
+              resonanceSkillBuyMorePercent +
+              prestigeBuyMorePercent +
+              eventBuyMorePercent +
+              allExchangesBuyMorePercent +
+              productBuyMorePercent;
 
             const buyLot = Math.min(
               cap,
-              Math.round((product.buyLot![fromCity]! * (restock + 1) * (100 + totalBuyMorePercent)) / 100)
+              Math.round((product.buyLot![fromCity]! * (restock + 1) * (100 + totalBuyMorePercent)) / 100),
             );
 
             profit += pdtProfit * buyLot;
@@ -367,7 +382,7 @@ export const calculateRouteCycle = (
     generalProfitIndex: calculateGeneralProfitIndex(
       cycleResult?.[1] ?? 0,
       cycleResult?.[2] ?? 0,
-      cycle.reduce((acc, cycleIt) => acc + cycleIt.restock, 0)
+      cycle.reduce((acc, cycleIt) => acc + cycleIt.restock, 0),
     ),
   };
 };
