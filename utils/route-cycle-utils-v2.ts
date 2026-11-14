@@ -6,6 +6,7 @@ import { GetPricesProducts } from "@/interfaces/get-prices";
 import {
   PlayerConfigEvents,
   PlayerConfigPrestige,
+  PlayerConfigProductBuyMorePercent,
   PlayerConfigProductUnlockStatus,
   PlayerConfigRoles,
 } from "@/interfaces/player-config";
@@ -13,6 +14,7 @@ import { Product } from "@/interfaces/product";
 import { BargainSummary, simulateBargain } from "./bargain-utils";
 import {
   GENERAL_PROFIT_INDEX_RESTOCK_FATIGUE_CONSTANT,
+  calculateBuyLot,
   calculateGeneralProfitIndex,
   getGameEventBuyMorePercent,
   getGameEventTaxVariation,
@@ -81,9 +83,11 @@ export const calculateRouteCycleV2 = (
   roles: PlayerConfigRoles,
   prestige: PlayerConfigPrestige,
   productUnlockStatus: PlayerConfigProductUnlockStatus,
+  allExchangesBuyMorePercent: number,
+  productsBuyMorePercent: PlayerConfigProductBuyMorePercent,
   playerConfigEvents: PlayerConfigEvents,
   bargainSummery: BargainSummary,
-  routeCycleInputs: RouteCycleInputs
+  routeCycleInputs: RouteCycleInputs,
 ) => {
   const start = performance.now();
 
@@ -121,10 +125,10 @@ export const calculateRouteCycleV2 = (
 
       // calculate bargain expected rate & fatigue
       const bargainResults = [...Array(maxBargainCount + 1).keys()].map((bargainCount) =>
-        simulateBargain(prestige, bargainSummery, fromCity, "bargain", bargainCount)
+        simulateBargain(prestige, bargainSummery, fromCity, "bargain", bargainCount),
       );
       const raiseResults = [...Array(maxRaiseCount + 1).keys()].map((raiseCount) =>
-        simulateBargain(prestige, bargainSummery, toCity, "raise", raiseCount)
+        simulateBargain(prestige, bargainSummery, toCity, "raise", raiseCount),
       );
 
       // get profit for each product
@@ -197,7 +201,7 @@ export const calculateRouteCycleV2 = (
       const doBuy = (
         restock: number,
         bargainCount: number,
-        raiseCount: number
+        raiseCount: number,
       ): {
         buys: Buy[];
         profit: number;
@@ -206,7 +210,7 @@ export const calculateRouteCycleV2 = (
         for (const pdtName in productsBuyPossibilities) {
           const product = PRODUCTS.find((p) => p.name === pdtName)!;
           const buy = productsBuyPossibilities[pdtName].find(
-            (p) => p.bargainCount === bargainCount && p.raiseCount === raiseCount
+            (p) => p.bargainCount === bargainCount && p.raiseCount === raiseCount,
           );
           const pdtProfit = buy?.profit ?? 0;
 
@@ -235,12 +239,20 @@ export const calculateRouteCycleV2 = (
           // get game event buy more percent
           const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfigEvents);
 
+          // get product investment buy more percent
+          const productBuyMorePercent = productsBuyMorePercent?.[product.name] ?? 0;
+
           // sum all buy more percent
-          const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
+          const totalBuyMorePercent =
+            resonanceSkillBuyMorePercent +
+            prestigeBuyMorePercent +
+            eventBuyMorePercent +
+            allExchangesBuyMorePercent +
+            productBuyMorePercent;
 
           const buyLot = Math.min(
             cap,
-            Math.round((product.buyLot![fromCity]! * (100 + totalBuyMorePercent)) / 100) * (restock + 1)
+            calculateBuyLot(product.buyLot![fromCity]!, totalBuyMorePercent) * (restock + 1),
           );
 
           profit += pdtProfit * buyLot;
@@ -464,7 +476,7 @@ export const calculateRouteCycleV2 = (
     const generalProfitIndex = calculateGeneralProfitIndex(totalProfit, totalFatigue, totalRestock);
 
     console.debug(
-      `Total profit: ${totalProfit}, Total fatigue: ${totalFatigue}, Total restock: ${totalRestock}, Total bargain: ${totalBargain}, Total raise: ${totalRaise}`
+      `Total profit: ${totalProfit}, Total fatigue: ${totalFatigue}, Total restock: ${totalRestock}, Total bargain: ${totalBargain}, Total raise: ${totalRaise}`,
     );
     console.debug(`profitPerFatigue: ${profitPerFatigue}, generalProfitIndex: ${generalProfitIndex}`);
     return routes;

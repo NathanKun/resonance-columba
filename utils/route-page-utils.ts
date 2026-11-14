@@ -10,6 +10,7 @@ import {
   PlayerConfigBargain,
   PlayerConfigEvents,
   PlayerConfigPrestige,
+  PlayerConfigProductBuyMorePercent,
   PlayerConfigProductUnlockStatus,
   PlayerConfigRoles,
 } from "@/interfaces/player-config";
@@ -33,13 +34,17 @@ export const calculateGeneralProfitIndex = (profit: number, fatigue: number, res
   return Math.round(index);
 };
 
+export const calculateBuyLot = (baseBuyLot: number, totalBuyMorePercent: number) => {
+  return Math.round((baseBuyLot * (100 + totalBuyMorePercent)) / 100);
+};
+
 const getProductsOfCity = (city: CityName) => PRODUCTS.filter((product) => product.buyPrices[city]);
 
 export const calculateExchanges = (
   playerConfig: PlayerConfig,
   fromCities: CityName[],
   toCities: CityName[],
-  prices: GetPricesProducts
+  prices: GetPricesProducts,
 ) => {
   const exchanges: Exchange[] = [];
 
@@ -55,19 +60,20 @@ export const calculateExchanges = (
 
   for (const fromCity of fromCities) {
     const availableProducts = getProductsOfCity(fromCity).filter(
-      (product) => playerConfig.productUnlockStatus?.[product.name] ?? true
+      (product) => playerConfig.productUnlockStatus?.[product.name] ?? true,
     );
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
     const buyPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[fromCityMaster]);
     if (!buyPrestige) {
       console.warn(
-        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfig.prestige[fromCityMaster]}`
+        `Prestige configurtation not found for ${fromCityMaster} level ${playerConfig.prestige[fromCityMaster]}`,
       );
       continue;
     }
 
     // get resonance skill tax cut percent of this city
     const resonanceSkillTaxCutPercent = getResonanceSkillTaxCutPercent(playerConfig.roles, fromCity);
+    const allExchangesBuyMorePercent = playerConfig.allExchangesBuyMorePercent ?? 0;
 
     const buys: Buy[] = availableProducts
       // group routes by fromCity and toCity
@@ -93,11 +99,19 @@ export const calculateExchanges = (
         // get game event buy more percent
         const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfig.events);
 
+        // get product investment buy more percent
+        const productBuyMorePercent = playerConfig.productsBuyMorePercent?.[product.name] ?? 0;
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
+        const totalBuyMorePercent =
+          resonanceSkillBuyMorePercent +
+          prestigeBuyMorePercent +
+          eventBuyMorePercent +
+          allExchangesBuyMorePercent +
+          productBuyMorePercent;
 
         // apply buy more percent to buy lot
-        buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
+        buyLot = calculateBuyLot(buyLot, totalBuyMorePercent);
 
         // calculate current buy price
         // skip any product that has missing data
@@ -162,7 +176,7 @@ export const calculateExchanges = (
       const sellPrestige = PRESTIGES.find((prestige) => prestige.level === playerConfig.prestige[toCityMaster]);
       if (!sellPrestige) {
         console.warn(
-          `Prestige configurtation not found for ${toCityMaster} level ${playerConfig.prestige[toCityMaster]}`
+          `Prestige configurtation not found for ${toCityMaster} level ${playerConfig.prestige[toCityMaster]}`,
         );
         continue;
       }
@@ -265,7 +279,7 @@ export const calculateAccumulatedValues = (playerConfig: PlayerConfig, cityGroup
   for (const fromCity in cityGroupedExchanges) {
     for (const toCity in cityGroupedExchanges[fromCity]) {
       cityGroupedExchanges[fromCity][toCity] = cityGroupedExchanges[fromCity][toCity].sort(
-        (a, b) => b.singleProfit - a.singleProfit // reverse sort
+        (a, b) => b.singleProfit - a.singleProfit, // reverse sort
       );
 
       let accProfit = 0;
@@ -305,7 +319,7 @@ export const getBestRoutesByNumberOfBuyingProductTypes = (
   fromCity: CityName,
   nbOfType: number, // number of different kind of product to buy from the same city
   cityGroupedExchanges: CityGroupedExchanges,
-  playerConfig: PlayerConfig
+  playerConfig: PlayerConfig,
 ) => {
   const fromCities = fromCity === "any" ? CITIES : [fromCity];
 
@@ -380,7 +394,9 @@ export const calculateOneGraphBuyCombinations = (
   prestige: PlayerConfigPrestige,
   roles: PlayerConfigRoles,
   productUnlockStatus: PlayerConfigProductUnlockStatus,
-  playerConfigEvents: PlayerConfigEvents
+  allExchangesBuyMorePercent: number,
+  productsBuyMorePercent: PlayerConfigProductBuyMorePercent,
+  playerConfigEvents: PlayerConfigEvents,
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -442,7 +458,7 @@ export const calculateOneGraphBuyCombinations = (
         }
 
         // apply bargain to buy price
-        const bargain = barginDisabled ? 0 : bargainPercent ?? 0;
+        const bargain = barginDisabled ? 0 : (bargainPercent ?? 0);
         buyPrice = buyPrice * (1 - bargain / 100);
 
         // get prestiged tax to buy price
@@ -465,11 +481,19 @@ export const calculateOneGraphBuyCombinations = (
         // get game event buy more percent
         const eventBuyMorePercent = getGameEventBuyMorePercent(product, fromCity, playerConfigEvents);
 
+        // get product investment buy more percent
+        const productBuyMorePercent = productsBuyMorePercent?.[product.name] ?? 0;
+
         // sum all buy more percent
-        const totalBuyMorePercent = resonanceSkillBuyMorePercent + prestigeBuyMorePercent + eventBuyMorePercent;
+        const totalBuyMorePercent =
+          resonanceSkillBuyMorePercent +
+          prestigeBuyMorePercent +
+          eventBuyMorePercent +
+          allExchangesBuyMorePercent +
+          productBuyMorePercent;
 
         // apply buy more percent to buy lot
-        buyLot = Math.round((buyLot * (100 + totalBuyMorePercent)) / 100);
+        buyLot = calculateBuyLot(buyLot, totalBuyMorePercent);
 
         return [
           {
@@ -504,7 +528,7 @@ export const calculateOneGraphBuyCombinations = (
           }
 
           // apply raise to sell price
-          const raise = barginDisabled ? 0 : raisePercent ?? 0;
+          const raise = barginDisabled ? 0 : (raisePercent ?? 0);
           sellPrice = Math.round(sellPrice * (1 + raise / 100));
 
           // calculate profit
@@ -622,7 +646,7 @@ export const getOneGraphRecommendation = (
   fromCity: CityName,
   toCity: CityName,
   buyCombinationsGo: OnegraphBuyCombinations,
-  buyCombinationsRt?: OnegraphBuyCombinations
+  buyCombinationsRt?: OnegraphBuyCombinations,
 ): OnegraphBuyCombinationStats[] => {
   // if simple go, the return the one with the request restock
   if (!goAndReturn) {
@@ -685,7 +709,7 @@ export const getResonanceSkillBuyMorePercent = (roles: PlayerConfigRoles, produc
     const currentProductBuyMorePercent = buyMore?.product?.[product.name] ?? 0;
     resonanceSkillBuyMorePercent += currentProductBuyMorePercent;
 
-    const currentCityBuyMorePercent = product.type === "Special" ? buyMore?.city?.[fromCity] ?? 0 : 0;
+    const currentCityBuyMorePercent = product.type === "Special" ? (buyMore?.city?.[fromCity] ?? 0) : 0;
     resonanceSkillBuyMorePercent += currentCityBuyMorePercent;
 
     const allBuyMorePercent = buyMore?.all ?? 0;
@@ -704,7 +728,7 @@ export const getGameEventBuyMorePercent = (product: Product, fromCity: CityName,
       const currentProductBuyMorePercent = event.buyMore?.product?.[product.name] ?? 0;
       eventBuyMorePercent += currentProductBuyMorePercent;
 
-      const currentCityBuyMorePercent = product.type === "Special" ? event.buyMore?.city?.[fromCity] ?? 0 : 0;
+      const currentCityBuyMorePercent = product.type === "Special" ? (event.buyMore?.city?.[fromCity] ?? 0) : 0;
       eventBuyMorePercent += currentCityBuyMorePercent;
     }
   }
@@ -718,7 +742,7 @@ export const getGameEventTaxVariation = (product: Product, fromCity: CityName, e
       const currentProductTaxVariation = event.taxVariation?.product?.[product.name] ?? 0;
       eventTaxVariation += currentProductTaxVariation;
 
-      const currentCityTaxVariation = product.type === "Special" ? event.taxVariation?.city?.[fromCity] ?? 0 : 0;
+      const currentCityTaxVariation = product.type === "Special" ? (event.taxVariation?.city?.[fromCity] ?? 0) : 0;
       eventTaxVariation += currentCityTaxVariation;
     }
   }

@@ -33,7 +33,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
   /* calculation */
   const bargainSummery = useMemo(
     () => getBargainSummary(playerConfig.roles, playerConfig.tradeLevel),
-    [playerConfig.roles, playerConfig.tradeLevel]
+    [playerConfig.roles, playerConfig.tradeLevel],
   );
 
   const routeCycleV2 = useMemo(() => {
@@ -44,9 +44,11 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
         playerConfig.roles,
         playerConfig.prestige,
         playerConfig.productUnlockStatus,
+        playerConfig.allExchangesBuyMorePercent,
+        playerConfig.productsBuyMorePercent,
         playerConfig.events,
         bargainSummery,
-        routeCycleInputs
+        routeCycleInputs,
       );
     } catch (e) {
       console.error(e);
@@ -58,6 +60,8 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
     playerConfig.roles,
     playerConfig.prestige,
     playerConfig.productUnlockStatus,
+    playerConfig.allExchangesBuyMorePercent,
+    playerConfig.productsBuyMorePercent,
     playerConfig.events,
     bargainSummery,
     routeCycleInputs,

@@ -10,6 +10,8 @@ export interface PlayerConfig {
   onegraph: PlayerConfigOnegraph;
   productUnlockStatus: PlayerConfigProductUnlockStatus;
   events: PlayerConfigEvents;
+  allExchangesBuyMorePercent: number;
+  productsBuyMorePercent: PlayerConfigProductBuyMorePercent;
   nanoid?: string;
 }
 
@@ -52,4 +54,8 @@ export interface PlayerConfigOnegraph {
 
 export interface PlayerConfigProductUnlockStatus {
   [pdtName: string]: boolean; // false is not unlocked yet, by default all products are unlocked, this should be set to false if the product is not unlocked
+}
+
+export interface PlayerConfigProductBuyMorePercent {
+  [pdtName: string]: number; // percentage, 0-100, each investment level adds 5
 }

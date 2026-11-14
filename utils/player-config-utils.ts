@@ -31,7 +31,9 @@ export const isValidPlayerConfig = (config: any) => {
           "nanoid",
           "productUnlockStatus",
           "events",
-        ].includes(key)
+          "allExchangesBuyMorePercent",
+          "productsBuyMorePercent",
+        ].includes(key),
     ).length > 0
   ) {
     return false;
@@ -111,7 +113,7 @@ export const isValidPlayerConfig = (config: any) => {
             "showGeneralProfitIndex",
             "enableMultiConfig",
             "displayMode",
-          ].includes(key)
+          ].includes(key),
       ).length > 0
     ) {
       return false;
@@ -182,6 +184,43 @@ export const isValidPlayerConfig = (config: any) => {
     }
   }
 
+  if (
+    config.allExchangesBuyMorePercent !== undefined &&
+    (typeof config.allExchangesBuyMorePercent !== "number" ||
+      !Number.isInteger(config.allExchangesBuyMorePercent) ||
+      config.allExchangesBuyMorePercent < 0 ||
+      config.allExchangesBuyMorePercent > 60)
+  ) {
+    return false;
+  }
+
+  if (config.productsBuyMorePercent !== undefined) {
+    if (
+      config.productsBuyMorePercent === null ||
+      typeof config.productsBuyMorePercent !== "object" ||
+      Array.isArray(config.productsBuyMorePercent)
+    ) {
+      return false;
+    }
+
+    const pdtNames = PRODUCTS.map((pdt) => pdt.name);
+    for (const [pdtName, percent] of Object.entries(config.productsBuyMorePercent)) {
+      if (!pdtNames.includes(pdtName)) {
+        return false;
+      }
+
+      if (
+        typeof percent !== "number" ||
+        !Number.isInteger(percent) ||
+        percent < 0 ||
+        percent > 100 ||
+        percent % 5 !== 0
+      ) {
+        return false;
+      }
+    }
+  }
+
   return true;
 };
 
@@ -240,6 +279,10 @@ export const mergePlayerConfigs = (newConfig: any): PlayerConfig => {
     prestige: { ...INITIAL_PLAYER_CONFIG.prestige, ...newConfig.prestige },
     roles: { ...INITIAL_PLAYER_CONFIG.roles, ...newConfig.roles },
     onegraph: { ...INITIAL_PLAYER_CONFIG.onegraph, ...newConfig.onegraph },
+    productsBuyMorePercent: {
+      ...INITIAL_PLAYER_CONFIG.productsBuyMorePercent,
+      ...newConfig.productsBuyMorePercent,
+    },
   };
 };
 
@@ -272,6 +315,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
     岚心城: 1,
     塔图站: 1,
     雪金城: 1,
+    武林源: 1,
   },
   roles: {},
   onegraph: {
@@ -285,4 +329,6 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
   },
   productUnlockStatus: {},
   events: {},
+  allExchangesBuyMorePercent: 0,
+  productsBuyMorePercent: {},
 };
