@@ -96,7 +96,7 @@ export default function RoleSkillSelects(props: RoleSkillSelectsProps) {
       }
 
       if (afterFailedLessFatigue) {
-        texts.push(block("roleskilltext-afterFailedLessFatigue", `价失败时增加的疲劳值-${afterFailedLessFatigue}`));
+        texts.push(block("roleskilltext-afterFailedLessFatigue", `议价失败时增加的疲劳值-${afterFailedLessFatigue}`));
       }
     }
 
