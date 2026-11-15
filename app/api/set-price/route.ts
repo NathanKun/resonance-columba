@@ -1,5 +1,5 @@
 import { PRODUCTS } from "@/data/Products";
-import { columbaCol } from "@/firebase/app";
+import { getColumbaCol, isFirebaseConfigured } from "@/firebase/app";
 import { GetPricesProducts, LbGetPricesProducts } from "@/interfaces/get-prices";
 import { SetPriceFirestoreRequest, SetPriceHistoryItem, SetPriceRequest } from "@/interfaces/set-price";
 import { lowBandwidthResponse } from "@/utils/price-api-compressor";
@@ -29,6 +29,10 @@ export async function POST(request: Request) {
     await limiter.check(300, "CACHE_TOKEN");
   } catch {
     return Response.json({ error: "rate limit exceeded" }, { status: 429 });
+  }
+
+  if (!isFirebaseConfigured) {
+    return Response.json({ error: "Firebase is not configured" }, { status: 503 });
   }
 
   try {
@@ -63,7 +67,7 @@ export async function POST(request: Request) {
     const newPrice = Math.round((basePrice * variation!) / 100);
 
     // update products doc
-    const productsDocRef = columbaCol.doc("products");
+    const productsDocRef = getColumbaCol().doc("products");
 
     const setPricePath = `${product}.${type}.${city}`;
     const setPriceItem: SetPriceHistoryItem = {
@@ -91,7 +95,7 @@ export async function POST(request: Request) {
     const newFirebaseData = docSnapshot.data()!;
 
     // before retuning the data, update the historical data
-    const historiesDocRef = columbaCol.doc("histories");
+    const historiesDocRef = getColumbaCol().doc("histories");
     const setHistoryData = {
       [setPricePath]: FieldValue.arrayUnion({
         ...setPriceItem,
