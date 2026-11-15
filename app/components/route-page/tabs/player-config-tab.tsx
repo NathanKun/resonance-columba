@@ -8,6 +8,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import { SetStateAction } from "react";
 import BargainInputs from "../bargain-inputs";
+import BuyMoreConfig from "../buy-more-config";
 import GameEventConfigPanel from "../game-event-config-panel";
 import NumberInput from "../number-input";
 import ProductUnlockSelect from "../product-unlock-select";
@@ -118,6 +119,11 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
             <ProductUnlockSelect playerConfig={playerConfig} setProductUnlock={setProductUnlock} />
           </AccordionDetails>
         </Accordion>
+      </Box>
+
+      <Box className="m-4">
+        <Typography className="p-2">进货量加成</Typography>
+        <BuyMoreConfig playerConfig={playerConfig} onPlayerConfigChange={onPlayerConfigChange} />
       </Box>
 
       <Box className="m-4">
