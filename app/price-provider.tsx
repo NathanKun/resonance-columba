@@ -29,10 +29,18 @@ export const PriceContext = createContext({
 
 const parseJsonResponse = async (response: Response) => {
   const contentType = response.headers.get("content-type") ?? "";
-  if (!response.ok || !contentType.includes("application/json")) {
-    throw new Error(`request failed with ${response.status} ${response.statusText}`);
+  const isJson = contentType.includes("application/json");
+  const body = isJson
+    ? await response.json().catch(() => null)
+    : null;
+  if (!response.ok || !isJson) {
+    throw new Error(
+      `request failed with ${response.status}: ${
+        body?.error ?? response.statusText
+      }`
+    );
   }
-  return response.json();
+  return body;
 };
 
 export default function PriceProvider({ children }: { children: React.ReactNode }) {
