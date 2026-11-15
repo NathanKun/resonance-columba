@@ -5,11 +5,8 @@ import { env } from "process";
 export const isFirebaseConfigured = Boolean(
   env.FIREBASE_PROJECT_ID &&
     env.FIREBASE_PRIVATE_KEY &&
-    env.FIREBASE_CLIENT_EMAIL
-);
-
-export const isColumbaCollectionConfigured = Boolean(
-  env.FIREBASE_COLLECTION_NAME
+    env.FIREBASE_CLIENT_EMAIL &&
+    env.FIREBASE_COLLECTION_NAME
 );
 
 let db: ReturnType<typeof getFirestore> | null = null;
