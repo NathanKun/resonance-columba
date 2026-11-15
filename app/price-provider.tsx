@@ -29,17 +29,34 @@ export const PriceContext = createContext({
 
 const parseJsonResponse = async (response: Response) => {
   const contentType = response.headers.get("content-type") ?? "";
-  const isJson = contentType.includes("application/json");
-  const body = isJson
-    ? await response.json().catch(() => null)
-    : null;
+  const isJson = contentType.includes("json");
+
+  let body: any = null;
+
+  if (isJson) {
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+  }
+
   if (!response.ok || !isJson) {
+    const serverError =
+      typeof body?.error === "string" ? body.error : "";
+
+    const reason =
+      serverError || response.statusText || "unknown error";
+
     throw new Error(
-      `request failed with ${response.status}: ${
-        body?.error ?? response.statusText
-      }`
+      `request failed with ${response.status}: ${reason}`
     );
   }
+
+  if (body === null) {
+    throw new Error("response body is not valid JSON");
+  }
+
   return body;
 };
 
