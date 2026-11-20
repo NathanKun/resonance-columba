@@ -10,6 +10,7 @@ export interface PlayerConfig {
   onegraph: PlayerConfigOnegraph;
   productUnlockStatus: PlayerConfigProductUnlockStatus;
   events: PlayerConfigEvents;
+  excludedCities: CityName[];
   allExchangesBuyMorePercent: number;
   productsBuyMorePercent: PlayerConfigProductBuyMorePercent;
   nanoid?: string;

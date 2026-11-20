@@ -117,6 +117,7 @@ export default function RoutePage() {
           setTargetCities={setTargetCities}
           switchSourceAndTargetCities={switchSourceAndTargetCities}
           cityGroupedExchangesSelectedTargetCities={cityGroupedExchangesSelectedTargetCities}
+          excludedCities={playerConfig.excludedCities}
         />
       </div>
 

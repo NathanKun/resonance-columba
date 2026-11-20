@@ -88,14 +88,17 @@ export const calculateRouteCycleV2 = (
   playerConfigEvents: PlayerConfigEvents,
   bargainSummery: BargainSummary,
   routeCycleInputs: RouteCycleInputs,
+  excludedCities: CityName[] = [],
 ) => {
   const start = performance.now();
 
   const { maxBargainCount, maxRaiseCount, maxRestockCount } = routeCycleInputs;
 
+  const availableCities = CITIES.filter((city) => !excludedCities.includes(city));
+
   const graph: Graph = {};
 
-  for (const fromCity of CITIES) {
+  for (const fromCity of availableCities) {
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
     const buyPrestige = PRESTIGES.find((p) => p.level === prestige[fromCityMaster]);
     if (!buyPrestige) {
@@ -111,7 +114,7 @@ export const calculateRouteCycleV2 = (
       // by default all products are unlocked, in productUnlockStatus the product should be set to false if the product is not unlocked
       .filter((product) => productUnlockStatus?.[product.name] ?? true);
 
-    for (const toCity of CITIES) {
+    for (const toCity of availableCities) {
       if (fromCity === toCity) {
         continue;
       }
@@ -322,8 +325,8 @@ export const calculateRouteCycleV2 = (
   //   // graph item weight w = search * totalFatigue - profit
   //   calculateUpperbound: () => {
   //     let upperbound = 0;
-  //     for (const fromCity of CITIES) {
-  //       for (const toCity of CITIES) {
+  //     for (const fromCity of availableCities) {
+  //       for (const toCity of availableCities) {
   //         if (fromCity === toCity) {
   //           continue;
   //         }
@@ -342,8 +345,8 @@ export const calculateRouteCycleV2 = (
   const byGeneralProfitIndex: FindRouteFunctions = {
     calculateUpperbound: () => {
       let upperbound = 0;
-      for (const fromCity of CITIES) {
-        for (const toCity of CITIES) {
+      for (const fromCity of availableCities) {
+        for (const toCity of availableCities) {
           if (fromCity === toCity) {
             continue;
           }
@@ -373,8 +376,8 @@ export const calculateRouteCycleV2 = (
       // update graph
       // search for a negative cycle
       let hasNegativeWeight = false;
-      for (const fromCity of CITIES) {
-        for (const toCity of CITIES) {
+      for (const fromCity of availableCities) {
+        for (const toCity of availableCities) {
           if (fromCity === toCity) {
             continue;
           }
@@ -394,7 +397,7 @@ export const calculateRouteCycleV2 = (
 
       // bellman-ford search for negative cycle
       const bellmanFord = () => {
-        const CITY_NUM = CITIES.length;
+        const CITY_NUM = availableCities.length;
         let fatigue: number[] = Array(CITY_NUM).fill(0);
         let predecessor: number[] = Array(CITY_NUM).fill(-1);
         fatigue[0] = 0;
@@ -402,9 +405,9 @@ export const calculateRouteCycleV2 = (
         // relax edges repeatedly
         for (let _ = 0; _ < CITY_NUM - 1; _++) {
           for (let u = 0; u < CITY_NUM; u++) {
-            const uCity = CITIES[u];
+            const uCity = availableCities[u];
             for (let v = 0; v < CITY_NUM; v++) {
-              const vCity = CITIES[v];
+              const vCity = availableCities[v];
               const weight = graph[uCity]?.[vCity]?.weight ?? 0;
               if (fatigue[u] + weight < fatigue[v]) {
                 fatigue[v] = fatigue[u] + weight;
@@ -416,9 +419,9 @@ export const calculateRouteCycleV2 = (
 
         // check for negative-weight cycles
         for (let u = 0; u < CITY_NUM; u++) {
-          const uCity = CITIES[u];
+          const uCity = availableCities[u];
           for (let v = 0; v < CITY_NUM; v++) {
-            const vCity = CITIES[v];
+            const vCity = availableCities[v];
             const weight = graph[uCity]?.[vCity]?.weight ?? 0;
             if (u !== v && fatigue[u] + weight < fatigue[v]) {
               let cycle: number[] = [];
@@ -454,8 +457,8 @@ export const calculateRouteCycleV2 = (
     const routes: Route[] = [];
     if (cycleResult) {
       for (let i = 0; i < cycleResult.length; i++) {
-        const fromCity = CITIES[cycleResult[i]];
-        const toCity = CITIES[cycleResult[(i + 1) % cycleResult.length]];
+        const fromCity = availableCities[cycleResult[i]];
+        const toCity = availableCities[cycleResult[(i + 1) % cycleResult.length]];
         const graphItem = graph[fromCity][toCity];
         routes.push({
           fromCity,

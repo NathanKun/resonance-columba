@@ -60,6 +60,9 @@ test("mergePlayerConfigs", () => {
 
   merged = mergePlayerConfigs({ productsBuyMorePercent: { 琥珀: 25 } });
   expect(merged.productsBuyMorePercent.琥珀).toBe(25);
+
+  merged = mergePlayerConfigs({ excludedCities: ["修格里城"] });
+  expect(merged.excludedCities).toEqual(["修格里城"]);
 });
 
 const validConfig1 = {
@@ -130,6 +133,7 @@ const validConfig1 = {
     琥珀: 15,
     防弹背心: 10,
   },
+  excludedCities: [],
 };
 
 const invalidConfigs = [
@@ -452,5 +456,19 @@ const invalidConfigs = [
     productsBuyMorePercent: {
       琥珀: "5",
     },
+  },
+  {
+    excludedCities: "修格里城",
+  },
+  {
+    excludedCities: {
+      修格里城: true,
+    },
+  },
+  {
+    excludedCities: ["不存在城市"],
+  },
+  {
+    excludedCities: ["修格里城", "修格里城"],
   },
 ];

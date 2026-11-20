@@ -1,4 +1,4 @@
-import { CITY_WITH_PRESTIGE, CityName } from "@/data/Cities";
+import { CITIES, CITY_WITH_PRESTIGE, CityName } from "@/data/Cities";
 import { PlayerConfig } from "@/interfaces/player-config";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Typography } from "@mui/material";
@@ -7,6 +7,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import { SetStateAction } from "react";
+import MultipleSelect from "../../prices-table/multiple-select";
 import BargainInputs from "../bargain-inputs";
 import BuyMoreConfig from "../buy-more-config";
 import GameEventConfigPanel from "../game-event-config-panel";
@@ -119,6 +120,20 @@ export default function PlayerConfigTab(props: PlayerConfigTabProps) {
             <ProductUnlockSelect playerConfig={playerConfig} setProductUnlock={setProductUnlock} />
           </AccordionDetails>
         </Accordion>
+      </Box>
+
+      <Box className="m-4">
+        <Typography className="p-2">排除城市</Typography>
+        <Typography className="px-2 pb-2 text-sm text-gray-500 dark:text-gray-400">
+          被排除的城市不会出现在线路计算中。
+        </Typography>
+        <MultipleSelect
+          label="排除城市"
+          name="excludedCities"
+          allOptions={CITIES}
+          selectedOptions={playerConfig.excludedCities}
+          handleChange={(selected: CityName[]) => onPlayerConfigChange("excludedCities", selected)}
+        />
       </Box>
 
       <Box className="m-4">

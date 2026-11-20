@@ -19,6 +19,7 @@ interface DetailedSimulationTabProps {
   setTargetCities: (cities: string[]) => void;
   switchSourceAndTargetCities: () => void;
   cityGroupedExchangesSelectedTargetCities: CityGroupedExchanges;
+  excludedCities: CityName[];
 }
 
 export default function DetailedSimulationTab(props: DetailedSimulationTabProps) {
@@ -28,7 +29,10 @@ export default function DetailedSimulationTab(props: DetailedSimulationTabProps)
     setTargetCities,
     switchSourceAndTargetCities,
     cityGroupedExchangesSelectedTargetCities,
+    excludedCities,
   } = props;
+
+  const availableCities = CITIES.filter((city) => !excludedCities.includes(city));
 
   return (
     <>
@@ -50,15 +54,15 @@ export default function DetailedSimulationTab(props: DetailedSimulationTabProps)
           <MultipleSelect
             label="原产地"
             name="sourceCities"
-            allOptions={CITIES}
-            selectedOptions={selectedCities.sourceCities}
+            allOptions={availableCities}
+            selectedOptions={selectedCities.sourceCities.filter((city) => !excludedCities.includes(city))}
             handleChange={(selected: CityName[]) => setSourceCities(selected)}
           />
           <MultipleSelect
             label="目标城市"
             name="targetCities"
-            allOptions={CITIES}
-            selectedOptions={selectedCities.targetCities}
+            allOptions={availableCities}
+            selectedOptions={selectedCities.targetCities.filter((city) => !excludedCities.includes(city))}
             handleChange={(selected: CityName[]) => setTargetCities(selected)}
           />
           <IconButton onClick={switchSourceAndTargetCities} size="small">
