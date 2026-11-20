@@ -49,6 +49,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
         playerConfig.events,
         bargainSummery,
         routeCycleInputs,
+        playerConfig.excludedCities,
       );
     } catch (e) {
       console.error(e);
@@ -63,6 +64,7 @@ export default function RouteCycleTab(props: RouteCycleTabProps) {
     playerConfig.allExchangesBuyMorePercent,
     playerConfig.productsBuyMorePercent,
     playerConfig.events,
+    playerConfig.excludedCities,
     bargainSummery,
     routeCycleInputs,
   ]);

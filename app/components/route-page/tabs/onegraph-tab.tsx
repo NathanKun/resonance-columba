@@ -84,6 +84,11 @@ export default function OnegraphTab(props: OnegraphTabProps) {
   const theme = useTheme();
   const prefersDarkMode = theme.palette.mode === "dark";
 
+  const availableCities = useMemo(
+    () => CITIES.filter((city) => !playerConfig.excludedCities.includes(city)),
+    [playerConfig.excludedCities],
+  );
+
   /* onegraph related player config updater */
   const onReturnBargainChange = (field: string, value: number) => {
     if (!isNaN(value)) {
@@ -139,6 +144,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.allExchangesBuyMorePercent,
         playerConfig.productsBuyMorePercent,
         playerConfig.events,
+        playerConfig.excludedCities,
       ),
     [
       prices,
@@ -150,6 +156,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.allExchangesBuyMorePercent,
       playerConfig.productsBuyMorePercent,
       playerConfig.events,
+      playerConfig.excludedCities,
     ],
   );
 
@@ -165,6 +172,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
         playerConfig.allExchangesBuyMorePercent,
         playerConfig.productsBuyMorePercent,
         playerConfig.events,
+        playerConfig.excludedCities,
       ),
     [
       prices,
@@ -176,14 +184,15 @@ export default function OnegraphTab(props: OnegraphTabProps) {
       playerConfig.allExchangesBuyMorePercent,
       playerConfig.productsBuyMorePercent,
       playerConfig.events,
+      playerConfig.excludedCities,
     ],
   );
 
   const onegraphRecommendations = useMemo(() => {
     const results: OnegraphRecommendations = {};
-    for (const fromCity of CITIES) {
+    for (const fromCity of availableCities) {
       results[fromCity] = {};
-      for (const toCity of CITIES) {
+      for (const toCity of availableCities) {
         if (fromCity === toCity) continue;
         let reco = getOneGraphRecommendation(onegraphMaxRestock, false, fromCity, toCity, onegraphBuyCombinationsGo);
         if (!reco || reco.length === 0) continue;
@@ -233,7 +242,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
     // console.debug(onegraphBuyCombinationsGo, onegraphBuyCombinationsRt, results);
 
     return results;
-  }, [onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
+  }, [availableCities, onegraphBuyCombinationsGo, onegraphMaxRestock, onegraphBuyCombinationsRt]);
 
   const topProfits: OnegraphTopProfit = useMemo(() => {
     let goProfits: OnegraphTopProfitItem[] = [];
@@ -574,13 +583,13 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                 {/** header 1 - spanning 终点 cell */}
                 <TableRow>
                   <TableCell colSpan={2} rowSpan={2}></TableCell>
-                  <TableCell align="center" colSpan={CITIES.length}>
+                  <TableCell align="center" colSpan={availableCities.length}>
                     终点
                   </TableCell>
                 </TableRow>
                 {/** header 2 - city cells */}
                 <TableRow>
-                  {CITIES.map((city) => (
+                  {availableCities.map((city) => (
                     <TableCell key={`onegraph-${city}`} align="center">
                       {city}
                     </TableCell>
@@ -588,11 +597,11 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {CITIES.map((fromCity, index) => (
+                {availableCities.map((fromCity, index) => (
                   <TableRow key={`onegraph-row-${fromCity}`}>
                     {/** spaning 起点 cell */}
                     {index === 0 && (
-                      <TableCell className="onegraph-cell-fromcity-source text-center" rowSpan={CITIES.length}>
+                      <TableCell className="onegraph-cell-fromcity-source text-center" rowSpan={availableCities.length}>
                         起点
                       </TableCell>
                     )}
@@ -603,7 +612,7 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                     </TableCell>
 
                     {/** profit cells */}
-                    {CITIES.map((toCity) => {
+                    {availableCities.map((toCity) => {
                       const key = `onegraph-row-${fromCity}-cell-${toCity}`;
                       const EmptyCell = () => (
                         <TableCell key={key} align="center">
@@ -631,16 +640,16 @@ export default function OnegraphTab(props: OnegraphTabProps) {
                       const topProfitsLocal = onegraphGoAndReturn
                         ? topProfits.byProfit.goAndReturn
                         : topProfits.byProfit.go;
-                      const maxProfitOfAll = topProfitsLocal[0].profit;
-                      const percentageToMax = Math.round((profit / maxProfitOfAll) * 100);
+                      const maxProfitOfAll = topProfitsLocal[0]?.profit ?? 0;
+                      const percentageToMax = maxProfitOfAll ? Math.round((profit / maxProfitOfAll) * 100) : 0;
                       let RankIcon, textClass;
-                      if (profit === topProfitsLocal[0].profit) {
+                      if (profit === topProfitsLocal[0]?.profit) {
                         RankIcon = <LooksOneIcon className="text-base" />;
                         textClass = "font-black";
-                      } else if (profit === topProfitsLocal[1].profit) {
+                      } else if (profit === topProfitsLocal[1]?.profit) {
                         RankIcon = <LooksTwoIcon className="text-base" />;
                         textClass = "font-bold";
-                      } else if (profit === topProfitsLocal[2].profit) {
+                      } else if (profit === topProfitsLocal[2]?.profit) {
                         RankIcon = <Looks3Icon className="text-base" />;
                         textClass = "font-medium";
                       } else {

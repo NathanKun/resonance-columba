@@ -54,3 +54,30 @@ test("calculateExchanges includes global and product investment buy-more percent
 
   warnSpy.mockRestore();
 });
+
+test("calculateExchanges excludes configured cities", () => {
+  const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  const product = PRODUCTS.find(
+    (pdt) =>
+      pdt.type !== "Craft" &&
+      Object.entries(pdt.buyLot ?? {}).some(([city, lot]) => (lot ?? 0) > 0 && (pdt.buyPrices[city] ?? 0) > 0)
+  )!;
+  const fromCity = Object.entries(product.buyLot!).find(([, lot]) => (lot ?? 0) > 0)![0] as CityName;
+  const toCity = CITIES.find((city) => city !== fromCity)!;
+  const prices: any = {
+    [product.name]: {
+      buy: { [fromCity]: { price: 100 } },
+      sell: { [toCity]: { price: 200 } },
+    },
+  };
+
+  const baseConfig = { ...INITIAL_PLAYER_CONFIG, excludedCities: [] };
+
+  expect(calculateExchanges(baseConfig, [fromCity], [toCity], prices)).toHaveLength(1);
+  expect(calculateExchanges({ ...baseConfig, excludedCities: [fromCity] }, [fromCity], [toCity], prices)).toHaveLength(
+    0
+  );
+  expect(calculateExchanges({ ...baseConfig, excludedCities: [toCity] }, [fromCity], [toCity], prices)).toHaveLength(0);
+
+  warnSpy.mockRestore();
+});

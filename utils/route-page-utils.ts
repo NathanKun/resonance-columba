@@ -58,7 +58,13 @@ export const calculateExchanges = (
     return exchanges;
   }
 
+  const excludedCities = playerConfig.excludedCities ?? [];
+
   for (const fromCity of fromCities) {
+    if (excludedCities.includes(fromCity)) {
+      continue;
+    }
+
     const availableProducts = getProductsOfCity(fromCity).filter(
       (product) => playerConfig.productUnlockStatus?.[product.name] ?? true,
     );
@@ -169,6 +175,10 @@ export const calculateExchanges = (
 
     for (const toCity of toCities) {
       if (fromCity === toCity) {
+        continue;
+      }
+
+      if (excludedCities.includes(toCity)) {
         continue;
       }
 
@@ -397,6 +407,7 @@ export const calculateOneGraphBuyCombinations = (
   allExchangesBuyMorePercent: number,
   productsBuyMorePercent: PlayerConfigProductBuyMorePercent,
   playerConfigEvents: PlayerConfigEvents,
+  excludedCities: CityName[] = [],
 ): OnegraphBuyCombinations => {
   // skip if Server side rendering
   if (typeof window === "undefined") {
@@ -413,7 +424,8 @@ export const calculateOneGraphBuyCombinations = (
   const { bargainPercent, raisePercent, bargainFatigue, raiseFatigue, disabled: barginDisabled } = bargain;
 
   const pricesData: OnegraphPriceData = {};
-  for (const fromCity of CITIES) {
+  const availableCities = CITIES.filter((city) => !excludedCities.includes(city));
+  for (const fromCity of availableCities) {
     const fromCityMaster = CITY_BELONGS_TO[fromCity] ?? fromCity;
     const buyPrestige = PRESTIGES.find((p) => p.level === prestige[fromCityMaster]);
     if (!buyPrestige) {
@@ -426,7 +438,7 @@ export const calculateOneGraphBuyCombinations = (
       // by default all products are unlocked, in productUnlockStatus the product should be set to false if the product is not unlocked
       .filter((product) => productUnlockStatus?.[product.name] ?? true);
 
-    for (const toCity of CITIES) {
+    for (const toCity of availableCities) {
       if (fromCity === toCity) {
         continue;
       }

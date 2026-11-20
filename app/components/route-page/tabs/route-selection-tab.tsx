@@ -10,7 +10,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface RouteSelectionTabProps {
   playerConfig: PlayerConfig;
@@ -23,6 +23,18 @@ export default function RouteSelectionTab(props: RouteSelectionTabProps) {
 
   /* states */
   const [selectedCityForReco, setSelectedCityForReco] = useState<CityName>("any");
+
+  const excludedCities = playerConfig.excludedCities;
+  const availableCities = useMemo(
+    () => CITIES.filter((city) => !excludedCities.includes(city)),
+    [excludedCities],
+  );
+
+  useEffect(() => {
+    if (selectedCityForReco !== "any" && excludedCities.includes(selectedCityForReco as CityName)) {
+      setSelectedCityForReco("any");
+    }
+  }, [excludedCities, selectedCityForReco]);
 
   /* calculation */
   const detailedRecommendations = useMemo(() => {
@@ -68,7 +80,7 @@ export default function RouteSelectionTab(props: RouteSelectionTabProps) {
             size="small"
             onChange={(e) => setSelectedCityForReco(e.target.value as CityName)}
           >
-            {CITIES.map((city) => (
+            {availableCities.map((city) => (
               <MenuItem key={city} value={city}>
                 {city}
               </MenuItem>

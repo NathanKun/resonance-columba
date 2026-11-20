@@ -1,4 +1,4 @@
-import { CITY_WITH_PRESTIGE } from "@/data/Cities";
+import { CITIES, CITY_WITH_PRESTIGE } from "@/data/Cities";
 import { EVENTS } from "@/data/Event";
 import { PRODUCTS } from "@/data/Products";
 import { ROLE_RESONANCE_SKILLS } from "@/data/RoleResonanceSkills";
@@ -31,6 +31,7 @@ export const isValidPlayerConfig = (config: any) => {
           "nanoid",
           "productUnlockStatus",
           "events",
+          "excludedCities",
           "allExchangesBuyMorePercent",
           "productsBuyMorePercent",
         ].includes(key),
@@ -184,6 +185,20 @@ export const isValidPlayerConfig = (config: any) => {
     }
   }
 
+  if (config.excludedCities !== undefined) {
+    if (!Array.isArray(config.excludedCities)) {
+      return false;
+    }
+
+    if (config.excludedCities.filter((city: any) => !CITIES.includes(city)).length > 0) {
+      return false;
+    }
+
+    if (new Set(config.excludedCities).size !== config.excludedCities.length) {
+      return false;
+    }
+  }
+
   if (
     config.allExchangesBuyMorePercent !== undefined &&
     (typeof config.allExchangesBuyMorePercent !== "number" ||
@@ -329,6 +344,7 @@ export const INITIAL_PLAYER_CONFIG: PlayerConfig = {
   },
   productUnlockStatus: {},
   events: {},
+  excludedCities: [],
   allExchangesBuyMorePercent: 0,
   productsBuyMorePercent: {},
 };
