@@ -70,6 +70,7 @@ Firebase项目已配置了使用位于香港的服务器。
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/WuZang0"><img src="https://avatars.githubusercontent.com/u/143314486?v=4&size=100" width="100px" height="100px" alt="WuZang0"/><br /><sub><b>WuZang0</b></sub></a><br /><a href="#code-WuZang0" title="Code">💻</a> <a href="#bug-WuZang0" title="Bug reports">🐛</a> <a href="#data-WuZang0" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Alzero50"><img src="https://avatars.githubusercontent.com/u/101871590?v=4&size=100" width="100px" height="100px" alt="Alz"/><br /><sub><b>Alz</b></sub></a><br /><a href="#code-Alzero50" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
